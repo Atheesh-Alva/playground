@@ -5,6 +5,11 @@ on:
     tags:
     - 'Run-+[0-9]+[0-9]+[0-9]'
 
+permissions:
+  contents: write
+  statuses: read
+  actions: read
+    
 jobs:
   build:
     name: Standard Playground CI/CD

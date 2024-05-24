@@ -20,6 +20,12 @@ jobs:
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+          custom-facts: |
+            - name: View Ostrum Tech website
+              value: "https://www.ostrumtech.com"
+          custom-actions: |
+            - text: View Ostrum Tech website
+              url: "https://www.ostrumtech.com"
 
     # - name: Super-Linter Run
     #   uses: github/super-linter@v4

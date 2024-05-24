@@ -27,10 +27,10 @@ jobs:
           include-files: false
           custom-facts: |
             - name: View Ostrum Tech website
-              value: "https://www.ostrumtech.com"
+              value: "https://www.ostrumtech.com/"
           custom-actions: |
             - text: Check Privacy Policy
-              url: "https://www.ostrumtech.com/privacy-policy"
+              url: "https://www.ostrumtech.com/privacy-policy/"
 
     # - name: Super-Linter Run
     #   uses: github/super-linter@v4

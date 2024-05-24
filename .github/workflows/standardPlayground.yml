@@ -11,23 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: 'Checkout Code' 
-      uses: actions/checkout@v3
+      - name: 'Checkout Code' 
+        uses: actions/checkout@v3
+
+      - name: 'MS Teams Notification' 
+        uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
+        if: always()
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
 
     # - name: Super-Linter Run
     #   uses: github/super-linter@v4
     #   env:
     #     DEFAULT_BRANCH: main
     #     GITHUB_TOKEN: ${{ github.token }}
-
-    - name: 'MS Teams Notification'
-      uses: freenet-actions/ms-teams-deploy-card@master
-      id: ms_teams_ostrum
-      if: always()
-      with:
-        github-token: ${{ github.token }}
-        webhook-uri: 'https://ostrumtech.webhook.office.com/webhookb2/091f8c3f-308c-4412-bbdd-3874be538cde@17bba2ca-6c02-4fee-a63a-9c8ec709bf04/IncomingWebhook/b1216fa280b141eca58341c2a6cc4192/ba2630c6-ea75-4788-b0f6-9fdd49bb16d1'
-        show-on-start: false
-        card-layout-exit: complete
-        enable-review-diffs-action: false
-        include-files: false

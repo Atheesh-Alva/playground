@@ -16,10 +16,15 @@ jobs:
 
       - name: 'MS Teams Notification' 
         uses: toko-bifrost/ms-teams-deploy-card@master #  or "./" if in a local set-up
+        id: ms_teams_ostrum
         if: always()
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+          show-on-start: false
+          card-layout-exit: complete
+          enable-review-diffs-action: false
+          include-files: false
           custom-facts: |
             - name: View Ostrum Tech website
               value: "https://www.ostrumtech.com"

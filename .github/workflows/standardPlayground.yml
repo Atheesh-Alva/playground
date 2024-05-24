@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 'MS Teams Notification' 
-        uses: toko-bifrost/ms-teams-deploy-card@release/v3 #  or "./" if in a local set-up
+        uses: freenet-actions/ms-teams-deploy-card@master #  or "./" if in a local set-up
         id: ms_teams_ostrum
         if: always()
         with:
@@ -26,11 +26,11 @@ jobs:
           enable-review-diffs-action: false
           include-files: false
           custom-facts: |
-            - name: Facts: View Ostrum Tech website
+            - name: View Ostrum Tech website
               value: "https://www.ostrumtech.com"
           custom-actions: |
-            - text: Actions: View Ostrum Tech website
-              url: "https://www.ostrumtech.com"
+            - text: Check Privacy Policy
+              url: "https://www.ostrumtech.com/privacy-policy"
 
     # - name: Super-Linter Run
     #   uses: github/super-linter@v4

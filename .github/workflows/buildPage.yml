@@ -7,9 +7,11 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
   statuses: read
   actions: read
-                
+           
 jobs:
   build:
     name: Build Page Playground CI/CD

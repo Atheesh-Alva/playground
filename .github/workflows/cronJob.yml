@@ -1,0 +1,19 @@
+name: Playground - Cron Schedule Workflow Action
+
+on:
+    schedule:
+        - cron: "5 * * * *" 
+
+permissions:
+  contents: write
+  statuses: read
+  actions: read
+
+jobs:
+  build:
+    name: Cron Schedule Playground CI/CD
+    runs-on: ubuntu-latest
+    
+    steps:
+        - name: 'Checkout Code' 
+          uses: actions/checkout@v3

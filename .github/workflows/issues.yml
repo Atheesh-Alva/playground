@@ -31,4 +31,6 @@ jobs:
             include-files: false
             custom-facts: |
               - name: Alert Type
-                value: "GitHub Issues"
+                value: "GitHub Issues!"
+              - name: Resolving issues
+                value: "GitHub Issues!"

@@ -32,5 +32,5 @@ jobs:
           custom-facts: |
             - name: Alert Type
               value: "Pull Request to main branch"
-            - name: Next commit to create conflict
+            - name: New commit to resolve conflict
               value: "Welcome to GitHub!"

@@ -33,4 +33,4 @@ jobs:
               - name: Alert Type
                 value: "GitHub Issues!"
               - name: Resolving issues
-                value: "GitHub Issues!"
+                value: "Trying again!"

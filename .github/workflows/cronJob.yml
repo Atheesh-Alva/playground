@@ -2,7 +2,7 @@ name: Playground - Cron Schedule Workflow Action
 
 on:
     schedule:
-        - cron: "0,15,30,45 * * * 6" 
+        - cron: "0 * * * *" 
 
 permissions:
   contents: write
@@ -17,3 +17,20 @@ jobs:
     steps:
         - name: 'Checkout Code' 
           uses: actions/checkout@v3
+
+        - name: 'MS Teams Notification' 
+          uses: freenet-actions/ms-teams-deploy-card@master #  or "./" if in a local set-up
+          id: ms_teams_ostrum
+          if: always()
+          with:
+            github-token: ${{ github.token }}
+            webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+            show-on-start: false
+            card-layout-exit: complete
+            enable-review-diffs-action: false
+            include-files: false
+            custom-facts: |
+              - name: Alert Type
+                value: "GitHub Cron Schedule Job!"
+              - name: Scheduled time frame
+                value: “At minute 0.”

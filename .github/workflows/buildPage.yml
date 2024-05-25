@@ -47,5 +47,5 @@ jobs:
           git remote add origin https://github.com/Atheesh-Alva/playground.git
           git checkout -b gh-pages
           git add --all
-          # git commit -m "update"
+          git commit -m "update"
           # git push origin gh-pages -f

@@ -6,16 +6,19 @@ on:
       - 'Build-+[0-9]+[0-9]+[0-9]'
 
 permissions:
-    contents: write
-    statuses: read
-    actions: read
-        
+  contents: read
+  pages: write
+  id-token: write
+           
 jobs:
   build:
     name: Build Page Playground CI/CD
     env:
       my_secret: ${{ github.token }}
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: https://github.com/Atheesh-Alva/playground.git
 
     steps:
       - name: 'Checkout Code' 
@@ -34,18 +37,14 @@ jobs:
       - name: 'Flutter Pub Get' 
         run: flutter pub get
 
-      - name: 'Build Web' 
+      - name: 'Build Web Release' 
         run: flutter build web --release
 
-      - name: 'Build GitHub Page' 
-        run: |
-          cd build/web
-          git init
-          git config --global user.email atheesh.alva@ostrumtech.com
-          git config --global user.name Atheesh-Alva
-          git status
-          git remote add origin https://github.com/Atheesh-Alva/playground.git
-          git checkout -b main
-          git add --all
-          git commit -m "update"
-          # git push origin gh-pages -f
+      - name: 'Upload Pages Artifact'
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: build/web/
+
+      - name: 'Deploy to GitHub Pages'
+        id: deployment
+        uses: actions/deploy-pages@v2

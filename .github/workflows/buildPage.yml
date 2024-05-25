@@ -1,9 +1,9 @@
 name: Playground - Build Page Workflow Action
 
 on:
-    push:
-      tags:
-      - 'Build-+[0-9]+[0-9]+[0-9]'
+  push:
+    tags:
+    - 'Build-+[0-9]+[0-9]+[0-9]'
 
 permissions:
   contents: write

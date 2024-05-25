@@ -44,7 +44,7 @@ jobs:
           git config --global user.email atheesh.alva@ostrumtech.com
           git config --global user.name Atheesh-Alva
           git status
-          git remote add origin https://Atheesh-Alva@github.com/playground.git
+          git remote add origin http://www.atheesh-alva-playground-github.com/
           git checkout -b gh-pages
           git add --all
           git commit -m "update"

@@ -1,0 +1,51 @@
+name: Playground - Build Page Workflow Action
+
+on:
+    push:
+      tags:
+      - 'Build-+[0-9]+[0-9]+[0-9]'
+
+permissions:
+    contents: write
+    statuses: read
+    actions: read
+        
+jobs:
+  build:
+    name: Build Page Playground CI/CD
+    env:
+      my_secret: ${{ github.token }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout Code' 
+        uses: actions/checkout@v3
+
+      - name: 'Setup Flutter'
+        uses: subosito/flutter-action@v2
+        with:
+            channel: 'stable'    
+            flutter-version: '3.22.0'
+            cache: true
+    
+      - name: 'Enable Flutter for Web' 
+        run: flutter config --enable-web
+
+      - name: 'Flutter Pub Get' 
+        run: flutter pub get
+
+      - name: 'Build Web' 
+        run: flutter build web --release
+
+      - name: 'Build Web' 
+        run: |
+          cd build/web
+          git init
+          git config --global user.email atheesh.alva@ostrumtech.com
+          git config --global user.name Atheesh-Alva
+          git status
+          git remote add origin https://Atheesh-Alva@github.com/playground.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "update"
+          git push origin gh-pages -f

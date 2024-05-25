@@ -1,0 +1,34 @@
+name: Playground - Pull Request Workflow Action
+
+on:
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: write
+  statuses: read
+  actions: read
+
+jobs:
+  build:
+    name: Standard Playground CI/CD
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 'Checkout Code' 
+        uses: actions/checkout@v3
+
+      - name: 'MS Teams Notification' 
+        uses: freenet-actions/ms-teams-deploy-card@master #  or "./" if in a local set-up
+        id: ms_teams_ostrum
+        if: always()
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+          show-on-start: false
+          card-layout-exit: complete
+          enable-review-diffs-action: false
+          include-files: false
+          custom-facts: |
+            - name: Alert Type
+              value: "Pull Request to Master branch"

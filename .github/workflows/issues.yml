@@ -1,0 +1,19 @@
+name: Playground - Issues Workflow Action
+
+on:
+  issues:
+    types: [opened, edited, deleted, transferred, closed, reopened]
+
+permissions:
+  contents: write
+  statuses: read
+  actions: read
+
+jobs:
+  build:
+    name: Issues Playground CI/CD
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 'Checkout Code' 
+        uses: actions/checkout@v3

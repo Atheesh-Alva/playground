@@ -2,7 +2,7 @@ name: Playground - Cron Schedule Workflow Action
 
 on:
     schedule:
-        - cron: "5 * * * *" 
+        - cron: "*/5 * * * *" 
 
 permissions:
   contents: write

@@ -42,7 +42,8 @@ jobs:
         run: |
           git config --global user.email atheesh.alva@ostrumtech.com
           git config --global user.name Atheesh-Alva
-          git commit -am "Automated commit"
+          git add -all
+          git commit -m "Automated commit"
           git push origin gh-pages -f
 
       # - name: 'Build Web Release' 
@@ -55,19 +56,19 @@ jobs:
       #     path: ./build/web
 
 
-  deploy:
-    name: Deploy Web Build
-    needs: build
-    runs-on: ubuntu-latest
+  # deploy:
+  #   name: Deploy Web Build
+  #   needs: build
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: 'Download Web Release'
-      uses: actions/download-artifact@v2
-      with:
-        name: web-release
+  #   steps:
+  #   - name: 'Download Web Release'
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: web-release
 
-    - name: 'Deploy to gh-pages'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
+  #   - name: 'Deploy to gh-pages'
+  #     uses: peaceiris/actions-gh-pages@v3
+  #     with:
+  #       github_token: ${{ secrets.GITHUB_TOKEN }}
+  #       publish_dir: ./

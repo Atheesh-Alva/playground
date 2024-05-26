@@ -69,6 +69,7 @@ jobs:
         run: |
           echo "Data=$(echo ${{ github.ref }} | sed 's/-.*//')" >> $GITHUB_ENV
           echo "Data=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
+          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         
       # - name: 'Deploy to gh-pages'
       #   if: github.ref == 'refs/heads/dev'
@@ -78,6 +79,7 @@ jobs:
       #     BRANCH: dev
       #     FOLDER: build
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # - name: 'Build Web Release' 
       #   run: flutter build web --release
     

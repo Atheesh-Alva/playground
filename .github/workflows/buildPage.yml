@@ -42,7 +42,7 @@ jobs:
         run: |
           git config --global user.email atheesh.alva@ostrumtech.com
           git config --global user.name Atheesh-Alva
-          git add -all
+          git add --all
           git commit -m "Automated commit"
           git push origin gh-pages -f
 

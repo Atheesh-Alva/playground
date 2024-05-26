@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   merge-branch:
+    name: Build Page Playground CI/CD - Merge branch
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout Code' 
@@ -28,59 +29,50 @@ jobs:
           commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'
 
   build:
-    name: Build Page Playground CI/CD
+    name: Build Page Playground CI/CD - Build
+    needs: merge-branch
     runs-on: ubuntu-latest
 
     steps:
-      - name: 'Checkout Code' 
-        uses: actions/checkout@v3
+      - name: 'Get dependencies'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "12.x"
+          cache: gradle
 
-      # - name: 'Get dependencies'
-      #   uses: actions/setup-java@v3
-      #   with:
-      #     distribution: 'zulu'
-      #     java-version: "12.x"
-      #     cache: gradle
-
-      # - name: 'Setup Flutter'
-      #   uses: subosito/flutter-action@v2
-      #   with:
-      #     flutter-version: "3.22.0"
-      #     channel: 'stable'
-      #     cache: true
+      - name: 'Setup Flutter'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.0"
+          channel: 'stable'
+          cache: true
       
-      # - name: 'Flutter Pub Get' 
-      #   run: flutter pub get
+      - name: 'Flutter Pub Get' 
+        run: flutter pub get
 
-      - name: 'Test'
-        run: |
-          echo "Data=$(echo ${{ github.ref }} | sed 's/-.*//')" >> $GITHUB_ENV
-          echo "Data=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
-          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-
-      # - name: 'Build Web Release' 
-      #   run: flutter build web --release
+      - name: 'Build Web Release' 
+        run: flutter build web --release
     
-      # - name: 'Upload Pages Artifact'
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: web-release
-      #     path: ./build/web
+      - name: 'Upload Pages Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: web-release
+          path: ./build/web
 
+  deploy:
+    name: Build Page Playground CI/CD - Deploy
+    needs: build
+    runs-on: ubuntu-latest
 
-  # deploy:
-  #   name: Deploy Web Build
-  #   needs: build
-  #   runs-on: ubuntu-latest
+    steps:
+    - name: 'Download Web Release'
+      uses: actions/download-artifact@v2
+      with:
+        name: web-release
 
-  #   steps:
-  #   - name: 'Download Web Release'
-  #     uses: actions/download-artifact@v2
-  #     with:
-  #       name: web-release
-
-  #   - name: 'Deploy to gh-pages'
-  #     uses: peaceiris/actions-gh-pages@v3
-  #     with:
-  #       github_token: ${{ secrets.GITHUB_TOKEN }}
-  #       publish_dir: ./
+    - name: 'Deploy to gh-pages'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./

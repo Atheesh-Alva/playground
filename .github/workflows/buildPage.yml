@@ -45,26 +45,39 @@ jobs:
       #     git commit -m "Automated commit"
       #     git push origin gh-pages -f
 
-      - name: 'Check change log'
-        id: verify_diff
-        run: |
-          git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+      # - name: 'Check change log'
+      #   id: verify_diff
+      #   run: |
+      #     git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
 
-      - name: 'Create commit'
-        if: steps.verify_diff.outputs.changed == 'true'
-        run: |
-          git config --global user.email atheesh.alva@ostrumtech.com
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "Build" -a
+      # - name: 'Create commit'
+      #   if: steps.verify_diff.outputs.changed == 'true'
+      #   run: |
+      #     git config --global user.email atheesh.alva@ostrumtech.com
+      #     git config --local user.name "github-actions[bot]"
+      #     git add .
+      #     git commit -m "Build" -a
 
-      - name: 'Create push'
-        if: steps.verify_diff.outputs.changed == 'true'
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-  
+      # - name: 'Create push'
+      #   if: steps.verify_diff.outputs.changed == 'true'
+      #   uses: ad-m/github-push-action@master
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: gh-pages
+
+      - name: 'Test'
+        run: |
+          echo "Data=$(echo ${{ github.ref }} | sed 's/-.*//')" >> $GITHUB_ENV
+          echo "Data=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
+        
+      # - name: 'Deploy to gh-pages'
+      #   if: github.ref == 'refs/heads/dev'
+      #   uses: s0/git-publish-subdir-action@develop
+      #   env:
+      #     REPO: self
+      #     BRANCH: dev
+      #     FOLDER: build
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - name: 'Build Web Release' 
       #   run: flutter build web --release
     

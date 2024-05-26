@@ -38,14 +38,33 @@ jobs:
       # - name: 'Flutter Pub Get' 
       #   run: flutter pub get
 
-      - name: "Push to gh-pages"
+      # - name: "Push to gh-pages"
+      #   run: |
+      #     git config --global user.name Atheesh-Alva
+      #     git add --all
+      #     git commit -m "Automated commit"
+      #     git push origin gh-pages -f
+
+      - name: 'Check change log'
+        id: verify_diff
+        run: |
+          git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: 'Create commit'
+        if: steps.verify_diff.outputs.changed == 'true'
         run: |
           git config --global user.email atheesh.alva@ostrumtech.com
-          git config --global user.name Atheesh-Alva
-          git add --all
-          git commit -m "Automated commit"
-          git push origin gh-pages -f
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Build" -a
 
+      - name: 'Create push'
+        if: steps.verify_diff.outputs.changed == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+  
       # - name: 'Build Web Release' 
       #   run: flutter build web --release
     

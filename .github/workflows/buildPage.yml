@@ -3,7 +3,7 @@ name: Playground - Build Page Workflow Action
 on:
   push:
     tags:
-    - 'Build-+[0-9]+[0-9]+[0-9]'
+    - 'Page-+[0-9]+[0-9]+[0-9]'
 
 permissions:
   contents: write
@@ -13,21 +13,27 @@ permissions:
   actions: read
 
 jobs:
-  build:
-    name: Build Page Playground CI/CD
+  merge-branch:
+    name: Merge branch
     runs-on: ubuntu-latest
-
     steps:
       - name: 'Checkout Code' 
         uses: actions/checkout@v3
 
-      - name: 'Get dependencies'
-        uses: actions/setup-java@v3
+      - name: 'Merge Code' 
+        uses: everlytic/branch-merge@1.1.2
         with:
-          distribution: 'zulu'
-          java-version: "12.x"
-          cache: gradle
+          github_token: ${{ github.token }}
+          source_ref: ${{ github.ref }}
+          target_branch: 'gh-pages'
+          commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'
 
+  build:
+    name: Build
+    needs: merge-branch
+    runs-on: ubuntu-latest
+
+    steps:
       - name: 'Setup Flutter'
         uses: subosito/flutter-action@v2
         with:
@@ -35,8 +41,18 @@ jobs:
           channel: 'stable'
           cache: true
       
+      - name: 'Flutter clean' 
+        run: flutter clean
+
       - name: 'Flutter Pub Get' 
         run: flutter pub get
+    
+      - name: 'Get dependencies'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "12.x"
+          cache: gradle
 
       - name: 'Build Web Release' 
         run: flutter build web --release
@@ -47,9 +63,8 @@ jobs:
           name: web-release
           path: ./build/web
 
-
   deploy:
-    name: Deploy Web Build
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
 

@@ -11,7 +11,7 @@ permissions:
   actions: read
 
 env:
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   build:
@@ -22,15 +22,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Get Branch
-        run: |
-          raw=$(git branch -r --contains ${{ github.ref }})
-          branch=${raw##*/}
-          echo $raw
-          echo $branch
-          echo "BRANCH=$branch" >> $GITHUB_ENV
-      - if: ${{ env.BRANCH == 'main' }}
-        run: echo ${{ env.BRANCH }}
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Get branch name
+        run: echo 'The branch name is' $BRANCH_NAME
 
       # - name: Create Pull Request
       #   id: cpr

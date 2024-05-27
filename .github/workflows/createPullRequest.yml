@@ -28,15 +28,15 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Auto-create PR Commit Message
           title: Auto-create PR Title
-          body: | 
-            branch: main
-            delete-branch: true
-            # labels: | report automated pr
-            # assignees: peter-evans
-            # reviewers: peter-evans
-            # team-reviewers: | developers qa-team
-            # milestone: 1
-            # draft: false
+          body: Auto-create PR Body
+          branch: main
+          delete-branch: true
+          # labels: | report automated pr
+          # assignees: peter-evans
+          # reviewers: peter-evans
+          # team-reviewers: | developers qa-team
+          # milestone: 1
+          # draft: false
 
 
       # - name: Create Pull Request

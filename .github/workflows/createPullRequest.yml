@@ -22,12 +22,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Extract branch name
-        shell: bash
+      - name: Get Branch
         run: |
-          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-          echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-        id: extract_branch
+          raw=$(git branch -r --contains ${{ github.ref }})
+          branch=${raw##*/}
+          echo $raw
+          echo $branch
+          echo "BRANCH=$branch" >> $GITHUB_ENV
+      - if: ${{ env.BRANCH == 'main' }}
+        run: echo ${{ env.BRANCH }}
 
       # - name: Create Pull Request
       #   id: cpr

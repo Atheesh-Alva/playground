@@ -29,8 +29,8 @@ jobs:
           commit-message: Auto-create PR Commit Message
           title: Auto-create PR Title
           body: Auto-create PR Body
-          branch: main
-          base: DEV  # The branch you want to create the pull request against
+          branch: "auto-pr-branch"
+          base: main  # The branch you want to create the pull request against
           delete-branch: true
           # labels: Auto-create PR Label
           # assignees: peter-evans

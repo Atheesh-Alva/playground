@@ -1,0 +1,35 @@
+name: Playground - Create PR Workflow Action
+
+on:
+  push:
+    tags:
+    - 'PR-+[0-9]+[0-9]+[0-9]'
+
+permissions:
+  contents: write
+  statuses: read
+  actions: read
+    
+jobs:
+  build:
+    name: Create PR Playground CI/CD
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+        
+      # - name: Create Pull Request
+      #   id: cpr
+      #   uses: peter-evans/create-pull-request@v6
+
+      # - name: Check outputs
+      #   if: ${{ steps.cpr.outputs.pull-request-number }}
+      #   run: |
+      #     echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+      #     echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"

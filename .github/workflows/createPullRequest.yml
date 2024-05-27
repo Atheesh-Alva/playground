@@ -10,9 +10,6 @@ permissions:
   statuses: read
   actions: read
 
-env:
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-
 jobs:
   build:
     name: Create PR Playground CI/CD
@@ -24,6 +21,22 @@ jobs:
 
       - name: Extract commit data
         uses: rlespinasse/git-commit-data-action@v1
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Auto-create PR Commit Message
+          title: Auto-create PR Title
+          body: | 
+            branch: main
+            delete-branch: true
+            # labels: | report automated pr
+            # assignees: peter-evans
+            # reviewers: peter-evans
+            # team-reviewers: | developers qa-team
+            # milestone: 1
+            # draft: false
 
 
       # - name: Create Pull Request

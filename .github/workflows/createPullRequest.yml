@@ -9,7 +9,10 @@ permissions:
   contents: write
   statuses: read
   actions: read
-    
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
 jobs:
   build:
     name: Create PR Playground CI/CD
@@ -23,7 +26,7 @@ jobs:
         shell: bash
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
-        
+
       # - name: Create Pull Request
       #   id: cpr
       #   uses: peter-evans/create-pull-request@v6

@@ -22,13 +22,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
+      - name: Extract commit data
+        uses: rlespinasse/git-commit-data-action@v1
 
-      - name: Get branch name
-        run: echo 'The branch name is' $BRANCH_NAME
 
       # - name: Create Pull Request
       #   id: cpr

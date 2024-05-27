@@ -29,12 +29,13 @@ jobs:
           commit-message: Auto-create PR Commit Message
           title: Auto-create PR Title
           body: Auto-create PR Body
-          branch: main
+          branch: DEV
+          base: main  # The branch you want to create the pull request against
           delete-branch: true
-          # labels: | report automated pr
+          labels: Auto-create PR Label
           # assignees: peter-evans
           # reviewers: peter-evans
-          # team-reviewers: | developers qa-team
+          # team-reviewers: 
           # milestone: 1
           # draft: false
 

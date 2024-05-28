@@ -11,12 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-        - name: Create an issue
-          uses: actions-ecosystem/action-create-issue@v1
+        # - name: Create an issue
+        #   uses: actions-ecosystem/action-create-issue@v1
+        #   with:
+        #     github_token: ${{ secrets.github_token }}
+        #     title: An example issue
+        #     body: This is an example issue created by a GitHub Actions workflow.
+        #     labels: | 
+        #       bug
+        #       enhancement
+
+        - name: Close Issue
+          uses: peter-evans/close-issue@v3
           with:
-            github_token: ${{ secrets.github_token }}
-            title: An example issue
-            body: This is an example issue created by a GitHub Actions workflow.
-            labels: | 
-              bug
-              enhancement
+            issue-number: 16
+            comment: Auto-closing issue

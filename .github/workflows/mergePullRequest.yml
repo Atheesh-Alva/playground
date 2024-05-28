@@ -16,7 +16,7 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v3
 
-        - name: Get PR Details
+        - name: Get Auto-Merge PR Details
           run: |
             PULL_REQUEST_NUMBER=$GITHUB_EVENT_NUMBER
             PULL_REQUEST_URL=https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${PULL_REQUEST_NUMBER}

@@ -27,7 +27,7 @@ jobs:
           -H ${{ env.ENV_SOURCE_BRANCH }} \
           --title '${{ env.ENV_PR_TITLE }}' \
           --body '${{ env.ENV_PR_BODY }}' \
-          --reviewer handle "Atheesh-Alva" \
-          --assignee login "@me"
+          --reviewer "Atheesh-Alva" \
+          --assignee "@me"
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

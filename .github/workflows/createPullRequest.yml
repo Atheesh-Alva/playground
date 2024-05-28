@@ -12,7 +12,7 @@ env:
   ENV_PR_BODY: Creating again
   ENV_REVIEWER: Atheesh-Alva
   ENV_ASSIGNEE: Atheesh-Alva
-  ENV_LABEL: bug, demo
+  ENV_LABEL: bug
 
 jobs:
   build:

@@ -3,7 +3,10 @@ name: Playground - Create PR Workflow Action
 on:
   push:
     tags:
-    - 'PR-+[0-9]+[0-9]+[0-9]'
+    - 'PR-*'
+
+permissions:
+  contents: write
 
 env:
   ENV_SOURCE_BRANCH: DEV

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    name: Standard Playground CI/CD
+    name: Pull Request Playground CI/CD
     runs-on: ubuntu-latest
     
     steps:

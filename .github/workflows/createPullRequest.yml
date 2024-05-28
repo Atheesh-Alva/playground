@@ -22,6 +22,12 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Create PR
-        run: gh pr create -B ${{ env.ENV_DESTINATION_BRANCH }} -H ${{ env.ENV_SOURCE_BRANCH }} --title '${{ env.ENV_PR_TITLE }}' --body '${{ env.ENV_PR_BODY }}' --assignee @me
+        run: gh pr create \
+          -B ${{ env.ENV_DESTINATION_BRANCH }} \
+          -H ${{ env.ENV_SOURCE_BRANCH }} \
+          --title '${{ env.ENV_PR_TITLE }}' \
+          --body '${{ env.ENV_PR_BODY }}' \
+          --reviewer @me 
+          # --assignee @me
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

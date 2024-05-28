@@ -23,10 +23,10 @@ jobs:
         
       - name: Create PR
         run: gh pr create \
-          -B ${{ env.ENV_DESTINATION_BRANCH }} \
-          -H ${{ env.ENV_SOURCE_BRANCH }} \
-          -t '${{ env.ENV_PR_TITLE }}' \
-          -b '${{ env.ENV_PR_BODY }}' \
+          --base ${{ env.ENV_DESTINATION_BRANCH }} \
+          --head ${{ env.ENV_SOURCE_BRANCH }} \
+          --title '${{ env.ENV_PR_TITLE }}' \
+          --body '${{ env.ENV_PR_BODY }}'
           # --reviewer "Atheesh-Alva" \
           # --assignee "@me"
         env:

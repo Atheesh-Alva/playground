@@ -14,6 +14,10 @@ jobs:
         - name: Checkout master
           uses: actions/checkout@master
 
+        - name: Set GITHUB_OWNER
+          run: |
+            echo "GITHUB_OWNER=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+
         - name: Issue Creation
           uses: bryannice/gitactions-git-issue-creation@master
           env:

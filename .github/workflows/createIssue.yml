@@ -11,6 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+        - name: Logs
+          run: |
+            echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
+            echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
+    
         # - name: Create an issue
         #   uses: actions-ecosystem/action-create-issue@v1
         #   with:
@@ -21,8 +26,8 @@ jobs:
         #       bug
         #       enhancement
 
-        - name: Close Issue
-          uses: peter-evans/close-issue@v3
-          with:
-            issue-number: 16
-            comment: Auto-closing issue
+        # - name: Close Issue
+        #   uses: peter-evans/close-issue@v3
+        #   with:
+        #     issue-number: 16
+        #     comment: Auto-closing issue

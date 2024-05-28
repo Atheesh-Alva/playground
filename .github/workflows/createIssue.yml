@@ -3,7 +3,7 @@ name: Playground - Create Issue Workflow Action
 on:
   push:
     tags:
-        - 'Issue-*'
+        - 'Issue'
         - 'Fixes-*'
 
 env:

@@ -11,11 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-        - name: Logs
+        - name: Extract Tag details
           run: |
             echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
             echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
     
+        - name: Setup logs
+          run: |
+            echo "${{ env.ENV_ACTION_TYPE }}"
+            echo "${{ env.ENV_VERSION }}"
+      
         # - name: Create an issue
         #   uses: actions-ecosystem/action-create-issue@v1
         #   with:

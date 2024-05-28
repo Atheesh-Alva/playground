@@ -1,0 +1,17 @@
+name: Playground - Merge PR Workflow Action
+
+on:
+    pull_request_review:
+        types: [submitted]
+
+permissions:
+  contents: write
+
+jobs:
+    merge-pr:
+      name: Merge PR Playground CI/CD
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3

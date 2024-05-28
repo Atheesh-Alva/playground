@@ -11,6 +11,7 @@ env:
   ENV_PR_TITLE: Auto create PR
   ENV_PR_BODY: Creating again
   ENV_REVIEWER: Atheesh-Alva
+  ENV_ASSIGNEE: Atheesh-Alva
 
 jobs:
   build:
@@ -23,7 +24,6 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Create PR
-        run: gh pr create --base ${{ env.ENV_DESTINATION_BRANCH }} --head ${{ env.ENV_SOURCE_BRANCH }} --title '${{ env.ENV_PR_TITLE }}' --body '${{ env.ENV_PR_BODY }}' --reviewer ${{ env.ENV_REVIEWER }}
-          # --assignee "@me"
+        run: gh pr create --base ${{ env.ENV_DESTINATION_BRANCH }} --head ${{ env.ENV_SOURCE_BRANCH }} --title '${{ env.ENV_PR_TITLE }}' --body '${{ env.ENV_PR_BODY }}' --reviewer ${{ env.ENV_REVIEWER }} --assignee ${{ env.ENV_ASSIGNEE }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

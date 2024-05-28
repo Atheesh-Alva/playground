@@ -11,7 +11,7 @@ permissions:
 env:
   ENV_SOURCE_BRANCH: DEV
   ENV_DESTINATION_BRANCH: main
-  ENV_PR_TITLE: Auto create PR $(date --rfc-3339=date)
+  ENV_PR_TITLE: Auto create PR ${{ github.ref_name }}
   ENV_PR_BODY: Creating again
   ENV_REVIEWER: Atheesh-Alva
   ENV_ASSIGNEE: Atheesh-Alva

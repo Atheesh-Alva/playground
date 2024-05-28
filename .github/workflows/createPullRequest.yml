@@ -9,7 +9,7 @@ env:
   ENV_SOURCE_BRANCH: DEV
   ENV_DESTINATION_BRANCH: main
   ENV_PR_TITLE: Auto create PR
-  ENV_PR_BODY: Demoing a PR!
+  ENV_PR_BODY: Creating again
 
 jobs:
   build:

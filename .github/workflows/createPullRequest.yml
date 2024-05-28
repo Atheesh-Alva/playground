@@ -12,6 +12,7 @@ env:
   ENV_PR_BODY: Creating again
   ENV_REVIEWER: Atheesh-Alva
   ENV_ASSIGNEE: Atheesh-Alva
+  ENV_LABEL: bug
 
 jobs:
   build:
@@ -31,6 +32,7 @@ jobs:
           --title '${{ env.ENV_PR_TITLE }}' \
           --body '${{ env.ENV_PR_BODY }}' \
           --reviewer ${{ env.ENV_REVIEWER }} \
-          --assignee ${{ env.ENV_ASSIGNEE }}
+          --assignee ${{ env.ENV_ASSIGNEE }} \
+          --label ${{ env.ENV_LABEL }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

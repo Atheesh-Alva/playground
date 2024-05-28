@@ -23,7 +23,7 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: ""   # If blank, default: triggered branch 
+          source_branch: "DEV"   # If blank, default: triggered branch 
           destination_branch: "main"
           pr_title: "Automated Pull Request"
           pr_body: "This is an automated pull request."

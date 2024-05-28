@@ -14,5 +14,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-        - name: PR Approved Log
-          run: echo "This PR was approved"
+        - name: PR Approved Logs
+          run: |
+            echo "This PR was approved"
+            echo "ref=${{ github.ref }}"

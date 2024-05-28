@@ -3,8 +3,13 @@ name: Playground - Create Issue Workflow Action
 on:
   push:
     tags:
-    - 'Issue-+[0-9]+[0-9]+[0-9]'
-  
+        - 'Issue-+[0-9]+[0-9]+[0-9]'
+        - 'Fixes-*'
+
+env:
+    ENV_ACTION_TYPE: ${{ github.ref_name }}
+    ENV_VERSION: ${{ github.ref_name }}
+
 jobs:
   build:
     name: Create Issue Playground CI/CD
@@ -22,6 +27,7 @@ jobs:
             echo "${{ env.ENV_VERSION }}"
       
         # - name: Create an issue
+        #   if: ${{ env.ENV_ACTION_TYPE == 'Issue' }}
         #   uses: actions-ecosystem/action-create-issue@v1
         #   with:
         #     github_token: ${{ secrets.github_token }}
@@ -32,6 +38,7 @@ jobs:
         #       enhancement
 
         # - name: Close Issue
+        #   if: ${{ env.ENV_ACTION_TYPE == 'Fixes' }}
         #   uses: peter-evans/close-issue@v3
         #   with:
         #     issue-number: 16

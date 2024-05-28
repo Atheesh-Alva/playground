@@ -19,14 +19,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         
-      - name: Create Pull Request
-        uses: repo-sync/pull-request@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_branch: "DEV"   # If blank, default: triggered branch 
-          destination_branch: "main"
-          pr_title: "Automated Pull Request"
-          pr_body: "This is an automated pull request."
-          pr_label: "automated"
-          pr_draft: false
-          pr_allow_empty: false
+      - name: Create PR
+        run: gh pr create -B DEV -H main --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Check for Existing Pull Request
+      #   id: check_pr
+      #   uses: peter-evans/find-pull-request@v6
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: ${{ github.head_ref }}      
+
+      # - name: Create Pull Request
+      #   uses: repo-sync/pull-request@v2
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     source_branch: "DEV"   # If blank, default: triggered branch 
+      #     destination_branch: "main"
+      #     pr_title: "Automated Pull Request"
+      #     pr_body: "This is an automated pull request."
+      #     pr_label: "automated"
+      #     pr_draft: false
+      #     pr_allow_empty: false

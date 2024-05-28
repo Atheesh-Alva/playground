@@ -1,0 +1,25 @@
+name: Playground - Create Issue Workflow Action
+
+on:
+  push:
+    tags:
+    - 'Issue-+[0-9]+[0-9]+[0-9]'
+  
+jobs:
+  build:
+    name: Create Issue Playground CI/CD
+    runs-on: ubuntu-latest
+    
+    steps:
+        - name: Checkout master
+          uses: actions/checkout@master
+
+        - name: Issue Creation
+          uses: bryannice/gitactions-git-issue-creation@master
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_COMMIT_SHA: ${{ github.sha }}
+            GITHUB_REPO_OWNER: 'Atheesh-Alva'
+            GITHUB_REPO_NAME: 'playground'
+            GITHUB_ISSUE_TITLE: 'Issue Creation Title'
+            GITHUB_ISSUE_BODY: 'Issue Creation Body'

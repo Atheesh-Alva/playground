@@ -11,19 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-        - name: Checkout master
-          uses: actions/checkout@master
-
-        - name: Set GITHUB_OWNER
-          run: |
-            echo "GITHUB_OWNER=${{ github.repository_owner }}" >> $GITHUB_OUTPUT
-
-        - name: Issue Creation
-          uses: bryannice/gitactions-git-issue-creation@master
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            GITHUB_COMMIT_SHA: ${{ github.sha }}
-            GITHUB_REPO_OWNER: ${{ github.repository_owner }}
-            GITHUB_REPO_NAME: 'playground'
-            GITHUB_ISSUE_TITLE: 'Issue Creation Title'
-            GITHUB_ISSUE_BODY: 'Issue Creation Body'
+        - name: Create an issue
+          uses: actions-ecosystem/action-create-issue@v1
+          with:
+            github_token: ${{ secrets.github_token }}
+            title: An example issue
+            body: This is an example issue created by a GitHub Actions workflow.
+            labels: | 
+              bug
+              enhancement

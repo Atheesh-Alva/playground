@@ -7,6 +7,9 @@ on:
 permissions:
   contents: write
 
+env:
+  ENV_PR_NUMBER: ${{ github.event.pull_request.number }}
+
 jobs:
     approved:
         name: Merge PR Playground CI/CD
@@ -17,4 +20,8 @@ jobs:
         - name: PR Approved Logs
           run: |
             echo "This PR was approved"
-            echo "ref=${{ github.ref }}"
+            echo "ref=${{ env.ENV_PR_NUMBER }}"
+
+        # - name: Auto Merge on Review
+        #   run: |
+        #     gh pr merge --pull-request $GITHUB_PULL_REQUEST_NUMBER

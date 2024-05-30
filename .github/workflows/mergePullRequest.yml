@@ -29,8 +29,8 @@ jobs:
             echo "Labels:${{ github.event.pull_request.labels.name }}"
             echo "URL:${{ github.event.pull_request.url }}"
 
-        # - name: Auto Merge on Review
-        #   run: |
-        #     gh pr merge --admin
-        #   env:
-        #     GH_TOKEN: ${{ github.token }}
+        - name: Auto Merge on Review
+          run: |
+            gh pr merge --merge ${{ github.event.pull_request.base.ref }}
+          env:
+            GH_TOKEN: ${{ github.token }}

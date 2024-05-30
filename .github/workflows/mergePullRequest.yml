@@ -22,15 +22,15 @@ jobs:
         - name: PR Approved Logs
           run: |
             echo "This PR was approved"
-            echo "Head:=${{ github.event.pull_request.head }}"
-            echo "Base:=${{ github.event.pull_request.base }}"
+            echo "Head:=${{ github.event.pull_request.head.label }}"
+            echo "Base:=${{ github.event.pull_request.base.label }}"
             echo "Title:=${{ github.event.pull_request.title }}"
             echo "Body:=${{ github.event.pull_request.body }}"
-            echo "Labels:=${{ github.event.pull_request.labels }}"
+            echo "Labels:=${{ github.event.pull_request.labels.name }}"
             echo "URL:=${{ github.event.pull_request.url }}"
 
         - name: Auto Merge on Review
           run: |
-            gh pr merge --admin # ${{ env.ENV_PR_NUMBER }}
+            gh pr merge --admin
           env:
             GH_TOKEN: ${{ github.token }}

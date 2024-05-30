@@ -24,4 +24,5 @@ jobs:
 
         - name: Auto Merge on Review
           run: |
-            gh pr merge --pull-request ${{ env.ENV_PR_NUMBER }}
+            gh pr merge --auto
+          # --pull-request ${{ env.ENV_PR_NUMBER }}

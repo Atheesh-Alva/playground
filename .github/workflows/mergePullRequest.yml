@@ -22,6 +22,6 @@ jobs:
             echo "This PR was approved"
             echo "ref=${{ env.ENV_PR_NUMBER }}"
 
-        # - name: Auto Merge on Review
-        #   run: |
-        #     gh pr merge --pull-request $GITHUB_PULL_REQUEST_NUMBER
+        - name: Auto Merge on Review
+          run: |
+            gh pr merge --pull-request ${{ env.ENV_PR_NUMBER }}

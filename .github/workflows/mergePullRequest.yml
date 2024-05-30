@@ -9,12 +9,12 @@ permissions:
 
 env:
   ENV_PR_NUMBER: ${{ github.event.pull_request.number }}
-  ENV_HEAD_BRANCH: ${{ github.event.pull_request.head }}
-  ENV_BASE_BRANCH: ${{ github.event.pull_request.base }}
-  ENV_TITLE: ${{ github.event.pull_request.title }}
-  ENV_BODY: ${{ github.event.pull_request.body }}
-  ENV_LABELS: ${{ github.event.pull_request.labels }}
-  ENV_URL: ${{ github.event.pull_request.url }}
+  # ENV_HEAD_BRANCH: ${{ github.event.pull_request.head }}
+  # ENV_BASE_BRANCH: ${{ github.event.pull_request.base }}
+  # ENV_TITLE: ${{ github.event.pull_request.title }}
+  # ENV_BODY: ${{ github.event.pull_request.body }}
+  # ENV_LABELS: ${{ github.event.pull_request.labels }}
+  # ENV_URL: ${{ github.event.pull_request.url }}
   ENV_PR_DETAILS: ${{ github.event.pull_request }}
 
 jobs:

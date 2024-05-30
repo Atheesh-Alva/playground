@@ -11,12 +11,6 @@ permissions:
 
 env:
   ENV_PR_NUMBER: ${{ github.event.pull_request.number }}
-  ENV_HEAD_BRANCH: ${{ github.event.pull_request.head }}
-  ENV_BASE_BRANCH: ${{ github.event.pull_request.base }}
-  ENV_TITLE: ${{ github.event.pull_request.title }}
-  ENV_BODY: ${{ github.event.pull_request.body }}
-  ENV_LABELS: ${{ github.event.pull_request.labels }}
-  ENV_URL: ${{ github.event.pull_request.url }}
 
 jobs:
     approved:
@@ -28,10 +22,15 @@ jobs:
         - name: PR Approved Logs
           run: |
             echo "This PR was approved"
-            echo "Details:=${{ github.event.pull_request }}"
+            echo "Head:=${{ github.event.pull_request.head }}"
+            echo "Base:=${{ github.event.pull_request.base }}"
+            echo "Title:=${{ github.event.pull_request.title }}"
+            echo "Body:=${{ github.event.pull_request.body }}"
+            echo "Labels:=${{ github.event.pull_request.labels }}"
+            echo "URL:=${{ github.event.pull_request.url }}"
 
         - name: Auto Merge on Review
           run: |
-            gh pr merge ${{ env.ENV_PR_NUMBER }}
+            gh pr merge --admin # ${{ env.ENV_PR_NUMBER }}
           env:
             GH_TOKEN: ${{ github.token }}

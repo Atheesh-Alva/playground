@@ -26,3 +26,5 @@ jobs:
           run: |
             gh pr merge --auto
           # --pull-request ${{ env.ENV_PR_NUMBER }}
+          env:
+            GH_TOKEN: ${{ github.token }}

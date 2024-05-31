@@ -17,6 +17,7 @@ jobs:
         name: Merge PR Playground CI/CD
         if: github.event.review.state == 'APPROVED'
         runs-on: ubuntu-latest
+        permissions: write-all
 
         steps:
         - name: PR Approved Logs

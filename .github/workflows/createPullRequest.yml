@@ -27,17 +27,29 @@ jobs:
       # - name: Checkout Code
       #   uses: actions/checkout@v3
         
-      - name: Logs part 1
+      - name: Logs
         run: |
-          echo "after:${{ github.event.after }}"
-          echo "base_ref:${{ github.event.base_ref }}"
-          echo "before:${{ github.event.before }}"
-          echo "compare:${{ github.event.compare }}"
-          echo "created:${{ github.event.created }}"
-          echo "deleted:${{ github.event.deleted }}"
-          echo "forced:${{ github.event.forced }}"
-          echo "ref:${{ github.event.ref}}"
-        # echo "sender:${{ github.event.sender}}"
+          echo "avatar_url:${{ github.event.sender.avatar_url }}"
+          echo "email:${{ github.event.sender.email }}"
+          echo "events_url:${{ github.event.sender.events_url }}"
+          echo "followers_url:${{ github.event.sender.followers_url }}"
+          echo "following_url:${{ github.event.sender.following_url }}"
+          echo "gists_url:${{ github.event.sender.gists_url }}"
+          echo "gravatar_id:${{ github.event.sender.gravatar_id }}"
+          echo "html_url:${{ github.event.sender.html_url }}"
+          echo "id:${{ github.event.sender.id }}"
+          echo "login:${{ github.event.sender.login }}"
+          echo "name:${{ github.event.sender.name }}"
+          echo "node_id:${{ github.event.sender.node_id }}"
+          echo "organizations_url:${{ github.event.sender.organizations_url }}"
+          echo "received_events_url:${{ github.event.sender.received_events_url }}"
+          echo "repos_url:${{ github.event.sender.repos_url }}"
+          echo "site_admin:${{ github.event.sender.site_admin }}"
+          echo "starred_at:${{ github.event.sender.starred_at }}"
+          echo "starred_url:${{ github.event.sender.starred_url }}"
+          echo "subscriptions_url:${{ github.event.sender.subscriptions_url }}"
+          echo "type:${{ github.event.sender.type }}"
+          echo "url:${{ github.event.sender.url }}"
         # echo "repository:${{ github.event.repository}}"
         # echo "pusher:${{ github.event.pusher }}"
         # echo "organization:${{ github.event.organization }}"
@@ -45,11 +57,6 @@ jobs:
         # echo "head_commit:${{ github.event.head_commit }}"
         # echo "enterprise:${{ github.event.enterprise }}"
         # echo "commits:${{ github.event.commits }}"
-
-      # - name: Logs part 1
-      #   run: |
-      #     ${{ each value in github.event }}:
-      #       - script: echo ${{ value }}
 
       # - name: Create PR
       #   run: |

@@ -31,6 +31,6 @@ jobs:
 
         - name: Auto Merge on Review
           run: |
-            gh pr merge --merge ${{ github.event.pull_request.base.ref }}
+            gh pr merge --auto --merge
           env:
             GH_TOKEN: ${{ github.token }}

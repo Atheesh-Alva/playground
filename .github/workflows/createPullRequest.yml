@@ -14,7 +14,7 @@ env:
   ENV_PR_TITLE: Auto create ${{ github.ref_name }}
   ENV_PR_BODY: Creating again
   ENV_REVIEWER: Atheesh-Alva
-  ENV_ASSIGNEE: Atheesh-Alva
+  ENV_ASSIGNEE: ${{ github.event.sender.login }}
   ENV_LABEL: bug
 
 jobs:
@@ -29,28 +29,35 @@ jobs:
         
       - name: Logs
         run: |
-          echo "avatar_url:${{ github.event.sender.avatar_url }}"
-          echo "email:${{ github.event.sender.email }}"
-          echo "events_url:${{ github.event.sender.events_url }}"
-          echo "followers_url:${{ github.event.sender.followers_url }}"
-          echo "following_url:${{ github.event.sender.following_url }}"
-          echo "gists_url:${{ github.event.sender.gists_url }}"
-          echo "gravatar_id:${{ github.event.sender.gravatar_id }}"
-          echo "html_url:${{ github.event.sender.html_url }}"
-          echo "id:${{ github.event.sender.id }}"
-          echo "login:${{ github.event.sender.login }}"
-          echo "name:${{ github.event.sender.name }}"
-          echo "node_id:${{ github.event.sender.node_id }}"
-          echo "organizations_url:${{ github.event.sender.organizations_url }}"
-          echo "received_events_url:${{ github.event.sender.received_events_url }}"
-          echo "repos_url:${{ github.event.sender.repos_url }}"
-          echo "site_admin:${{ github.event.sender.site_admin }}"
-          echo "starred_at:${{ github.event.sender.starred_at }}"
-          echo "starred_url:${{ github.event.sender.starred_url }}"
-          echo "subscriptions_url:${{ github.event.sender.subscriptions_url }}"
-          echo "type:${{ github.event.sender.type }}"
-          echo "url:${{ github.event.sender.url }}"
-        # echo "repository:${{ github.event.repository}}"
+          echo "allow_auto_merge:${{ github.event.repository.allow_auto_merge }}"
+          echo "allow_forking:${{ github.event.repository.allow_forking }}"
+          echo "allow_merge_commit:${{ github.event.repository.allow_merge_commit }}"
+          echo "allow_rebase_merge:${{ github.event.repository.allow_rebase_merge }}"
+          echo "allow_squash_merge:${{ github.event.repository.allow_squash_merge }}"
+          echo "allow_update_branch:${{ github.event.repository.allow_update_branch }}"
+          echo "archive_url:${{ github.event.repository.archive_url }}"
+          echo "archived:${{ github.event.repository.archived }}"
+          echo "assignees_url:${{ github.event.repository.assignees_url }}"
+          echo "blobs_url:${{ github.event.repository.blobs_url }}"
+          echo "branches_url:${{ github.event.repository.branches_url }}"
+          echo "clone_url:${{ github.event.repository.clone_url }}"
+          echo "comments_url:${{ github.event.repository.comments_url }}"
+          echo "commits_url:${{ github.event.repository.commits_url }}"
+          echo "default_branch:${{ github.event.repository.default_branch }}"
+          echo "description:${{ github.event.repository.description }}"
+          echo "full_name:${{ github.event.repository.full_name }}"
+          echo "homepage:${{ github.event.repository.homepage }}"
+          echo "id:${{ github.event.repository.id }}"
+          echo "watchers:${{ github.event.repository.watchers }}"
+          echo "topics:${{ github.event.repository.topics }}"
+          echo "stargazers:${{ github.event.repository.stargazers }}"
+          echo "size:${{ github.event.repository.size }}"
+          echo "role_name:${{ github.event.repository.role_name }}"
+          echo "permissions.admin:${{ github.event.repository.permissions.admin }}"
+          echo "organization:${{ github.event.repository.organization }}"
+          echo "name:${{ github.event.repository.name }}"
+          echo "master_branch:${{ github.event.repository.master_branch }}"
+
         # echo "pusher:${{ github.event.pusher }}"
         # echo "organization:${{ github.event.organization }}"
         # echo "installation:${{ github.event.installation }}"

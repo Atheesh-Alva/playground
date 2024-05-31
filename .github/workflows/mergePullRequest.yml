@@ -29,8 +29,7 @@ jobs:
             echo "Labels:${{ github.event.pull_request.labels.name }}"
             echo "URL:${{ github.event.pull_request.url }}"
 
-        - name: Auto Merge on Review
-          run: |
-            gh pr merge --auto --merge
+        - name: Enable Pull Request Auto-merge
+          run: gh pr merge --merge --auto "${{ env.ENV_PR_NUMBER }}"
           env:
             GH_TOKEN: ${{ github.token }}

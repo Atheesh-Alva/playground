@@ -24,18 +24,42 @@ jobs:
     permissions: write-all
     
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      # - name: Checkout Code
+      #   uses: actions/checkout@v3
         
-      - name: Create PR
+      - name: Logs part 1
         run: |
-          gh pr create \
-          --base ${{ env.ENV_DESTINATION_BRANCH }} \
-          --head ${{ env.ENV_SOURCE_BRANCH }} \
-          --title '${{ env.ENV_PR_TITLE }}' \
-          --body '${{ env.ENV_PR_BODY }}' \
-          --reviewer ${{ env.ENV_REVIEWER }} \
-          --assignee ${{ env.ENV_ASSIGNEE }} \
-          --label ${{ env.ENV_LABEL }}
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "after:${{ github.event.after }}"
+          echo "base_ref:${{ github.event.base_ref }}"
+          echo "before:${{ github.event.before }}"
+          echo "compare:${{ github.event.compare }}"
+          echo "created:${{ github.event.created }}"
+          echo "deleted:${{ github.event.deleted }}"
+          echo "forced:${{ github.event.forced }}"
+          echo "ref:${{ github.event.ref}}"
+        # echo "sender:${{ github.event.sender}}"
+        # echo "repository:${{ github.event.repository}}"
+        # echo "pusher:${{ github.event.pusher }}"
+        # echo "organization:${{ github.event.organization }}"
+        # echo "installation:${{ github.event.installation }}"
+        # echo "head_commit:${{ github.event.head_commit }}"
+        # echo "enterprise:${{ github.event.enterprise }}"
+        # echo "commits:${{ github.event.commits }}"
+
+      # - name: Logs part 1
+      #   run: |
+      #     ${{ each value in github.event }}:
+      #       - script: echo ${{ value }}
+
+      # - name: Create PR
+      #   run: |
+      #     gh pr create \
+      #     --base ${{ env.ENV_DESTINATION_BRANCH }} \
+      #     --head ${{ env.ENV_SOURCE_BRANCH }} \
+      #     --title '${{ env.ENV_PR_TITLE }}' \
+      #     --body '${{ env.ENV_PR_BODY }}' \
+      #     --reviewer ${{ env.ENV_REVIEWER }} \
+      #     --assignee ${{ env.ENV_ASSIGNEE }} \
+      #     --label ${{ env.ENV_LABEL }}
+      #   env:
+      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

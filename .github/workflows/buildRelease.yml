@@ -31,12 +31,12 @@ jobs:
             flutter-version: "3.16.0"
             cache: true
 
-        - name: Setup java for Android
-          uses: actions/setup-java@v3
-          with:
-            distribution: "zulu"
-            java-version: "17"
-            cache: "gradle"
+        # - name: Setup java for Android
+        #   uses: actions/setup-java@v3
+        #   with:
+        #     distribution: "zulu"
+        #     java-version: "17"
+        #     cache: "gradle"
 
         - name: Flutter Clean
           run: flutter clean
@@ -71,7 +71,7 @@ jobs:
 
         - name: Build iOS ipa
           run: |
-            flutter build ipa --release --build-name=${{ env.EV_BUILD_VERSION }} --build-number=${{ env.EV_BUILD_NUMBER }} --export-options-plist=$HOME/export_options.plist
+            flutter build ipa
             
         - name: 'Create release entry'
           uses: softprops/action-gh-release@v1

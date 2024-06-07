@@ -1,4 +1,4 @@
-name: Playground - Pull Request Workflow Action
+name: PR Alert
 
 on:
   pull_request:
@@ -10,16 +10,13 @@ permissions:
   actions: read
 
 jobs:
-  build:
-    name: Pull Request Playground CI/CD
+  Alert:
+    name: Pull Request Alert
     runs-on: ubuntu-latest
     
     steps:
-      - name: 'Checkout Code' 
-        uses: actions/checkout@v3
-
       - name: 'MS Teams Notification' 
-        uses: freenet-actions/ms-teams-deploy-card@master #  or "./" if in a local set-up
+        uses: freenet-actions/ms-teams-deploy-card@master
         id: ms_teams_ostrum
         if: always()
         with:
@@ -32,5 +29,3 @@ jobs:
           custom-facts: |
             - name: Alert Type
               value: "Pull Request to main branch"
-            - name: New commit to resolve conflict
-              value: "Welcome to GitHub!"

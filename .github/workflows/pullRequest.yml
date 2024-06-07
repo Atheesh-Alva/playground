@@ -98,3 +98,22 @@ jobs:
         run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: MS Teams Notification - Flutter Team
+        if: always()
+        uses: freenet-actions/ms-teams-deploy-card@master
+        id: ms_teams_ostrum
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+          show-on-start: false
+          card-layout-exit: complete
+          enable-review-diffs-action: false
+          include-files: false
+          custom-facts: |
+            - name: View Ostrum Tech website
+              value: "https://www.ostrumtech.com/"
+          custom-actions: |
+            - text: Check Privacy Policy
+              url: "https://www.ostrumtech.com/privacy-policy/"
+    

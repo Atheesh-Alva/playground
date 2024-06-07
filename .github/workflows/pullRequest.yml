@@ -12,6 +12,34 @@ on:
       types: [submitted]
 
 jobs:
+  PullRequestAlert:
+    name: Pull Request Alert
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: MS Teams Notification
+        uses: freenet-actions/ms-teams-deploy-card@master
+        id: ms_teams_ostrum
+        if: always()
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+          show-on-start: false
+          card-layout-exit: complete
+          enable-review-diffs-action: false
+          include-files: false
+          custom-facts: |
+            - name: View Ostrum Tech website
+              value: "https://www.ostrumtech.com/"
+          custom-actions: |
+            - text: Check Privacy Policy
+              url: "https://www.ostrumtech.com/privacy-policy/"
+
+      - name: PR Logs
+        run: |
+          echo "url:${{ github.event.pull_request.url }}"
+   
   CreatePullRequest:
     name: Create Pull Request
     if: github.ref_type == 'tag'
@@ -44,34 +72,6 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  PullRequestAlert:
-    name: Pull Request Alert
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    
-    steps:
-      - name: PR Logs
-        run: |
-          echo "url:${{ github.event.pull_request.url }}"
-
-      - name: MS Teams Notification
-        uses: freenet-actions/ms-teams-deploy-card@master
-        id: ms_teams_ostrum
-        if: always()
-        with:
-          github-token: ${{ github.token }}
-          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-          show-on-start: false
-          card-layout-exit: complete
-          enable-review-diffs-action: false
-          include-files: false
-          custom-facts: |
-            - name: View Ostrum Tech website
-              value: "https://www.ostrumtech.com/"
-          custom-actions: |
-            - text: Check Privacy Policy
-              url: "https://www.ostrumtech.com/privacy-policy/"
-   
   PullRequestAutoMerge:
     name: Pull Request Auto Merge
     if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
@@ -86,56 +86,3 @@ jobs:
         run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
         env:
           GH_TOKEN: ${{ github.token }}
-                            
-        
-# github.event_name = pull_request_review / pull_request
-# github.ref_type = tag
-
-# name: PR Merge
-
-# on:
-#   pull_request_review:
-#       types: [submitted]
-
-# permissions:
-#   contents: write
-#   pull-requests: write
-#   repository-projects: write
-
-# env:
-#   ENV_PR_NUMBER: ${{ github.event.pull_request.number }}
-
-# jobs:
-#     approved:
-#         name: Merge PR Playground CI/CD
-#         if: github.event.review.state == 'APPROVED'
-#         runs-on: ubuntu-latest
-#         permissions: write-all
-
-#         steps:
-
-
-# name: Create PR
-
-# on:
-#   push:
-#     tags:
-#     - 'PR-*'
-
-# env:
-#   ENV_SOURCE_BRANCH: DEV
-#   # Below target branch must be setup in secrets
-#   ENV_DESTINATION_BRANCH: main
-#   ENV_PR_TITLE: Auto create ${{ github.ref_name }}
-#   ENV_PR_BODY: Created by ${{ github.event.sender.login }}
-#   ENV_REVIEWER: Atheesh-Alva
-#   ENV_ASSIGNEE: ${{ github.event.sender.login }}
-#   ENV_LABEL: bug
-
-# jobs:
-#   build:
-#     name: Create PR
-#     runs-on: ubuntu-latest
-#     permissions: write-all
-    
-#     steps:

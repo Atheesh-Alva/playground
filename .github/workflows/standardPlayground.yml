@@ -1,4 +1,4 @@
-name: Playground - Standard Workflow Action
+name: Standard
 
 on:
   push:
@@ -11,14 +11,19 @@ permissions:
   actions: read
     
 jobs:
-  build:
-    name: Standard Playground CI/CD
+  Checkout:
+    name: Checking out code
     runs-on: ubuntu-latest
     
     steps:
       - name: 'Checkout Code' 
         uses: actions/checkout@v3
 
+  Notification:
+    name: MS Teams
+    runs-on: ubuntu-latest
+         
+    steps: 
       - name: 'MS Teams Notification' 
         uses: freenet-actions/ms-teams-deploy-card@master #  or "./" if in a local set-up
         id: ms_teams_ostrum
@@ -36,9 +41,3 @@ jobs:
           custom-actions: |
             - text: Check Privacy Policy
               url: "https://www.ostrumtech.com/privacy-policy/"
-
-    # - name: Super-Linter Run
-    #   uses: github/super-linter@v4
-    #   env:
-    #     DEFAULT_BRANCH: main
-    #     GITHUB_TOKEN: ${{ github.token }}

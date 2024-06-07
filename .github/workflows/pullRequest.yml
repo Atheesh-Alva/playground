@@ -11,6 +11,9 @@ on:
   pull_request_review: # If any PR review is submitted
       types: [submitted]
 
+env:
+  ENV_ACTION_TYPE: ${{ github.ref_name }}
+  
 jobs:
   Logs:
     name: Pull Request Logs

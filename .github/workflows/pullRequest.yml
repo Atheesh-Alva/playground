@@ -12,31 +12,37 @@ on:
       types: [submitted]
 
 jobs:
-  Logs:
-    name: Logs
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: PR Logs
-        run: |
-          echo "action:${{ github.action }}"
-          echo "action_ref:${{ github.action_ref }}"
-          echo "action_status:${{ github.action_status }}"
-          echo "event_name:${{ github.event_name }}"
-          echo "ref:${{ github.ref }}"
-          echo "ref_name:${{ github.ref_name }}"
-          echo "ref_type:${{ github.ref_type }}"
-
   CreatePullRequest:
     name: Create Pull Request
-    runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions: write-all
     
+    env:
+      ENV_DESTINATION_BRANCH: main
+      ENV_SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
+      ENV_PR_TITLE: Auto create ${{ github.ref_name }}
+      ENV_PR_BODY: Created by ${{ github.event.sender.login }}
+      ENV_REVIEWER: Atheesh-Alva
+      ENV_ASSIGNEE: ${{ github.event.sender.login }}
+      ENV_LABEL: bug
+
     steps:
-      - name: PR Logs
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      - name: Create Pull Request 
         run: |
-          echo "ref_name:${{ github.ref_name }}"
-          echo "ref_type:${{ github.ref_type }}"
+          gh pr create \
+          --base ${{ env.ENV_DESTINATION_BRANCH }} \
+          --head ${{ env.ENV_SOURCE_BRANCH }} \
+          --title '${{ env.ENV_PR_TITLE }}' \
+          --body '${{ env.ENV_PR_BODY }}' \
+          --reviewer ${{ env.ENV_REVIEWER }} \
+          --assignee ${{ env.ENV_ASSIGNEE }} \
+          --label ${{ env.ENV_LABEL }}
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   PullRequestAlert:
     name: Pull Request Alert
@@ -46,7 +52,25 @@ jobs:
     steps:
       - name: PR Logs
         run: |
-          echo "event_name:${{ github.event_name }}"
+          echo "url:${{ github.event.pull_request.url }}"
+
+      - name: MS Teams Notification
+        uses: freenet-actions/ms-teams-deploy-card@master
+        id: ms_teams_ostrum
+        if: always()
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+          show-on-start: false
+          card-layout-exit: complete
+          enable-review-diffs-action: false
+          include-files: false
+          custom-facts: |
+            - name: View Ostrum Tech website
+              value: "https://www.ostrumtech.com/"
+          custom-actions: |
+            - text: Check Privacy Policy
+              url: "https://www.ostrumtech.com/privacy-policy/"
    
   PullRequestAutoMerge:
     name: Pull Request Auto Merge
@@ -127,29 +151,3 @@ jobs:
 #     permissions: write-all
     
 #     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v3
-        
-#       - name: Logs
-#         run: |
-#           echo "default_branch:${{ github.event.repository.default_branch }}"
-#           echo "master_branch:${{ github.event.repository.master_branch }}"
-          
-#           echo "name:${{ github.event.pusher.name }}"
-#           echo "username:${{ github.event.head_commit.author.username }}"
-#           echo "name:${{ github.event.head_commit.author.name }}"
-#           echo "username:${{ github.event.head_commit.committer.username }}"
-#           echo "name:${{ github.event.head_commit.committer.name }}"
-
-#       - name: Create PR
-#         run: |
-#           gh pr create \
-#           --base ${{ env.ENV_DESTINATION_BRANCH }} \
-#           --head ${{ env.ENV_SOURCE_BRANCH }} \
-#           --title '${{ env.ENV_PR_TITLE }}' \
-#           --body '${{ env.ENV_PR_BODY }}' \
-#           --reviewer ${{ env.ENV_REVIEWER }} \
-#           --assignee ${{ env.ENV_ASSIGNEE }} \
-#           --label ${{ env.ENV_LABEL }}
-#         env:
-#             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

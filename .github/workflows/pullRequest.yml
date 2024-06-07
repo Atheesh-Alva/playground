@@ -1,31 +1,67 @@
 name: PR Alert
 
 on:
-  pull_request:
+  pull_request: # If PR is created to the below branches
     branches: [ main ]
 
-permissions:
-  contents: write
-  statuses: read
-  actions: read
+  pull_request_review: # If any PR review is submitted
+      types: [submitted]
 
 jobs:
-  Alert:
-    name: Pull Request Alert
+  Logs:
+    name: Pull Request Logs
     runs-on: ubuntu-latest
     
     steps:
-      - name: 'MS Teams Notification' 
-        uses: freenet-actions/ms-teams-deploy-card@master
-        id: ms_teams_ostrum
-        if: always()
-        with:
-          github-token: ${{ github.token }}
-          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-          show-on-start: false
-          card-layout-exit: complete
-          enable-review-diffs-action: false
-          include-files: false
-          custom-facts: |
-            - name: Alert Type
-              value: "Pull Request to main branch"
+      - name: PR Logs
+        run: |
+          echo "action:${{ github.action }}"
+          echo "action_ref:${{ github.action_ref }}"
+          echo "action_status:${{ github.action_status }}"
+          echo "event_name:${{ github.event_name }}"
+          echo "ref:${{ github.ref }}"
+          echo "ref_name:${{ github.ref_name }}"
+          echo "ref_type:${{ github.ref_type }}"
+
+
+
+
+# name: PR Merge
+
+# on:
+#   pull_request_review:
+#       types: [submitted]
+
+# permissions:
+#   contents: write
+#   pull-requests: write
+#   repository-projects: write
+
+# env:
+#   ENV_PR_NUMBER: ${{ github.event.pull_request.number }}
+
+# jobs:
+#     approved:
+#         name: Merge PR Playground CI/CD
+#         if: github.event.review.state == 'APPROVED'
+#         runs-on: ubuntu-latest
+#         permissions: write-all
+
+#         steps:
+#           - name: Checkout Code
+#             uses: actions/checkout@v3
+            
+#           - name: PR Approved Logs
+#             run: |
+#               echo "This PR was approved"
+#               echo "Head:${{ github.event.pull_request.head.ref }}"
+#               echo "Base:${{ github.event.pull_request.base.label }}"
+#               echo "Title:${{ github.event.pull_request.title }}"
+#               echo "Body:${{ github.event.pull_request.body }}"
+#               echo "Labels:${{ github.event.pull_request.labels.name }}"
+#               echo "URL:${{ github.event.pull_request.url }}"
+
+#           - name: Enable Pull Request Auto-merge
+#             run: gh pr merge --merge --auto "${{ env.ENV_PR_NUMBER }}"
+#             env:
+#               GH_TOKEN: ${{ github.token }}

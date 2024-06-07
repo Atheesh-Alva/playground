@@ -74,13 +74,18 @@ jobs:
    
   PullRequestAutoMerge:
     name: Pull Request Auto Merge
+    if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_review'
+    permissions: write-all
     
     steps:
-      - name: PR Logs
-        run: |
-          echo "event_name:${{ github.event_name }}"
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      - name: Auto-merge Pull Request on Approval
+        run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
                             
         
 # github.event_name = pull_request_review / pull_request
@@ -108,23 +113,6 @@ jobs:
 #         permissions: write-all
 
 #         steps:
-#           - name: Checkout Code
-#             uses: actions/checkout@v3
-            
-#           - name: PR Approved Logs
-#             run: |
-#               echo "This PR was approved"
-#               echo "Head:${{ github.event.pull_request.head.ref }}"
-#               echo "Base:${{ github.event.pull_request.base.label }}"
-#               echo "Title:${{ github.event.pull_request.title }}"
-#               echo "Body:${{ github.event.pull_request.body }}"
-#               echo "Labels:${{ github.event.pull_request.labels.name }}"
-#               echo "URL:${{ github.event.pull_request.url }}"
-
-#           - name: Enable Pull Request Auto-merge
-#             run: gh pr merge --merge --auto "${{ env.ENV_PR_NUMBER }}"
-#             env:
-#               GH_TOKEN: ${{ github.token }}
 
 
 # name: Create PR

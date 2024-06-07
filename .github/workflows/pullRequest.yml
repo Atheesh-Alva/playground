@@ -40,37 +40,37 @@ jobs:
         run: |
           echo "url:${{ github.event.pull_request.url }}"
    
-  CreatePullRequest:
-    name: Create Pull Request
-    if: github.ref_type == 'tag'
-    runs-on: ubuntu-latest
-    permissions: write-all
+  # CreatePullRequest:
+  #   name: Create Pull Request
+  #   if: github.ref_type == 'tag'
+  #   runs-on: ubuntu-latest
+  #   permissions: write-all
     
-    env:
-      ENV_DESTINATION_BRANCH: main
-      ENV_SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
-      ENV_PR_TITLE: Auto create ${{ github.ref_name }}
-      ENV_PR_BODY: Created by ${{ github.event.sender.login }}
-      ENV_REVIEWER: Atheesh-Alva
-      ENV_ASSIGNEE: ${{ github.event.sender.login }}
-      ENV_LABEL: bug
+  #   env:
+  #     ENV_DESTINATION_BRANCH: main
+  #     ENV_SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
+  #     ENV_PR_TITLE: Auto create ${{ github.ref_name }}
+  #     ENV_PR_BODY: Created by ${{ github.event.sender.login }}
+  #     ENV_REVIEWER: Atheesh-Alva
+  #     ENV_ASSIGNEE: ${{ github.event.sender.login }}
+  #     ENV_LABEL: bug
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
         
-      - name: Create Pull Request 
-        run: |
-          gh pr create \
-          --base ${{ env.ENV_DESTINATION_BRANCH }} \
-          --head ${{ env.ENV_SOURCE_BRANCH }} \
-          --title '${{ env.ENV_PR_TITLE }}' \
-          --body '${{ env.ENV_PR_BODY }}' \
-          --reviewer ${{ env.ENV_REVIEWER }} \
-          --assignee ${{ env.ENV_ASSIGNEE }} \
-          --label ${{ env.ENV_LABEL }}
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Create Pull Request 
+  #       run: |
+  #         gh pr create \
+  #         --base ${{ env.ENV_DESTINATION_BRANCH }} \
+  #         --head ${{ env.ENV_SOURCE_BRANCH }} \
+  #         --title '${{ env.ENV_PR_TITLE }}' \
+  #         --body '${{ env.ENV_PR_BODY }}' \
+  #         --reviewer ${{ env.ENV_REVIEWER }} \
+  #         --assignee ${{ env.ENV_ASSIGNEE }} \
+  #         --label ${{ env.ENV_LABEL }}
+  #       env:
+  #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   PullRequestAutoMerge:
     name: Pull Request Auto Merge

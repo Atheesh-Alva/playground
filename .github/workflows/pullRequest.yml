@@ -12,16 +12,72 @@ on:
       types: [submitted]
 
 jobs:
-  PullRequestAlert:
-    name: Pull Request Alert
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+  # PullRequestAlert:
+  #   name: Pull Request Alert
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'pull_request'
     
+  #   steps:
+  #     - name: MS Teams Notification
+  #       uses: freenet-actions/ms-teams-deploy-card@master
+  #       id: ms_teams_ostrum
+  #       if: always()
+  #       with:
+  #         github-token: ${{ github.token }}
+  #         webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+  #         show-on-start: false
+  #         card-layout-exit: complete
+  #         enable-review-diffs-action: false
+  #         include-files: false
+  #         custom-facts: |
+  #           - name: View Ostrum Tech website
+  #             value: "https://www.ostrumtech.com/"
+  #         custom-actions: |
+  #           - text: Check Privacy Policy
+  #             url: "https://www.ostrumtech.com/privacy-policy/"
+
+  #     - name: PR Logs
+  #       run: |
+  #         echo "url:${{ github.event.pull_request.url }}"
+   
+  CreatePullRequest:
+    name: Create Pull Request
+    # if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions: write-all
+    
+    env:
+      ENV_DESTINATION_BRANCH: main
+      ENV_SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
+      ENV_PR_TITLE: Auto create ${{ github.ref_name }}
+      ENV_PR_BODY: Created by ${{ github.event.sender.login }}
+      ENV_REVIEWER: Atheesh-Alva
+      ENV_ASSIGNEE: ${{ github.event.sender.login }}
+      ENV_LABEL: bug
+
     steps:
+      - name: Checkout Code
+        if: github.ref_type == 'tag'
+        uses: actions/checkout@v3
+        
+      - name: Create Pull Request 
+        if: github.ref_type == 'tag'
+        run: |
+          gh pr create \
+          --base ${{ env.ENV_DESTINATION_BRANCH }} \
+          --head ${{ env.ENV_SOURCE_BRANCH }} \
+          --title '${{ env.ENV_PR_TITLE }}' \
+          --body '${{ env.ENV_PR_BODY }}' \
+          --reviewer ${{ env.ENV_REVIEWER }} \
+          --assignee ${{ env.ENV_ASSIGNEE }} \
+          --label ${{ env.ENV_LABEL }}
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: MS Teams Notification
+        if: github.event_name == 'pull_request' && always()
         uses: freenet-actions/ms-teams-deploy-card@master
         id: ms_teams_ostrum
-        if: always()
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
@@ -37,41 +93,10 @@ jobs:
               url: "https://www.ostrumtech.com/privacy-policy/"
 
       - name: PR Logs
+        if: github.event_name == 'pull_request'
         run: |
           echo "url:${{ github.event.pull_request.url }}"
-   
-  # CreatePullRequest:
-  #   name: Create Pull Request
-  #   if: github.ref_type == 'tag'
-  #   runs-on: ubuntu-latest
-  #   permissions: write-all
-    
-  #   env:
-  #     ENV_DESTINATION_BRANCH: main
-  #     ENV_SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
-  #     ENV_PR_TITLE: Auto create ${{ github.ref_name }}
-  #     ENV_PR_BODY: Created by ${{ github.event.sender.login }}
-  #     ENV_REVIEWER: Atheesh-Alva
-  #     ENV_ASSIGNEE: ${{ github.event.sender.login }}
-  #     ENV_LABEL: bug
-
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-        
-  #     - name: Create Pull Request 
-  #       run: |
-  #         gh pr create \
-  #         --base ${{ env.ENV_DESTINATION_BRANCH }} \
-  #         --head ${{ env.ENV_SOURCE_BRANCH }} \
-  #         --title '${{ env.ENV_PR_TITLE }}' \
-  #         --body '${{ env.ENV_PR_BODY }}' \
-  #         --reviewer ${{ env.ENV_REVIEWER }} \
-  #         --assignee ${{ env.ENV_ASSIGNEE }} \
-  #         --label ${{ env.ENV_LABEL }}
-  #       env:
-  #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+       
   PullRequestAutoMerge:
     name: Pull Request Auto Merge
     if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'

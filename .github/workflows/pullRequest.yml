@@ -1,4 +1,4 @@
-name: PR Alert
+name: Pull Request Alerts
 
 on:
   pull_request: # If PR is created to the below branches

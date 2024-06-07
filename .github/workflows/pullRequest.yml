@@ -19,13 +19,15 @@ jobs:
     permissions: write-all
     
     env:
-      ENV_DESTINATION_BRANCH: main
-      ENV_SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
-      ENV_PR_TITLE: Auto create ${{ github.ref_name }}
-      ENV_PR_BODY: Created by ${{ github.event.sender.login }}
-      ENV_REVIEWER: Atheesh-Alva
-      ENV_ASSIGNEE: ${{ github.event.sender.login }}
-      ENV_LABEL: bug
+      DESTINATION_BRANCH: main
+      SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
+      PR_TITLE: Auto create ${{ github.ref_name }}
+      PR_BODY: Created by ${{ github.event.sender.login }}
+      REVIEWER: Atheesh-Alva
+      ASSIGNEE: ${{ github.event.sender.login }}
+      LABEL: bug
+      FLUTTER_VERSION: "3.22.0"
+      FLUTTER_HOME: 
 
     steps:
       - name: Checkout Code
@@ -49,22 +51,38 @@ jobs:
             - text: Check Privacy Policy
               url: "https://www.ostrumtech.com/privacy-policy/"
 
+      - name: Flutter Setup
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Flutter Clean
+        run: flutter clean
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+    
+      - name: 'Cache pub dependencies'
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.FLUTTER_HOME }}/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
+  
       - name: Create Pull Request 
         run: |
           gh pr create \
-          --base ${{ env.ENV_DESTINATION_BRANCH }} \
-          --head ${{ env.ENV_SOURCE_BRANCH }} \
-          --title '${{ env.ENV_PR_TITLE }}' \
-          --body '${{ env.ENV_PR_BODY }}' \
-          --reviewer ${{ env.ENV_REVIEWER }} \
-          --assignee ${{ env.ENV_ASSIGNEE }} \
-          --label ${{ env.ENV_LABEL }}
+          --base ${{ env.DESTINATION_BRANCH }} \
+          --head ${{ env.SOURCE_BRANCH }} \
+          --title '${{ env.PR_TITLE }}' \
+          --body '${{ env.PR_BODY }}' \
+          --reviewer ${{ env.REVIEWER }} \
+          --assignee ${{ env.ASSIGNEE }} \
+          --label ${{ env.LABEL }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: PR Logs
-        run: |
-          echo "url:${{ github.event.pull_request.url }}"
        
   PullRequestAutoMerge:
     name: Pull Request Auto Merge

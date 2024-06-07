@@ -11,19 +11,12 @@ on:
   pull_request_review: # If any PR review is submitted
       types: [submitted]
 
-env:
-  ENV_ACTION_TYPE: ${{ github.ref_name }}
-  
 jobs:
   Logs:
-    name: Pull Request Logs
+    name: Logs
     runs-on: ubuntu-latest
     
     steps:
-      - name: Extract Tag details
-        run: |
-          echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
-  
       - name: PR Logs
         run: |
           echo "action:${{ github.action }}"
@@ -34,8 +27,40 @@ jobs:
           echo "ref_name:${{ github.ref_name }}"
           echo "ref_type:${{ github.ref_type }}"
 
+  CreatePullRequest:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    
+    steps:
+      - name: PR Logs
+        run: |
+          echo "ref_name:${{ github.ref_name }}"
+          echo "ref_type:${{ github.ref_type }}"
 
+  PullRequestAlert:
+    name: Pull Request Alert
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: PR Logs
+        run: |
+          echo "event_name:${{ github.event_name }}"
+   
+  PullRequestAutoMerge:
+    name: Pull Request Auto Merge
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_review'
+    
+    steps:
+      - name: PR Logs
+        run: |
+          echo "event_name:${{ github.event_name }}"
+                            
+        
 # github.event_name = pull_request_review / pull_request
+# github.ref_type = tag
 
 # name: PR Merge
 

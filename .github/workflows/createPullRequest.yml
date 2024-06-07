@@ -1,59 +1,50 @@
-name: Playground - Create PR Workflow Action
+name: Create PR
 
 on:
   push:
     tags:
     - 'PR-*'
 
-permissions:
-  contents: write
-
 env:
   ENV_SOURCE_BRANCH: DEV
+  # Below target branch must be setup in secrets
   ENV_DESTINATION_BRANCH: main
   ENV_PR_TITLE: Auto create ${{ github.ref_name }}
-  ENV_PR_BODY: Creating again
+  ENV_PR_BODY: Created by ${{ github.event.sender.login }}
   ENV_REVIEWER: Atheesh-Alva
   ENV_ASSIGNEE: ${{ github.event.sender.login }}
   ENV_LABEL: bug
 
 jobs:
   build:
-    name: Create PR Playground CI/CD
+    name: Create PR
     runs-on: ubuntu-latest
     permissions: write-all
     
     steps:
-      # - name: Checkout Code
-      #   uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
         
       - name: Logs
         run: |
           echo "default_branch:${{ github.event.repository.default_branch }}"
           echo "master_branch:${{ github.event.repository.master_branch }}"
+          
           echo "name:${{ github.event.pusher.name }}"
-
-          echo "login:${{ github.event.organization.login }}"
-          echo "added:${{ github.event.head_commit.added }}"
           echo "username:${{ github.event.head_commit.author.username }}"
           echo "name:${{ github.event.head_commit.author.name }}"
           echo "username:${{ github.event.head_commit.committer.username }}"
           echo "name:${{ github.event.head_commit.committer.name }}"
-          echo "distinct:${{ github.event.head_commit.distinct }}"
-          echo "id:${{ github.event.head_commit.id }}"
 
-        # echo "enterprise:${{ github.event.enterprise }}"
-        # echo "commits:${{ github.event.commits }}"
-
-      # - name: Create PR
-      #   run: |
-      #     gh pr create \
-      #     --base ${{ env.ENV_DESTINATION_BRANCH }} \
-      #     --head ${{ env.ENV_SOURCE_BRANCH }} \
-      #     --title '${{ env.ENV_PR_TITLE }}' \
-      #     --body '${{ env.ENV_PR_BODY }}' \
-      #     --reviewer ${{ env.ENV_REVIEWER }} \
-      #     --assignee ${{ env.ENV_ASSIGNEE }} \
-      #     --label ${{ env.ENV_LABEL }}
-      #   env:
-      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create PR
+        run: |
+          gh pr create \
+          --base ${{ env.ENV_DESTINATION_BRANCH }} \
+          --head ${{ env.ENV_SOURCE_BRANCH }} \
+          --title '${{ env.ENV_PR_TITLE }}' \
+          --body '${{ env.ENV_PR_BODY }}' \
+          --reviewer ${{ env.ENV_REVIEWER }} \
+          --assignee ${{ env.ENV_ASSIGNEE }} \
+          --label ${{ env.ENV_LABEL }}
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

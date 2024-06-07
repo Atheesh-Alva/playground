@@ -4,12 +4,7 @@ on:
   push:
     tags:
     - 'Run-+[0-9]+[0-9]+[0-9]'
-
-permissions:
-  contents: write
-  statuses: read
-  actions: read
-    
+ 
 jobs:
   Checkout:
     name: Checking out code
@@ -22,6 +17,7 @@ jobs:
   Notification:
     name: MS Teams
     runs-on: ubuntu-latest
+    needs: Checkout
          
     steps: 
       - name: 'MS Teams Notification' 

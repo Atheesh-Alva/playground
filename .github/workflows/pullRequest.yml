@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Extract Tag details
+        run: |
+          echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
+  
       - name: PR Logs
         run: |
           echo "action:${{ github.action }}"

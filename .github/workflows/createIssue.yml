@@ -12,8 +12,8 @@ on:
         - 'Fixes-*'
 
 jobs:
-  build:
-    name: Create Issue Playground CI/CD
+  IssueAction:
+    name: Issue Action
     runs-on: ubuntu-latest
     
     env:

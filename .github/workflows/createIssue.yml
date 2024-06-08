@@ -15,7 +15,7 @@ jobs:
   IssueAction:
     name: Issue Action
     runs-on: ubuntu-latest
-    
+
     env:
       ENV_ACTION_TYPE:
       ENV_VERSION:

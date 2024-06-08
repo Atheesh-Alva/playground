@@ -6,7 +6,11 @@ env:
     REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
     LABEL: bug # documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
     FLUTTER_VERSION: "3.22.0"
-  
+
+    ISSUE_TITLE: Testing PR Creation
+    ISSUE_BODY: This is the body!
+    ISSUE_LABEL: bug # documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
+
 on:
     push:
         branches:
@@ -41,15 +45,15 @@ jobs:
         outputs:
             ACTION_TYPE: ${{ steps.set-action-type.outputs.OUTPUT }}
 
-    Logs:
-        name: Logs
-        runs-on: ubuntu-latest
-        needs: CheckAction
+    # Logs:
+    #     name: Logs
+    #     runs-on: ubuntu-latest
+    #     needs: CheckAction
 
-        steps:
-          - name: Logs
-            run: |
-                echo "From CheckAction: ${{ needs.CheckAction.outputs.ACTION_TYPE }}"
+    #     steps:
+    #       - name: Logs
+    #         run: |
+    #             echo "From CheckAction: ${{ needs.CheckAction.outputs.ACTION_TYPE }}"
 
     CICD:
         name: Continuous Integration / Continuous Development
@@ -61,6 +65,7 @@ jobs:
             SOURCE_BRANCH: # DO NOT CHANGE
             ASSIGNEE: ${{ github.event.sender.login }}
             FLUTTER_HOME:
+            ENV_ISSUE_NUMBER:      
 
         steps:
           - name: Checkout Code
@@ -135,7 +140,23 @@ jobs:
             run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
             env:
                 GH_TOKEN: ${{ github.token }}
-                            
+
+          - name: Create an Issue
+            if: ${{ needs.CheckAction.outputs.ACTION_TYPE }} == 'ISSUE'
+            uses: actions-ecosystem/action-create-issue@v1
+            with:
+                github_token: ${{ secrets.github_token }}
+                title: 'Auto create - ${{ github.ref_name }}: ${{ env.ISSUE_TITLE }}'
+                body: 'Created by ${{ github.event.sender.login }}: ${{ env.ISSUE_BODY }}'
+                labels: ${{ env.ISSUE_LABEL }}
+
+          - name: Close Issue
+            if: ${{ needs.CheckAction.outputs.ACTION_TYPE }} == 'FIXES'
+            uses: peter-evans/close-issue@v3
+            with:
+                issue-number: ${{ env.ENV_ISSUE_NUMBER }}
+                comment: Auto-closing issue
+        
 #######################################################################################
 
 # name: Issue Action

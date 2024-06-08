@@ -1,10 +1,13 @@
 name: Alerts
 
 on:
-    pull_request: # If PR is created to the below branches
-      branches: [ main ]
+    # pull_request: # If PR is created to the below branches
+    #   branches: [ main ]
 
-    issues:
+    # issues:
+
+  repository_dispatch:
+    types: [pull-request-created]
 
 jobs:
     Alerts:
@@ -21,5 +24,5 @@ jobs:
                 echo "action=${{ github.action }}"
                 echo "action_ref=${{ github.action_ref }}"
                 echo "event_name=${{ github.event_name }}"
-                echo "event_name=${{ github.event.pull_request }}"
+                echo "event.action=${{ github.event.action }}"
           

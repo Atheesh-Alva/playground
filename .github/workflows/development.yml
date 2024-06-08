@@ -1,30 +1,34 @@
 name: Development Actions
 
+env:
+    ENV_ACTION_TYPE:
+    ENV_VERSION:
+
 on:
-  push:
-    tags:
-      - 'PR-*'
-      - 'Issue-*'
+    # push:
+    #     tags:
+    #       - 'PR-*'
+    #       - 'Issue-*'
+
+    push:
+        paths:
+          - '.github/workflows/development.yml'
 
 jobs:
-  Logs:
-    name: Issue Action
-    runs-on: ubuntu-latest
+    CheckAction:
+        name: Check the type of Action
+        runs-on: ubuntu-latest
 
-    env:
-      ENV_ACTION_TYPE:
-      ENV_VERSION:
+        steps:
+          - name: Extract Tag details
+            run: |
+                echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
+                echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
 
-    steps:
-      - name: Extract Tag details
-        run: |
-            echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
-            echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
-
-      - name: Logs
-        run: |
-            echo "${{ env.ENV_ACTION_TYPE }}"
-            echo "${{ env.ENV_VERSION }}"
+          - name: Logs
+            run: |
+                echo "${{ env.ENV_ACTION_TYPE }}"
+                echo "${{ env.ENV_VERSION }}"
 
 #######################################################################################
 

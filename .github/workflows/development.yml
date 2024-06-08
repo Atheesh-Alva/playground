@@ -17,7 +17,7 @@ jobs:
             ENV_ACTION_TYPE:
         
         outputs:
-            OUTPUT_ACTION_TYPE: ${{ steps.set-action-type.outputs.ENV_ACTION_TYPE }}
+            OUTPUT_ACTION_TYPE: ${{ steps.set-action-type.outputs.OUTPUT_ACTION_TYPE }}
 
         steps:
           - name: Extract from Commit Message

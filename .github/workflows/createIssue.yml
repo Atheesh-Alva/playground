@@ -1,0 +1,45 @@
+name: Playground - Create Issue Workflow Action
+
+on:
+  push:
+    tags:
+        - 'Issue-*'
+        - 'Fixes-*'
+
+env:
+    ENV_ACTION_TYPE: ${{ github.ref_name }}
+    ENV_VERSION: ${{ github.ref_name }}
+
+jobs:
+  build:
+    name: Create Issue Playground CI/CD
+    runs-on: ubuntu-latest
+    
+    steps:
+        - name: Extract Tag details
+          run: |
+            echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
+            echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
+    
+        - name: Setup logs
+          run: |
+            echo "${{ env.ENV_ACTION_TYPE }}"
+            echo "${{ env.ENV_VERSION }}"
+      
+        - name: Create an Issue
+          if: ${{ env.ENV_ACTION_TYPE == 'Issue' }}
+          uses: actions-ecosystem/action-create-issue@v1
+          with:
+            github_token: ${{ secrets.github_token }}
+            title: An example issue
+            body: This is an example issue created by a GitHub Actions workflow.
+            labels: | 
+              bug
+              enhancement
+
+        - name: Close Issue
+          if: ${{ env.ENV_ACTION_TYPE == 'Fixes' }}
+          uses: peter-evans/close-issue@v3
+          with:
+            issue-number: ${{ env.ENV_VERSION }}
+            comment: Auto-closing issue

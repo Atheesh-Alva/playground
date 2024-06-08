@@ -1,27 +1,44 @@
-name: Playground - Pull Request Workflow Action
+name: Pull Request Actions
+
+env:
+  PR_TITLE: Testing PR Creation
+  PR_BODY: This is the body!
+  REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
+  LABEL: bug
+  FLUTTER_VERSION: "3.22.0"
 
 on:
-  pull_request:
-    branches: [ main ]
+  push: # To create PR on tag creation
+    tags:
+    - 'PR-*'
 
-permissions:
-  contents: write
-  statuses: read
-  actions: read
+  # pull_request: # If PR is created to the below branches
+  #   branches: [ main ]
+
+  pull_request_review: # If any PR review is submitted
+      types: [submitted]
 
 jobs:
-  build:
-    name: Standard Playground CI/CD
+  PullRequestActions:
+    name: Pull Request Actions
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: 'Checkout Code' 
-        uses: actions/checkout@v3
+    permissions: write-all
 
-      - name: 'MS Teams Notification' 
-        uses: freenet-actions/ms-teams-deploy-card@master #  or "./" if in a local set-up
-        id: ms_teams_ostrum
+    env:
+      SOURCE_BRANCH: # DO NOT CHANGE
+      ASSIGNEE: ${{ github.event.sender.login }}
+      FLUTTER_HOME: 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: MS Teams Notification - Flutter Team
         if: always()
+        uses: freenet-actions/ms-teams-deploy-card@master
+        id: ms_teams_ostrum
         with:
           github-token: ${{ github.token }}
           webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
@@ -30,7 +47,59 @@ jobs:
           enable-review-diffs-action: false
           include-files: false
           custom-facts: |
-            - name: Alert Type
-              value: "Pull Request to main branch"
-            - name: New commit to resolve conflict
-              value: "Welcome to GitHub!"
+            - name: While Merging PR
+              value: "https://www.ostrumtech.com/"
+          custom-actions: |
+            - text: While Merging PR
+              url: "https://www.ostrumtech.com/privacy-policy/"
+  
+      - name: Get Source Branch
+        if: github.ref_type == 'tag'
+        run: |
+          branch=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
+          echo "SOURCE_BRANCH=$branch" >> $GITHUB_ENV
+
+      # - name: Flutter Setup
+      #   if: github.ref_type == 'tag'
+      #   uses: subosito/flutter-action@v2
+      #   with:
+      #     channel: "stable"
+      #     flutter-version: ${{ env.FLUTTER_VERSION }}
+      #     cache: true
+
+      # - name: Flutter Clean
+      #   if: github.ref_type == 'tag'
+      #   run: flutter clean
+
+      # - name: Flutter Pub Get
+      #   if: github.ref_type == 'tag'
+      #   run: flutter pub get
+    
+      # - name: 'Cache pub dependencies'
+      #   if: github.ref_type == 'tag'
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.FLUTTER_HOME }}/.pub-cache
+      #     key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+      #     restore-keys: ${{ runner.os }}-pub-
+  
+      - name: Create Pull Request 
+        if: github.ref_type == 'tag'
+        run: |
+          gh pr create \
+          --base ${{ secrets.PR_DESTINATION_BRANCH }} \
+          --head ${{ env.SOURCE_BRANCH }} \
+          --title 'Auto create - ${{ github.ref_name }}: ${{ env.PR_TITLE }}' \
+          --body 'Created by ${{ github.event.sender.login }}: ${{ env.PR_BODY }}' \
+          --reviewer ${{ env.REVIEWER }} \
+          --assignee ${{ env.ASSIGNEE }} \
+          --label ${{ env.LABEL }}
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       
+      - name: Auto-merge Pull Request on Approval
+        if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+        run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+    

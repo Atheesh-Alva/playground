@@ -13,7 +13,7 @@ on:
 
 jobs:
   PullRequestActions:
-    name: Checkout Code
+    name: Pull Request Actions
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -46,18 +46,18 @@ jobs:
           enable-review-diffs-action: false
           include-files: false
           custom-facts: |
-            if: github.ref_type == 'tag'
             - name: While Creating PR
+              if: github.ref_type == 'tag'
               value: "https://www.ostrumtech.com/"
-            if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
             - name: While Merging PR
+              if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
               value: "https://www.ostrumtech.com/"
           custom-actions: |
-            if: github.ref_type == 'tag'
             - text: While Creating PR
+              if: github.ref_type == 'tag'
               url: "https://www.ostrumtech.com/privacy-policy/"
-            if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
             - text: While Merging PR
+              if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
               url: "https://www.ostrumtech.com/privacy-policy/"
   
       - name: Get Source Branch

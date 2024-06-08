@@ -80,10 +80,10 @@ jobs:
                 enable-review-diffs-action: false
                 include-files: false
                 custom-facts: |
-                    - name: While Merging PR
+                  - name: While Merging PR
                     value: "https://www.ostrumtech.com/"
                 custom-actions: |
-                    - text: While Merging PR
+                  - text: While Merging PR
                     url: "https://www.ostrumtech.com/privacy-policy/"
     
           - name: Get Source Branch

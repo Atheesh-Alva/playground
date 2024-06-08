@@ -2,10 +2,9 @@ name: Development Actions
 
 on:
     push:
-      tags: [
-        'PR-*', 
-        'Issue-*'
-      ]
+        tags: 
+          - 'PR-*'
+          - 'Issue-*'
 
     pull_request_review:
         types: [submitted]

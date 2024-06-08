@@ -5,8 +5,8 @@ on:
         paths:
           - '.github/workflows/development.yml'
 
-    pull_request_review:
-        types: [submitted]
+    # pull_request_review:
+    #     types: [submitted]
 
 jobs:
     CheckAction:

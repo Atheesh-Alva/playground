@@ -4,12 +4,12 @@ on:
     pull_request: # If PR is created to the below branches
         branches: [ main ]
 
-    issues:
-        types: [
-            opened, edited, deleted, transferred, pinned, 
-            unpinned, closed, reopened, assigned, unassigned, 
-            labeled, unlabeled, locked, unlocked, milestoned, demilestoned
-        ]
+    # issues:
+    #     types: [
+    #         opened, edited, deleted, transferred, pinned, 
+    #         unpinned, closed, reopened, assigned, unassigned, 
+    #         labeled, unlabeled, locked, unlocked, milestoned, demilestoned
+    #     ]
 
 
 jobs:

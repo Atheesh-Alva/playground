@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      ENV_ACTION_TYPE: 
-      ENV_VERSION: 
+      ENV_ACTION_TYPE:
+      ENV_VERSION:
 
     steps:
         - name: Extract Tag details

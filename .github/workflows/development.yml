@@ -33,9 +33,13 @@ jobs:
         runs-on: ubuntu-latest
         needs: CheckAction
 
+        env:
+            ENV_DATA: ${{ needs.CheckAction.outputs }}
+        
         steps:
           - name: Logs
             run: |
+                echo "${{ env.ENV_DATA }}"
                 echo "${{ env.ENV_ACTION_TYPE }}"
                 echo "${{ env.ENV_ACTION_TYPE2 }}"
 

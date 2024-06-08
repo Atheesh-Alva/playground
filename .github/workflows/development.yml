@@ -1,8 +1,7 @@
 name: Development Actions
 
-env:
-    ENV_ACTION_TYPE:
-    ENV_ACTION_TYPE2:
+# env:
+#     ENV_ACTION_TYPE:
 
 on:
     push:
@@ -17,31 +16,27 @@ jobs:
         name: Check the type of Action
         runs-on: ubuntu-latest
 
+        outputs:
+            ENV_ACTION_TYPE:
+
         steps:
           - name: Extract Commit Details
             if: github.event_name == 'push'
-            run: |
-                echo "ENV_ACTION_TYPE=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_ENV
-                echo "ENV_ACTION_TYPE2=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_OUTPUT
+            run: echo "ENV_ACTION_TYPE2=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_OUTPUT
 
           - name: Logs
             if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
-            run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_ENV
+            run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_OUTPUT
 
     Logs:
         name: Logs
         runs-on: ubuntu-latest
         needs: CheckAction
 
-        env:
-            ENV_DATA: ${{ needs.CheckAction.outputs.ENV_ACTION_TYPE2 }}
-        
         steps:
           - name: Logs
             run: |
-                echo "${{ env.ENV_DATA }}"
-                echo "${{ env.ENV_ACTION_TYPE }}"
-                echo "${{ env.ENV_ACTION_TYPE2 }}"
+                echo "From CheckAction: ${{ needs.CheckAction.outputs.ENV_ACTION_TYPE }}"
 
 #######################################################################################
 

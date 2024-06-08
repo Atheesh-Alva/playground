@@ -1,9 +1,5 @@
 name: Development Actions
 
-env:
-    ACTION_TYPE:
-    ACTION_VERSION:
-
 on:
     push:
       tags: [
@@ -19,6 +15,10 @@ jobs:
     name: Issue Action
     runs-on: ubuntu-latest
 
+    env:
+        ACTION_TYPE:
+        ACTION_VERSION:
+    
     steps:
       - name: Extract Tag
         if: github.ref_type == 'tag'

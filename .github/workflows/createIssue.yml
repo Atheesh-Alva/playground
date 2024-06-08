@@ -26,11 +26,24 @@ jobs:
             echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
             echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
     
-        - name: Setup logs
-          run: |
-            echo "${{ env.ENV_ACTION_TYPE }}"
-            echo "${{ env.ENV_VERSION }}"
-      
+        - name: MS Teams Notification - Flutter Team
+          if: always()
+          uses: freenet-actions/ms-teams-deploy-card@master
+          id: ms_teams_ostrum
+          with:
+            github-token: ${{ github.token }}
+            webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+            show-on-start: false
+            card-layout-exit: complete
+            enable-review-diffs-action: false
+            include-files: false
+            custom-facts: |
+              - name: While Merging PR
+                value: "https://www.ostrumtech.com/"
+            custom-actions: |
+              - text: While Merging PR
+                url: "https://www.ostrumtech.com/privacy-policy/"
+  
         - name: Create an Issue
           if: ${{ env.ENV_ACTION_TYPE == 'Issue' }}
           uses: actions-ecosystem/action-create-issue@v1

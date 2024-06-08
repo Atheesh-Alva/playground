@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 0
 
       - name: MS Teams Notification - Flutter Team
-        if: always() && github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+        if: always()
         uses: freenet-actions/ms-teams-deploy-card@master
         id: ms_teams_ostrum
         with:

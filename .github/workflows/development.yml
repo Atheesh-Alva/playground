@@ -27,7 +27,7 @@ jobs:
 
           - name: Logs
             id: set-action-type
-            run: echo "OUTPUT=${{ env.ENV_ACTION_TYPE }}"
+            run: echo "OUTPUT=${{ env.ENV_ACTION_TYPE }}" >> $GITHUB_OUTPUT
 
         outputs:
             ACTION_TYPE: ${{ steps.set-action-type.outputs.OUTPUT }}

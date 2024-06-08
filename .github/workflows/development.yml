@@ -22,7 +22,7 @@ jobs:
         steps:
           - name: Extract from Commit Message
             if: github.event_name == 'push'
-            run: echo "ENV_ACTION_TYPE2=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_OUTPUT
+            run: echo "ENV_ACTION_TYPE=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_OUTPUT
 
           - name: Check PR Review Approved
             if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'

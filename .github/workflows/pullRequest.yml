@@ -5,7 +5,7 @@ env:
   PR_TITLE: Testing PR Creation
   PR_BODY: This is the body!
   REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
-  LABEL: # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
+  LABEL: bug # documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
 on:
   push: # To create PR on tag creation

@@ -20,15 +20,24 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-          - name: Extract Tag details
-            run: |
-                echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
-                echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
+        #   - name: Extract Tag details
+        #     run: |
+        #         echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
+        #         echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
 
           - name: Logs
             run: |
-                echo "${{ env.ENV_ACTION_TYPE }}"
-                echo "${{ env.ENV_VERSION }}"
+                echo "ref=${{ github.ref }}"
+                echo "ref_name=${{ github.ref_name }}"
+                echo "ref_type=${{ github.ref_type }}"
+                echo "action_ref=${{ github.action_ref }}"
+                echo "action_path=${{ github.action_path }}"
+                echo "action_status=${{ github.action_status }}"
+                echo "action=${{ github.action }}"
+                echo "event_name=${{ github.event_name }}"
+                echo "event_path=${{ github.event_path }}"
+                echo "ref=${{ github.event.ref }}"
+                echo "head_commit.message=${{ github.event.head_commit.message }}"
 
 #######################################################################################
 

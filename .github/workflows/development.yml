@@ -3,8 +3,8 @@ name: Development Actions
 on:
   push:
     tags:
-        - 'Issue-*'
-        # - 'Fixes-*' # To automate fix with merge to default branch
+      - 'PR-*'
+      - 'Issue-*'
 
 jobs:
   Logs:

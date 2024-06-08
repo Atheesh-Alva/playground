@@ -32,14 +32,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
         
       - name: Get Source Branch
         run: |
           branch=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
           echo "SOURCE_BRANCH=$branch" >> $GITHUB_ENV
-          echo ${{ env.SOURCE_BRANCH }}
-          
-    # echo "EV_BUILD_TYPE=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
 
       - name: MS Teams Notification - Flutter Team
         if: always()
@@ -79,18 +78,18 @@ jobs:
       #     key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
       #     restore-keys: ${{ runner.os }}-pub-
   
-      # - name: Create Pull Request 
-      #   run: |
-      #     gh pr create \
-      #     --base ${{ env.DESTINATION_BRANCH }} \
-      #     --head ${{ env.SOURCE_BRANCH }} \
-      #     --title '${{ env.PR_TITLE }}' \
-      #     --body '${{ env.PR_BODY }}' \
-      #     --reviewer ${{ env.REVIEWER }} \
-      #     --assignee ${{ env.ASSIGNEE }} \
-      #     --label ${{ env.LABEL }}
-      #   env:
-      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Pull Request 
+        run: |
+          gh pr create \
+          --base ${{ env.DESTINATION_BRANCH }} \
+          --head ${{ env.SOURCE_BRANCH }} \
+          --title '${{ env.PR_TITLE }}' \
+          --body '${{ env.PR_BODY }}' \
+          --reviewer ${{ env.REVIEWER }} \
+          --assignee ${{ env.ASSIGNEE }} \
+          --label ${{ env.LABEL }}
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
        
   PullRequestAutoMerge:
     name: Pull Request Auto Merge

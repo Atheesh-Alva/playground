@@ -1,0 +1,37 @@
+name: Alerts
+
+on:
+    pull_request: # If PR is created to the below branches
+        branches: [ main ]
+        types: [ 
+            assigned, unassigned, labeled, unlabeled, 
+            opened, edited, closed, reopened, synchronize, 
+            converted_to_draft, locked, unlocked, ready_for_review, 
+            review_requested, review_request_removed, auto_merge_enabled, auto_merge_disabled
+        ]
+
+    issues:
+        types: [
+            opened, edited, deleted, transferred, pinned, 
+            unpinned, closed, reopened, assigned, unassigned, 
+            labeled, unlabeled, locked, unlocked, milestoned, demilestoned
+        ]
+
+
+jobs:
+    Alerts:
+        name: Alerts
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Logs
+              run: |
+                echo "ref=${{ github.ref }}"
+                echo "ref_name=${{ github.ref_name }}"
+                echo "ref_type=${{ github.ref_type }}"
+                echo "action_ref=${{ github.action_ref }}"
+                echo "action=${{ github.action }}"
+                echo "action_ref=${{ github.action_ref }}"
+                echo "event_name=${{ github.event_name }}"
+                echo "event_name=${{ github.event.pull_request }}"
+          

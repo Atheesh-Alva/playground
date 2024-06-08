@@ -1,11 +1,11 @@
 name: Pull Request Actions
 
 env:
+  FLUTTER_VERSION: "3.22.0"
   PR_TITLE: Testing PR Creation
   PR_BODY: This is the body!
   REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
-  LABEL: bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
-  FLUTTER_VERSION: "3.22.0"
+  LABEL: bug # documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
 on:
   push: # To create PR on tag creation

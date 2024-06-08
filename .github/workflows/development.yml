@@ -17,7 +17,7 @@ jobs:
             ENV_ACTION_TYPE:
         
         outputs:
-            ENV_ACTION_TYPE: ${{ steps.set-action-type.outputs.ENV_ACTION_TYPE }}
+            OUTPUT_ACTION_TYPE: ${{ steps.set-action-type.outputs.ENV_ACTION_TYPE }}
 
         steps:
           - name: Extract from Commit Message
@@ -30,7 +30,7 @@ jobs:
 
           - name: Logs
             id: set-action-type
-            run: echo "=${{ env.ENV_ACTION_TYPE }}"
+            run: echo "OUTPUT_ACTION_TYPE=${{ env.ENV_ACTION_TYPE }}"
 
     Logs:
         name: Logs
@@ -40,7 +40,7 @@ jobs:
         steps:
           - name: Logs
             run: |
-                echo "From CheckAction: ${{ needs.CheckAction.outputs.ENV_ACTION_TYPE }}"
+                echo "From CheckAction: ${{ needs.CheckAction.outputs.OUTPUT_ACTION_TYPE }}"
 
 #######################################################################################
 

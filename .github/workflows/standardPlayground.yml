@@ -37,8 +37,6 @@ jobs:
         run: |
           echo ${{ env.SOURCE_BRANCH }}
 
-# name: Example Workflow
-
 # on:
 #   push:
 #     branches:
@@ -55,25 +53,28 @@ jobs:
 #     outputs:
 #       RELEASE_DATE: ${{ steps.set-release-date.outputs.RELEASE_DATE }}
       
+#     env:
+#       ENV_ACTION_TYPE:
+
 #     steps:
-#     - name: Set RELEASE_DATE
-#       id: set-release-date
-#       run: |
-#         echo "RELEASE_DATE=$(date --rfc-3339=date)" >> $GITHUB_OUTPUT
+#       - name: Extract from Commit Message
+#         if: github.event_name == 'push'
+#         run: echo "ENV_ACTION_TYPE=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_ENV
+
+#       - name: Check PR Review Approved
+#         if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+#         run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_ENV
+
+#       - name: Set RELEASE_DATE
+#         id: set-release-date
+#         run: |
+#           echo "RELEASE_DATE=$(date --rfc-3339=date)" >> $GITHUB_OUTPUT
         
 #   job2:
 #     needs: job1
 #     runs-on: ubuntu-latest
     
 #     steps:
-#       - name: Extract from Commit Message
-#         if: github.event_name == 'push'
-#         run: echo "ENV_ACTION_TYPE2=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_OUTPUT
-
-#       - name: Check PR Review Approved
-#         if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
-#         run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_OUTPUT
-
 #       - name: Get RELEASE_DATE
 #         run: |
 #           echo "RELEASE_DATE from job1: ${{ needs.job1.outputs.RELEASE_DATE }}"

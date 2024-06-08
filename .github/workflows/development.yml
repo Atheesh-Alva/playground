@@ -46,7 +46,7 @@ jobs:
             ACTION_TYPE: ${{ steps.set-action-type.outputs.OUTPUT }}
 
     CICD:
-        name: Continuous Integration / Continuous Development
+        name: Development Actions
         needs: CheckAction
         runs-on: ubuntu-latest
         permissions: write-all

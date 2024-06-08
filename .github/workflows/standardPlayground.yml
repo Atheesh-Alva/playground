@@ -20,17 +20,17 @@ jobs:
     # needs: Checkout
 
     env:
-      BRANCH: "Dummy"
+      BRANCH: $(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
          
     steps: 
       - name: Checkout source code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Get Branch
-        run: |
-          branch=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
-          echo "BRANCH=$branch" >> $GITHUB_ENV
+        
+      # - name: Get Branch
+      #   run: |
+      #     branch=
+      #     echo "BRANCH=$branch" >> $GITHUB_ENV
+
       - name: Print Branch
         run: |
           echo ${{ env.BRANCH }}

@@ -20,7 +20,7 @@ jobs:
     
     env:
       DESTINATION_BRANCH: main
-      SOURCE_BRANCH: DEV # Below target branch must be setup in secrets
+      SOURCE_BRANCH: # DO NOT CHANGE
       PR_TITLE: Auto create ${{ github.ref_name }}
       PR_BODY: Created by ${{ github.event.sender.login }}
       REVIEWER: Atheesh-Alva

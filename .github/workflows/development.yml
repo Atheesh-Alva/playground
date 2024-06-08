@@ -1,8 +1,5 @@
 name: Development Actions
 
-env:
-    ENV_ACTION_TYPE:
-
 on:
     push:
         paths:
@@ -16,8 +13,11 @@ jobs:
         name: Check type of Action
         runs-on: ubuntu-latest
 
-        outputs:
+        env:
             ENV_ACTION_TYPE:
+        
+        outputs:
+            ENV_ACTION_TYPE: ${{ steps.set-action-type.outputs.ENV_ACTION_TYPE }}
 
         steps:
           - name: Extract from Commit Message
@@ -29,7 +29,7 @@ jobs:
             run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_OUTPUT
 
           - name: Logs
-            if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+            id: set-action-type
             run: echo "=${{ env.ENV_ACTION_TYPE }}"
 
     Logs:

@@ -128,7 +128,7 @@ jobs:
                 --assignee ${{ env.ASSIGNEE }} \
                 --label ${{ env.LABEL }}
                 env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    GITHUB_TOKEN: ${{ github.token }}
         
           - name: Auto-merge Pull Request on Approval
             if: ${{ needs.CheckAction.outputs.ACTION_TYPE }} == 'PR_MERGE'

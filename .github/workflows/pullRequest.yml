@@ -82,7 +82,7 @@ jobs:
           --base ${{ env.DESTINATION_BRANCH }} \
           --head ${{ env.SOURCE_BRANCH }} \
           --title '${{ env.PR_TITLE }}' \
-          --body '${{ env.PR_TITLE }}: ${{ env.PR_BODY }}' \
+          --body '${{ env.PR_BODY }}' \
           --reviewer ${{ env.REVIEWER }} \
           --assignee ${{ env.ASSIGNEE }} \
           --label ${{ env.LABEL }}

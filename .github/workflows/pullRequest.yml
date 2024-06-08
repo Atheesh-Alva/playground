@@ -4,7 +4,7 @@ env:
   PR_TITLE: Testing PR Creation
   PR_BODY: This is the body!
   REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
-  LABEL: bug
+  LABEL: bug, documentation, duplicate, enhancement, good first issue, help wanted, invalid, question, wontfix
   FLUTTER_VERSION: "3.22.0"
 
 on:
@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 0
 
       - name: MS Teams Notification - Flutter Team
-        if: always()
+        if: always() && github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
         uses: freenet-actions/ms-teams-deploy-card@master
         id: ms_teams_ostrum
         with:

@@ -2,17 +2,14 @@ name: Development Actions
 
 env:
     ENV_ACTION_TYPE:
-    ENV_VERSION:
 
 on:
-    # push:
-    #     tags:
-    #       - 'PR-*'
-    #       - 'Issue-*'
-
     push:
         paths:
           - '.github/workflows/development.yml'
+
+    pull_request_review:
+        types: [submitted]
 
 jobs:
     CheckAction:
@@ -21,22 +18,23 @@ jobs:
 
         steps:
           - name: Extract Commit Details
+            if: github.event_name == 'push'
             run: |
                 echo "ENV_ACTION_TYPE=$(echo ${{ github.event.head_commit.message }} | cut -d- -f1)" >> $GITHUB_ENV
 
           - name: Logs
+            if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+            run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_ENV
+    
+    Logs:
+        name: Check the type of Action
+        runs-on: ubuntu-latest
+        needs: CheckAction
+
+        steps:
+          - name: Logs
             run: |
-                echo "ref=${{ github.ref }}"
-                echo "ref_name=${{ github.ref_name }}"
-                echo "ref_type=${{ github.ref_type }}"
-                echo "action_ref=${{ github.action_ref }}"
-                echo "action_path=${{ github.action_path }}"
-                echo "action_status=${{ github.action_status }}"
-                echo "action=${{ github.action }}"
-                echo "event_name=${{ github.event_name }}"
-                echo "event_path=${{ github.event_path }}"
-                echo "ref=${{ github.event.ref }}"
-                echo "head_commit.message=${{ github.event.head_commit.message }}"
+                echo "${{ env.ENV_ACTION_TYPE }}"
 
 #######################################################################################
 

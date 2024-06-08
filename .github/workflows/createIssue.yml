@@ -1,4 +1,9 @@
-name: Playground - Create Issue Workflow Action
+name: Issue Action
+
+env:
+  ISSUE_TITLE: Testing PR Creation
+  ISSUE_BODY: This is the body!
+  ISSUE_LABEL: bug # documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
 on:
   push:
@@ -6,15 +11,15 @@ on:
         - 'Issue-*'
         - 'Fixes-*'
 
-env:
-    ENV_ACTION_TYPE: ${{ github.ref_name }}
-    ENV_VERSION: ${{ github.ref_name }}
-
 jobs:
   build:
     name: Create Issue Playground CI/CD
     runs-on: ubuntu-latest
     
+    env:
+      ENV_ACTION_TYPE: 
+      ENV_VERSION: 
+
     steps:
         - name: Extract Tag details
           run: |
@@ -31,11 +36,9 @@ jobs:
           uses: actions-ecosystem/action-create-issue@v1
           with:
             github_token: ${{ secrets.github_token }}
-            title: An example issue
-            body: This is an example issue created by a GitHub Actions workflow.
-            labels: | 
-              bug
-              enhancement
+            title: 'Auto create - ${{ github.ref_name }}: ${{ env.ISSUE_TITLE }}'
+            body: 'Created by ${{ github.event.sender.login }}: ${{ env.ISSUE_BODY }}'
+            labels: ${{ env.ISSUE_LABEL }}
 
         - name: Close Issue
           if: ${{ env.ENV_ACTION_TYPE == 'Fixes' }}

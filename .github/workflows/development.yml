@@ -25,7 +25,7 @@ jobs:
           - name: Logs
             if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
             run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_ENV
-    
+
     Logs:
         name: Check the type of Action
         runs-on: ubuntu-latest

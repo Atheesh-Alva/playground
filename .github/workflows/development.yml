@@ -23,7 +23,7 @@ jobs:
 
           - name: Check PR Review Approved
             if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
-            run: echo "ENV_ACTION_TYPE=$PR_MERGE" >> $GITHUB_ENV
+            run: echo "ENV_ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
 
           - name: Logs
             id: set-action-type

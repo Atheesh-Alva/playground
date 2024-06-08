@@ -2,7 +2,7 @@ name: Alerts
 
 on:
     pull_request: # If PR is created to the below branches
-        branches: [ main ]
+        # branches: [ main ]
 
     # issues:
     #     types: [

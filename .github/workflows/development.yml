@@ -25,6 +25,8 @@ jobs:
         run: |
             echo "ACTION_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
             echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
+            echo "${{ env.ACTION_TYPE }}"
+            echo "${{ env.ACTION_VERSION }}"
 
       - name: PR Review Log
         if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'

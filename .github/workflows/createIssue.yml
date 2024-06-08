@@ -43,7 +43,7 @@ jobs:
             custom-actions: |
               - text: While Merging PR
                 url: "https://www.ostrumtech.com/privacy-policy/"
-  
+
         - name: Create an Issue
           if: ${{ env.ENV_ACTION_TYPE == 'Issue' }}
           uses: actions-ecosystem/action-create-issue@v1

@@ -6,18 +6,9 @@ on:
     - 'Run-+[0-9]+[0-9]+[0-9]'
  
 jobs:
-  # Checkout:
-  #   name: Checking out code
-  #   runs-on: ubuntu-latest
-    
-  #   steps:
-  #     - name: 'Checkout Code' 
-  #       uses: actions/checkout@v3
-
   Logs:
     name: Logs
     runs-on: ubuntu-latest
-    # needs: Checkout
 
     env:
       SOURCE_BRANCH:

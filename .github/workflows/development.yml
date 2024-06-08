@@ -2,6 +2,8 @@ name: Development Actions
 
 on:
     push:
+        branches:
+          - 'DEV*'
         paths:
           - '.github/workflows/development.yml'
 

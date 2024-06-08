@@ -34,7 +34,7 @@ jobs:
         needs: CheckAction
 
         env:
-            ENV_DATA: ${{ needs.CheckAction.outputs }}
+            ENV_DATA: ${{ needs.CheckAction.outputs.ENV_ACTION_TYPE2 }}
         
         steps:
           - name: Logs

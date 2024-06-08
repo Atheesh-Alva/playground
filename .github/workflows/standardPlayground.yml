@@ -6,23 +6,29 @@ on:
     - 'Run-+[0-9]+[0-9]+[0-9]'
  
 jobs:
-  Checkout:
-    name: Checking out code
-    runs-on: ubuntu-latest
+  # Checkout:
+  #   name: Checking out code
+  #   runs-on: ubuntu-latest
     
-    steps:
-      - name: 'Checkout Code' 
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: 'Checkout Code' 
+  #       uses: actions/checkout@v3
 
   Notification:
     name: MS Teams
     runs-on: ubuntu-latest
-    needs: Checkout
+    # needs: Checkout
          
     steps: 
       - name: Logs
         run: |
           echo "head_ref=${{ github.head_ref }}"
+          echo "ref=${{ github.ref }}"
+          echo "ref_name=${{ github.ref_name }}"
+          echo "ref_type=${{ github.ref_type }}"
+          echo "base_ref=${{ github.base_ref }}"
+          echo "action_ref=${{ github.action_ref }}"
+          echo "workflow_ref=${{ github.workflow_ref }}"
       # - name: 'MS Teams Notification' 
       #   uses: freenet-actions/ms-teams-deploy-card@master #  or "./" if in a local set-up
       #   id: ms_teams_ostrum

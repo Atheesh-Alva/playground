@@ -12,8 +12,19 @@ on:
       types: [submitted]
 
 jobs:
+  Checkout:
+    name: Checkout Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+    
   CreatePullRequest:
     name: Create Pull Request
+    needs: Checkout
     if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     permissions: write-all
@@ -30,11 +41,6 @@ jobs:
       FLUTTER_HOME: 
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-        
       - name: Get Source Branch
         run: |
           branch=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
@@ -93,14 +99,12 @@ jobs:
        
   PullRequestAutoMerge:
     name: Pull Request Auto Merge
+    needs: Checkout
     if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
     runs-on: ubuntu-latest
     permissions: write-all
     
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        
       - name: Auto-merge Pull Request on Approval
         run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
         env:

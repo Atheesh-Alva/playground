@@ -9,7 +9,7 @@ on:
   push:
     tags:
         - 'Issue-*'
-        - 'Fixes-*'
+        # - 'Fixes-*' # To automate fix with merge to default branch
 
 jobs:
   IssueAction:

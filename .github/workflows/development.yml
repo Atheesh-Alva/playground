@@ -1,14 +1,10 @@
 name: Development Actions
 
 on:
-    push:
-      tags: [
-        'PR-*', 
-        'Issue-*'
-      ]
-
-    pull_request_review:
-        types: [submitted]
+  push:
+    tags:
+      - 'PR-*'
+      - 'Issue-*'
 
 jobs:
   Logs:
@@ -16,25 +12,19 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-        ACTION_TYPE:
-        ACTION_VERSION:
-    
+      ENV_ACTION_TYPE:
+      ENV_VERSION:
+
     steps:
-      - name: Extract Tag
-        if: github.ref_type == 'tag'
+      - name: Extract Tag details
         run: |
-            echo "ACTION_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
-            echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
-            echo "${{ env.ACTION_TYPE }}"
-            echo "${{ env.ACTION_VERSION }}"
+            echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
+            echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV
 
-      - name: PR Review Log
-        if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+      - name: Logs
         run: |
-            echo "STATE=${{ github.event.review.state }}"
-
-
-
+            echo "${{ env.ENV_ACTION_TYPE }}"
+            echo "${{ env.ENV_VERSION }}"
 
 #######################################################################################
 

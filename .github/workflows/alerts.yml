@@ -3,12 +3,6 @@ name: Alerts
 on:
     pull_request: # If PR is created to the below branches
         branches: [ main ]
-        types: [ 
-            assigned, unassigned, labeled, unlabeled, 
-            opened, edited, closed, reopened, synchronize, 
-            converted_to_draft, locked, unlocked, ready_for_review, 
-            review_requested, review_request_removed, auto_merge_enabled, auto_merge_disabled
-        ]
 
     issues:
         types: [

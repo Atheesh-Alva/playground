@@ -54,8 +54,8 @@ jobs:
           - name: Extract Title and Body
             if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
             run: |
-              commit_title=$(git show -s --format=%s)
-              commit_description=$(git show -s --format=%b)
+              commit_title=$(git show -s --format=%s | sed 's/@/\\@/g')
+              commit_description=$(git show -s --format=%b | sed 's/@/\\@/g')
               echo "TITLE=$commit_title" >> $GITHUB_ENV
               echo "BODY=$commit_description" >> $GITHUB_ENV
 

@@ -117,7 +117,7 @@ jobs:
                 gh pr create \
                 --base ${{ secrets.PR_DESTINATION_BRANCH }} \
                 --head ${{ env.SOURCE_BRANCH }} \
-                --title 'Auto:${{ github.ref_name }}- ${{ env.TITLE }}' \
+                --title 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}' \
                 --body 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}' \
                 --reviewer ${{ env.REVIEWER }} \
                 --assignee ${{ env.ASSIGNEE }} \
@@ -136,7 +136,7 @@ jobs:
             uses: actions-ecosystem/action-create-issue@v1
             with:
                 github_token: ${{ secrets.github_token }}
-                title: 'Auto:${{ github.ref_name }}- ${{ env.TITLE }}'
+                title: 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}'
                 body: 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}'
                 labels: ${{ env.LABEL }}
                 assignees: ${{ env.REVIEWER }}
@@ -146,4 +146,4 @@ jobs:
             uses: peter-evans/close-issue@v3
             with:
                 issue-number: ${{ env.ISSUE_NUMBER }}
-                comment: 'Auto: ${{ github.event.head_commit.message }}'
+                comment: 'AUTO: ${{ github.event.head_commit.message }}'

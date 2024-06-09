@@ -104,7 +104,7 @@ jobs:
                 --base ${{ secrets.PR_DESTINATION_BRANCH }} \
                 --head ${{ env.SOURCE_BRANCH }} \
                 --title 'AUTO: Tag - ${{ github.ref_name }}' \
-                --body 'Created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}' \
+                --body 'Auto created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}' \
                 --reviewer ${{ env.OWNER }} \
                 --assignee ${{ github.event.sender.login }} \
                 --label ${{ env.LABEL }}
@@ -123,6 +123,6 @@ jobs:
             with:
                 github_token: ${{ secrets.github_token }}
                 title: 'AUTO: Tag - ${{ github.ref_name }}'
-                body: 'Created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
+                body: 'Auto created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
                 labels: ${{ env.LABEL }}
                 assignees: ${{ env.OWNER }}

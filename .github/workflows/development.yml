@@ -141,17 +141,9 @@ jobs:
                 labels: ${{ env.LABEL }}
                 assignees: ${{ env.REVIEWER }}
 
-          # - name: Close Issue ${{ env.ISSUE_NUMBER }}
-          #   if: ${{ env.ACTION_TYPE == 'FIXES' }}
-          #   uses: peter-evans/close-issue@v3
-          #   with:
-          #       issue-number: ${{ env.ISSUE_NUMBER }}
-          #       comment: 'AUTO: ${{ github.event.head_commit.message }}'
-
           - name: Close Issue
-            run: |
-              gh issue close "${{ env.ISSUE_NUMBER }}" \
-              -c "${{ github.event.head_commit.message }}" \
-              -r "completed"
-            env:
-              GH_TOKEN: ${{ github.token }}
+            if: ${{ env.ACTION_TYPE == 'FIXES' }}
+            uses: peter-evans/close-issue@v3
+            with:
+                issue-number: ${{ env.ISSUE_NUMBER }}
+                comment: 'AUTO: Closing issue'

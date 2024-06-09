@@ -29,3 +29,6 @@ jobs:
             card-layout-exit: complete
             enable-review-diffs-action: false
             include-files: false
+            custom-facts: |
+              - name: Alert Action
+                value: ${{ github.event.action }}

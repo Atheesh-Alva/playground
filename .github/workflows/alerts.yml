@@ -8,27 +8,34 @@ on:
         types: [ opened, deleted, closed, reopened ]
 
 jobs:
-  alert:
-    name: PR / Issue Alert
-    runs-on: ubuntu-latest
+    alert:
+        name: PR / Issue Alert
+        runs-on: ubuntu-latest
     
-    steps:
-        - name: Logs
-          run: |
-            echo "event_name=${{ github.event_name }}"
-            echo "action=${{ github.event.action }}"
+        steps:
+          - name: MS Teams Notification - Flutter Team
+            uses: freenet-actions/ms-teams-deploy-card@master
+            id: ms_teams_ostrum
+            if: always()
+            with:
+                github-token: ${{ github.token }}
+                webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+                show-on-start: false
+                card-layout-exit: complete
+                enable-review-diffs-action: false
+                include-files: false
+                custom-facts: |
+                  - name: Alert Action
+                    value: ${{ github.event.action }}
 
-        - name: MS Teams Notification - Flutter Team
-          uses: freenet-actions/ms-teams-deploy-card@master
-          id: ms_teams_ostrum
-          if: always()
-          with:
-            github-token: ${{ github.token }}
-            webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-            show-on-start: false
-            card-layout-exit: complete
-            enable-review-diffs-action: false
-            include-files: false
-            custom-facts: |
-              - name: Alert Action
-                value: ${{ github.event.action }}
+    pr-check:
+        name: Pull Request Check
+        needs: alert
+        if: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Logs
+            run: |
+                echo "event_name=${{ github.event_name }}"
+                echo "action=${{ github.event.action }}"

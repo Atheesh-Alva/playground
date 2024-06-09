@@ -42,10 +42,10 @@ jobs:
         - name:
           run: |
             echo "Title=${{ github.event.head_commit.message }}"
-            run: echo "PR_TITLE=$(git show -s --format=%s)" >> $GITHUB_ENV
-            run: echo "PR_BODY=$(git show -s --format=%b)" >> $GITHUB_ENV
-            echo "PR_TITLE=${{ env.PR_TITLE }}"
-            echo "PR_BODY=${{ env.PR_BODY }}"
+            commit_title=$(git show -s --format=%s)
+            commit_description=$(git show -s --format=%b)
+            echo "Commit Title: $commit_title"
+            echo "Commit Description: $commit_description"
 
     dev-jobs:
         if: false

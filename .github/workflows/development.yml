@@ -39,13 +39,18 @@ jobs:
           with:
               fetch-depth: 0
 
-        - name:
+        - name: Extract
           run: |
             echo "Title=${{ github.event.head_commit.message }}"
             commit_title=$(git show -s --format=%s)
             commit_description=$(git show -s --format=%b)
             echo "PR_TITLE=$commit_title" >> $GITHUB_ENV
             echo "PR_BODY=$commit_description" >> $GITHUB_ENV
+          
+        - name: Logs
+          run: |
+            echo "${{ env.PR_TITLE }}"
+            echo "${{ env.PR_BODY }}"
 
     dev-jobs:
         if: false

@@ -3,13 +3,15 @@ env:
 # Specify the Flutter version to be used
   FLUTTER_VERSION: "3.22.0"
 
-# Below set of varibles must be updated only when creating a Pull Request
-  REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
+# Choose the ID for Pull Request Reviewer / Issue Assignee
+  OWNER: ${{ secrets.ID_ATHEESH }}
 
   # Choose any lable from the below options. If you are choosing more than one label, make sure no space is provided.
   # If there is any space in a sibgle label, mark the entire label with quotations like shown below.
   LABEL: enhancement 
   # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
+
+# ******************** DO NOT ALTER ANY CODE BELOW ********************
 
 name: Development Actions
 
@@ -18,7 +20,6 @@ on:
         tags:
           - 'PR-*'
           - 'ISSUE-*'
-          # - 'FIXES-*'
 
     pull_request_review:
         types: [submitted]
@@ -32,10 +33,6 @@ jobs:
         env:
           ACTION_TYPE:
           SOURCE_BRANCH:
-          ISSUE_NUMBER:
-          TITLE:
-          BODY:
-          ASSIGNEE: ${{ github.event.sender.login }}
           FLUTTER_HOME:
 
         steps:
@@ -48,21 +45,9 @@ jobs:
             if: github.ref_type == 'tag'
             run: echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
 
-          - name: Extract Issue Number
-            if: ${{ env.ACTION_TYPE == 'FIXES' }}
-            run: echo "ENV_ISSUE_NUMBER=$(echo ${{ github.ref_name }} | cut -d- -f2)" >> $GITHUB_ENV
-
           - name: Check PR Review Approved
             if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
             run: echo "ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
-    
-          - name: Extract Title and Body
-            if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
-            run: |
-              commit_title=$(git show -s --format=%s)
-              commit_description=$(git show -s --format=%b)
-              echo "TITLE=$commit_title" >> $GITHUB_ENV
-              echo "BODY=$commit_description" >> $GITHUB_ENV
 
           - name: MS Teams Notification - Flutter Team
             if: always()
@@ -81,7 +66,7 @@ jobs:
                 custom-actions: |
                   - text: While Merging PR
                     url: "https://www.ostrumtech.com/privacy-policy/"
-
+              
           - name: Get Source Branch
             if: ${{ env.ACTION_TYPE == 'PR' }}
             run: |
@@ -118,10 +103,10 @@ jobs:
                 gh pr create \
                 --base ${{ secrets.PR_DESTINATION_BRANCH }} \
                 --head ${{ env.SOURCE_BRANCH }} \
-                --title 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}' \
-                --body 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}' \
-                --reviewer ${{ env.REVIEWER }} \
-                --assignee ${{ env.ASSIGNEE }} \
+                --title 'AUTO: Tag - ${{ github.ref_name }}' \
+                --body 'Created by ${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}' \
+                --reviewer ${{ env.OWNER }} \
+                --assignee ${{ github.event.sender.login }} \
                 --label ${{ env.LABEL }}
             env:
                 GITHUB_TOKEN: ${{ github.token }}
@@ -137,14 +122,7 @@ jobs:
             uses: actions-ecosystem/action-create-issue@v1
             with:
                 github_token: ${{ secrets.github_token }}
-                title: 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}'
-                body: 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}'
+                title: 'AUTO: Tag - ${{ github.ref_name }}'
+                body: 'Created by ${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
                 labels: ${{ env.LABEL }}
-                assignees: ${{ env.REVIEWER }}
-
-          # - name: Close Issue
-          #   if: ${{ env.ACTION_TYPE == 'FIXES' }}
-          #   uses: peter-evans/close-issue@v3
-          #   with:
-          #       issue-number: ${{ env.ISSUE_NUMBER }}
-          #       comment: 'AUTO: Closing issue'
+                assignees: ${{ env.OWNER }}

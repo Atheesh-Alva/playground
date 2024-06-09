@@ -54,6 +54,7 @@ jobs:
             ISSUE_NUMBER: ${{ steps.set-action-type.outputs.ISSUE_NUMBER }}
 
     CICD:
+        if: false
         name: Development Actions
         needs: CheckAction
         runs-on: ubuntu-latest

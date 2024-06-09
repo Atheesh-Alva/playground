@@ -4,8 +4,8 @@ env:
   FLUTTER_VERSION: "3.22.0"
 
 # Below set of varibles must be updated only when creating a Pull Request
-  PR_TITLE: Testing PR Creation
-  PR_BODY: This is the body!
+  PR_TITLE:
+  PR_BODY:
   REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
   LABEL: enhancement 
   # Choose any lable from the below options. If you are choosing more than one label, make sure no space is provided.
@@ -37,8 +37,10 @@ jobs:
         - name:
           run: |
             echo "Title=${{ github.event.head_commit.message }}"
-            echo "Desc=${{ github.event.commits.message }}"
-
+            run: echo "PR_TITLE=$(git show -s --format=%s)" >> $GITHUB_ENV
+            run: echo "PR_BODY=$(git show -s --format=%b)" >> $GITHUB_ENV
+            echo "PR_TITLE=${{ env.PR_TITLE }}"
+            echo "PR_BODY=${{ env.PR_BODY }}"
 
     dev-jobs:
         if: false

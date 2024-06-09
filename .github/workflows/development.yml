@@ -54,10 +54,10 @@ jobs:
           - name: Extract Title and Body
             if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
             run: |
-              commit_title=$(git show -s --format=%s)
-              commit_description=$(git show -s --format=%b)
-              echo "TITLE=$commit_title" >> $GITHUB_ENV
-              echo "BODY=$commit_description" >> $GITHUB_ENV
+              COMMIT_TITLE=$(git log -1 --pretty=format:'%s')
+              COMMIT_DESCRIPTION=$(git log -1 --pretty=format:'%b')
+              echo "TITLE=$COMMIT_TITLE" >> $GITHUB_ENV
+              echo "BODY=$COMMIT_DESCRIPTION" >> $GITHUB_ENV
 
           - name: MS Teams Notification - Flutter Team
             if: always()

@@ -1,0 +1,43 @@
+name: Alerts
+
+on:
+    pull_request:
+        types: [
+            assigned, unassigned, labeled, unlabeled, opened, 
+            edited, closed, reopened, synchronize, converted_to_draft, 
+            locked, unlocked, ready_for_review, review_requested, 
+            review_request_removed, auto_merge_enabled, 
+            auto_merge_disabled
+        ]
+
+    issues:
+        types: [
+            opened, edited, deleted, transferred, pinned, unpinned, 
+            closed, reopened, assigned, unassigned, labeled, 
+            unlabeled, locked, unlocked, milestoned, demilestoned
+        ]
+
+jobs:
+  alert:
+    name: PR / Issue Alert
+    runs-on: ubuntu-latest
+    
+    steps:
+        - name: MS Teams Notification - Flutter Team
+          uses: freenet-actions/ms-teams-deploy-card@master
+          id: ms_teams_ostrum
+          if: always()
+          with:
+            github-token: ${{ github.token }}
+            webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+            show-on-start: false
+            card-layout-exit: complete
+            enable-review-diffs-action: false
+            include-files: false
+            custom-facts: |
+              - name: Alert Type
+                value: ${{ github.ref_type }}
+              - name: Alert Name
+                value: ${{ github.ref_name }}
+              - name: Alert Event Name
+                value: ${{ github.event_name }}

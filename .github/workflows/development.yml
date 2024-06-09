@@ -55,7 +55,7 @@ jobs:
             if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
             run: |
               COMMIT_TITLE=$(git log -1 --pretty=format:'%H %s')
-              COMMIT_DESCRIPTION=$(git log -1 --pretty=format:'%b')
+              COMMIT_DESCRIPTION=$(git log -1 --pretty=format:'%H %b')
               echo "TITLE=$COMMIT_TITLE" >> $GITHUB_ENV
               echo "BODY=$COMMIT_DESCRIPTION" >> $GITHUB_ENV
 

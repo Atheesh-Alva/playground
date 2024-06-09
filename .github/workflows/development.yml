@@ -5,6 +5,7 @@ env:
 
 # Below set of varibles must be updated only when creating a Pull Request
   REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
+
   # Choose any lable from the below options. If you are choosing more than one label, make sure no space is provided.
   # If there is any space in a sibgle label, mark the entire label with quotations like shown below.
   LABEL: enhancement 
@@ -17,14 +18,14 @@ on:
         tags:
           - 'PR-*'
           - 'ISSUE-*'
-          - 'FIXES-*'
+          # - 'FIXES-*'
 
     pull_request_review:
         types: [submitted]
 
 jobs:
     dev-jobs:
-        name: Dev Action
+        name: PR / Issues
         runs-on: ubuntu-latest
         permissions: write-all
 
@@ -117,7 +118,7 @@ jobs:
                 gh pr create \
                 --base ${{ secrets.PR_DESTINATION_BRANCH }} \
                 --head ${{ env.SOURCE_BRANCH }} \
-                --title 'Auto:${{ github.ref_name }}- ${{ env.TITLE }}' \
+                --title 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}' \
                 --body 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}' \
                 --reviewer ${{ env.REVIEWER }} \
                 --assignee ${{ env.ASSIGNEE }} \
@@ -136,14 +137,14 @@ jobs:
             uses: actions-ecosystem/action-create-issue@v1
             with:
                 github_token: ${{ secrets.github_token }}
-                title: 'Auto:${{ github.ref_name }}- ${{ env.TITLE }}'
+                title: 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}'
                 body: 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}'
                 labels: ${{ env.LABEL }}
                 assignees: ${{ env.REVIEWER }}
 
-          - name: Close Issue ${{ env.ISSUE_NUMBER }}
-            if: ${{ env.ACTION_TYPE == 'FIXES' }}
-            uses: peter-evans/close-issue@v3
-            with:
-                issue-number: ${{ env.ISSUE_NUMBER }}
-                comment: 'Auto: ${{ github.event.head_commit.message }}'
+          # - name: Close Issue
+          #   if: ${{ env.ACTION_TYPE == 'FIXES' }}
+          #   uses: peter-evans/close-issue@v3
+          #   with:
+          #       issue-number: ${{ env.ISSUE_NUMBER }}
+          #       comment: 'AUTO: Closing issue'

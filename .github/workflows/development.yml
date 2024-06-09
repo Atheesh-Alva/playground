@@ -13,8 +13,6 @@ name: Development Actions
 
 on:
     push:
-        branches:
-          - 'DEV*'
         tags:
           - 'PR-*'
 

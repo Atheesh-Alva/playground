@@ -46,6 +46,8 @@ jobs:
             commit_description=$(git show -s --format=%b)
             echo "Commit Title: $commit_title"
             echo "Commit Description: $commit_description"
+            run: echo "PR_TITLE=$(git show -s --format=%s)" >> $GITHUB_ENV
+            echo "PR_TITLE: ${{ env.PR_TITLE }}"
 
     dev-jobs:
         if: false

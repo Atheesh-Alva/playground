@@ -56,7 +56,7 @@ jobs:
             run: echo "ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
     
           - name: Extract Title and Body
-            if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
+            if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
             run: |
               commit_title=$(git show -s --format=%s)
               commit_description=$(git show -s --format=%b)

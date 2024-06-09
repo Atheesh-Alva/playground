@@ -22,7 +22,26 @@ on:
         types: [submitted]
 
 jobs:
+    read-json:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Read JSON file
+          run: |
+            JSON_DATA=$(cat .github/json.json)
+
+        - name: Parse JSON data
+          run: |
+            JSON_DATA=$(echo "$JSON_DATA" | jq '.')
+
+        - name: Set environment variable
+          run: |
+            echo "JSON_DATA=$JSON_DATA" >> $GITHUB_ENV
+
     CheckAction:
+        if: false
         name: Check type of Action
         runs-on: ubuntu-latest
 

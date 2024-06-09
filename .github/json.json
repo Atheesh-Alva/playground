@@ -1,0 +1,12 @@
+{
+    "pr": {
+        "title": "PR Title",
+        "body": "PR Body",
+        "label": "enhancement"
+    },
+    "issue": {
+        "title": "Issue Title",
+        "body": "Issue Body",
+        "label": "bug"
+    }
+}

@@ -151,7 +151,7 @@ jobs:
           - name: Close Issue
             run: |
               gh issue close ${{ env.ISSUE_NUMBER }} \
-              -c ${{ github.event.head_commit.message }} \
+              -c "${{ github.event.head_commit.message }}" \
               -r "completed"
             env:
               GH_TOKEN: ${{ github.token }}

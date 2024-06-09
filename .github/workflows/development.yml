@@ -54,6 +54,18 @@ jobs:
           - name: Extract Title and Body
             if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
             run: |
+              # Extract the tag name from the event payload
+              tag_name="${{ github.ref }}"
+              
+              # Get the commit SHA associated with the tag
+              commit_sha=$(git rev-list -n 1 $tag_name)
+    
+              # Get commit titles and descriptions
+              commit_info=$(git log --format="%s%n%b" $commit_sha)
+    
+              # Output commit info
+              echo "$commit_info"
+              
               COMMIT_TITLE=$(git log -1 --pretty=format:'%H %s')
               COMMIT_DESCRIPTION=$(git log -1 --pretty=format:'%H %b')
               echo "TITLE=$COMMIT_TITLE" >> $GITHUB_ENV

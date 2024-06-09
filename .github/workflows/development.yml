@@ -4,17 +4,11 @@ env:
   FLUTTER_VERSION: "3.22.0"
 
 # Below set of varibles must be updated only when creating a Pull Request
-  PR_TITLE:
-  PR_BODY:
   REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
-  LABEL: enhancement 
   # Choose any lable from the below options. If you are choosing more than one label, make sure no space is provided.
   # If there is any space in a sibgle label, mark the entire label with quotations like shown below.
+  LABEL: enhancement 
   # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
-
-  ISSUE_TITLE: Testing PR Creation
-  ISSUE_BODY: This is the body!
-  ISSUE_LABEL: bug # documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
 name: Development Actions
 
@@ -29,29 +23,6 @@ on:
         types: [submitted]
 
 jobs:
-    logs:
-      name: logs
-      runs-on: ubuntu-latest
-
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v3
-          with:
-              fetch-depth: 0
-
-        - name: Extract
-          run: |
-            echo "Title=${{ github.event.head_commit.message }}"
-            commit_title=$(git show -s --format=%s)
-            commit_description=$(git show -s --format=%b)
-            echo "PR_TITLE=$commit_title" >> $GITHUB_ENV
-            echo "PR_BODY=$commit_description" >> $GITHUB_ENV
-          
-        - name: Logs
-          run: |
-            echo "${{ env.PR_TITLE }}"
-            echo "${{ env.PR_BODY }}"
-
     dev-jobs:
         if: false
         name: Dev Action
@@ -61,11 +32,18 @@ jobs:
         env:
           ACTION_TYPE:
           SOURCE_BRANCH:
-          ISSUE_NUMBER: 
+          ISSUE_NUMBER:
+          TITLE:
+          BODY:
           ASSIGNEE: ${{ github.event.sender.login }}
           FLUTTER_HOME:
 
         steps:
+          - name: Checkout Code
+            uses: actions/checkout@v3
+            with:
+                fetch-depth: 0
+
           - name: Extract Tag details
             if: github.ref_type == 'tag'
             run: echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
@@ -77,11 +55,14 @@ jobs:
           - name: Check PR Review Approved
             if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
             run: echo "ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
-
-          - name: Checkout Code
-            uses: actions/checkout@v3
-            with:
-                fetch-depth: 0
+    
+          - name: Extract Title and Body
+            if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
+            run: |
+              commit_title=$(git show -s --format=%s)
+              commit_description=$(git show -s --format=%b)
+              echo "TITLE=$commit_title" >> $GITHUB_ENV
+              echo "BODY=$commit_description" >> $GITHUB_ENV
 
           - name: MS Teams Notification - Flutter Team
             if: always()
@@ -137,8 +118,8 @@ jobs:
                 gh pr create \
                 --base ${{ secrets.PR_DESTINATION_BRANCH }} \
                 --head ${{ env.SOURCE_BRANCH }} \
-                --title 'Auto create - ${{ github.ref_name }}: ${{ env.PR_TITLE }}' \
-                --body 'Created by ${{ github.event.sender.login }}: ${{ env.PR_BODY }}' \
+                --title 'Auto create - ${{ github.ref_name }}: ${{ env.TITLE }}' \
+                --body 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}' \
                 --reviewer ${{ env.REVIEWER }} \
                 --assignee ${{ env.ASSIGNEE }} \
                 --label ${{ env.LABEL }}
@@ -156,9 +137,10 @@ jobs:
             uses: actions-ecosystem/action-create-issue@v1
             with:
                 github_token: ${{ secrets.github_token }}
-                title: 'Auto create - ${{ github.ref_name }}: ${{ env.ISSUE_TITLE }}'
-                body: 'Created by ${{ github.event.sender.login }}: ${{ env.ISSUE_BODY }}'
-                labels: ${{ env.ISSUE_LABEL }}
+                title: 'Auto create - ${{ github.ref_name }}: ${{ env.TITLE }}'
+                body: 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}'
+                labels: ${{ env.LABEL }}
+                assignees: ${{ env.REVIEWER }}
 
           - name: Close Issue ${{ env.ISSUE_NUMBER }}
             if: ${{ env.ACTION_TYPE == 'FIXES' }}

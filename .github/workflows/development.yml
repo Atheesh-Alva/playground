@@ -16,6 +16,7 @@ on:
         tags:
           - 'PR-*'
           - 'ISSUE-*'
+          - 'FIXES-*'
 
     pull_request_review:
         types: [submitted]

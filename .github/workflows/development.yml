@@ -24,7 +24,6 @@ on:
 
 jobs:
     dev-jobs:
-        if: false
         name: Dev Action
         runs-on: ubuntu-latest
         permissions: write-all

@@ -33,8 +33,6 @@ jobs:
         env:
           ACTION_TYPE:
           SOURCE_BRANCH:
-          TITLE:
-          BODY:
           FLUTTER_HOME:
 
         steps:
@@ -50,20 +48,6 @@ jobs:
           - name: Check PR Review Approved
             if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
             run: echo "ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
-    
-          - name: Extract Title and Body
-            if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
-            run: |
-              # Get the last commit title and description
-              last_commit_info=$(git log -1 --format="%s%n%b")
-    
-              # Output last commit info
-              echo "$last_commit_info"
-
-              COMMIT_TITLE=$(git log -1 --pretty=format:'%H %s')
-              COMMIT_DESCRIPTION=$(git log -1 --pretty=format:'%H %b')
-              echo "TITLE=$COMMIT_TITLE" >> $GITHUB_ENV
-              echo "BODY=$COMMIT_DESCRIPTION" >> $GITHUB_ENV
 
           - name: MS Teams Notification - Flutter Team
             if: always()
@@ -119,8 +103,8 @@ jobs:
                 gh pr create \
                 --base ${{ secrets.PR_DESTINATION_BRANCH }} \
                 --head ${{ env.SOURCE_BRANCH }} \
-                --title 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}' \
-                --body 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}' \
+                --title 'AUTO: Tag - ${{ github.ref_name }}' \
+                --body 'Created by ${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}' \
                 --reviewer ${{ env.OWNER }} \
                 --assignee ${{ github.event.sender.login }} \
                 --label ${{ env.LABEL }}
@@ -138,7 +122,7 @@ jobs:
             uses: actions-ecosystem/action-create-issue@v1
             with:
                 github_token: ${{ secrets.github_token }}
-                title: 'AUTO:${{ github.ref_name }}- ${{ env.TITLE }}'
-                body: 'Created by ${{ github.event.sender.login }}: ${{ env.BODY }}'
+                title: 'AUTO: Tag - ${{ github.ref_name }}'
+                body: 'Created by ${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
                 labels: ${{ env.LABEL }}
                 assignees: ${{ env.OWNER }}

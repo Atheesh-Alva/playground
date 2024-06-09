@@ -1,9 +1,16 @@
 env:
+
+# Specify the Flutter version to be used
+  FLUTTER_VERSION: "3.22.0"
+
+# Below set of varibles must be updated only when creating a Pull Request
   PR_TITLE: Testing PR Creation
   PR_BODY: This is the body!
   REVIEWER: ${{ secrets.PR_REVIEWER_ATHEESH }}
-  LABEL: bug # documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
-  FLUTTER_VERSION: "3.22.0"
+  LABEL: enhancement 
+  # Choose any lable from the below options. If you are choosing more than one label, make sure no space is provided.
+  # If there is any space in a sibgle label, mark the entire label with quotations like shown below.
+  # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
   ISSUE_TITLE: Testing PR Creation
   ISSUE_BODY: This is the body!
@@ -22,52 +29,43 @@ on:
         types: [submitted]
 
 jobs:
-    CheckAction:
-        name: Check type of Action
-        runs-on: ubuntu-latest
+    logs:
+      name: logs
+      runs-on: ubuntu-latest
 
-        env:
-            ENV_ACTION_TYPE:
-            ENV_ISSUE_NUMBER:
+      steps:
+        - name:
+          run: |
+            echo "Title=${{ github.event.head_commit.message }}"
+            echo "Desc=${{ github.event.commits.message }}"
 
-        steps:
-          - name: Extract from Commit Message
-            if: github.ref_type == 'tag'
-            run: echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
 
-          - name: Extract Issue Number
-            if: ${{ env.ENV_ACTION_TYPE == 'FIXES' }}
-            run: echo "ENV_ISSUE_NUMBER=$(echo ${{ github.ref_name }} | cut -d- -f2)" >> $GITHUB_ENV
-
-          - name: Check PR Review Approved
-            if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
-            run: echo "ENV_ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
-
-          - name: Export Outputs
-            id: set-action-type
-            run: |
-                echo "ACTION_TYPE=${{ env.ENV_ACTION_TYPE }}" >> $GITHUB_OUTPUT
-                echo "ISSUE_NUMBER=${{ env.ENV_ISSUE_NUMBER }}" >> $GITHUB_OUTPUT
-
-        outputs:
-            ACTION_TYPE: ${{ steps.set-action-type.outputs.ACTION_TYPE }}
-            ISSUE_NUMBER: ${{ steps.set-action-type.outputs.ISSUE_NUMBER }}
-
-    CICD:
+    dev-jobs:
         if: false
-        name: Development Actions
-        needs: CheckAction
+        name: Dev Action
         runs-on: ubuntu-latest
         permissions: write-all
 
         env:
-            SOURCE_BRANCH: # DO NOT CHANGE
-            ASSIGNEE: ${{ github.event.sender.login }}
-            FLUTTER_HOME:
-            ACTION_TYPE: ${{ needs.CheckAction.outputs.ACTION_TYPE }}
-            ENV_ISSUE_NUMBER: ${{ needs.CheckAction.outputs.ISSUE_NUMBER }}
+          ACTION_TYPE:
+          SOURCE_BRANCH:
+          ISSUE_NUMBER: 
+          ASSIGNEE: ${{ github.event.sender.login }}
+          FLUTTER_HOME:
 
         steps:
+          - name: Extract Tag details
+            if: github.ref_type == 'tag'
+            run: echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
+
+          - name: Extract Issue Number
+            if: ${{ env.ACTION_TYPE == 'FIXES' }}
+            run: echo "ENV_ISSUE_NUMBER=$(echo ${{ github.ref_name }} | cut -d- -f2)" >> $GITHUB_ENV
+
+          - name: Check PR Review Approved
+            if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+            run: echo "ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
+
           - name: Checkout Code
             uses: actions/checkout@v3
             with:
@@ -150,17 +148,9 @@ jobs:
                 body: 'Created by ${{ github.event.sender.login }}: ${{ env.ISSUE_BODY }}'
                 labels: ${{ env.ISSUE_LABEL }}
 
-          - name: Close Issue
+          - name: Close Issue ${{ env.ISSUE_NUMBER }}
             if: ${{ env.ACTION_TYPE == 'FIXES' }}
             uses: peter-evans/close-issue@v3
             with:
-                issue-number: ${{ env.ENV_ISSUE_NUMBER }}
+                issue-number: ${{ env.ISSUE_NUMBER }}
                 comment: Auto-closing issue
-
-
-
-
-#         - name: Extract Tag details
-#           run: |
-#             echo "ENV_VERSION=$(echo ${{ github.ref_name }} | sed 's/.*-//')" >> $GITHUB_ENV
-#             echo "ENV_ACTION_TYPE=$(echo ${{ github.ref_name }} | sed 's/-.*//')" >> $GITHUB_ENV

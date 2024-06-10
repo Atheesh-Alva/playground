@@ -2,8 +2,8 @@ name: Standard
 
 on:
   push:
-    tags:
-    - 'Run-+[0-9]+[0-9]+[0-9]'
+    # tags:
+    # - 'Run-+[0-9]+[0-9]+[0-9]'
  
 jobs:
   logs:
@@ -26,7 +26,7 @@ jobs:
         run: |
           if [ -z ${{ env.LABEL }} ]; then
             echo "EMPTY"
-            echo "LABEL=$(${{ vars.LABEL_BUG }},${{ vars.LABEL_BUG }})" >> $GITHUB_ENV
+            echo "LABEL=${{ vars.LABEL_BUG }},${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
           else
             echo "NOT EMPTY"
           fi

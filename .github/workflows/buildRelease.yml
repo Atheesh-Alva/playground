@@ -59,20 +59,26 @@ jobs:
         - name: Output Data
           id: output-data
           run: |
-            echo "FLUTTER_ROOT=${{ env. FLUTTER_ROOT }}"
-            echo "OUTPUT_FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_OUTPUT
+            echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_OUTPUT
 
     outputs:
-      OUTPUT_FLUTTER_ROOT: ${{ steps.output-data.outputs.OUTPUT_FLUTTER_ROOT }}
+      FLUTTER_ROOT: ${{ steps.output-data.outputs.FLUTTER_ROOT }}
 
   deploy-apk:
     name: Deploy APK
     needs: groundwork
     runs-on: ubuntu-latest
 
+    env:
+      FLUTTER_ROOT: ${{ needs.groundwork.outputs.FLUTTER_ROOT }}
+
     steps:
         - name: Logs
-          run: echo "OUTPUT_FLUTTER_ROOT=${{ needs.groundwork.outputs.OUTPUT_FLUTTER_ROOT }}"
+          run: echo "FLUTTER_ROOT=${{ env.FLUTTER_ROOT }}"
+
+        - name: Flutter Check
+          run: |
+            flutter doctor
 
         # - name: Setup CodeMagic cli Tools
         #   run: |

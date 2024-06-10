@@ -24,12 +24,16 @@ jobs:
     steps:
       - name: Check
         run: |
-          if [ ${{ env.BUG }} ]; then
-            echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+          if [ -z ${{ env.LABEL }} ]; then
+            echo "EMPTY"
           else
-            echo "LABEL=${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
+            echo "NOT EMPTY"
           fi
-          echo "LABEL=${{ env.LABEL }}"
+  # if [ ${{ env.BUG }} ]; then
+  #   echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+  # else
+  #   echo "LABEL=${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
+  # fi
 
       - name: Logs
         run: |

@@ -11,7 +11,7 @@ env:
 
 jobs:
   groundwork:
-    name: Cleanup & Setup
+    name: Setup & Build
     runs-on: ubuntu-latest
     # runs-on: macos-14
 
@@ -48,8 +48,8 @@ jobs:
         - name: Build APK File
           run: flutter build apk
   
-  build-apk:
-    name: Build APK
+  deploy-apk:
+    name: Deploy APK
     needs: groundwork
     if: 
     runs-on: ubuntu-latest
@@ -68,10 +68,10 @@ jobs:
             name: apk
             path: build/app/outputs/flutter-apk/app-release.apk
   
-        # - name: Get APK from GitHub Artifacts
-        #   uses: actions/download-artifact@v2
-        #   with:
-        #     name: apk
+        - name: Download APK to GitHub Artifacts
+          uses: actions/download-artifact@v2
+          with:
+            name: apk
 
         # - name: Setup CodeMagic cli Tools
         #   run: |

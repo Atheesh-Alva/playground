@@ -55,17 +55,17 @@ jobs:
             token: ${{ github.token }}
             commit: ${{ github.sha }}
 
-        - name: Upload APK to GitHub Artifacts
-          uses: actions/upload-artifact@v2
-          with:
-            name: apk
-            path: build/app/outputs/flutter-apk/app-release.apk
+        # - name: Upload APK to GitHub Artifacts
+        #   uses: actions/upload-artifact@v2
+        #   with:
+        #     name: apk
+        #     path: build/app/outputs/flutter-apk/app-release.apk
   
-        - name: Download APK to GitHub Artifacts
-          uses: actions/download-artifact@v2
-          with:
-            name: apk
-            
+        # - name: Download APK to GitHub Artifacts
+        #   uses: actions/download-artifact@v2
+        #   with:
+        #     name: apk
+
   deploy-apk:
     name: Deploy APK
     needs: groundwork

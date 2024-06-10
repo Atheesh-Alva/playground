@@ -48,10 +48,28 @@ jobs:
         - name: Build APK File
           run: flutter build apk
   
+        - name: Release APK to GitHub Artifacts
+          uses: ncipollo/release-action@v1
+          with:
+            artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+            token: ${{ github.token }}
+            commit: ${{ github.sha }}
+
+        - name: Upload APK to GitHub Artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: apk
+            path: build/app/outputs/flutter-apk/app-release.apk
+  
+        - name: Download APK to GitHub Artifacts
+          uses: actions/download-artifact@v2
+          with:
+            name: apk
+            
   deploy-apk:
     name: Deploy APK
     needs: groundwork
-    if: 
+    if: false
     runs-on: ubuntu-latest
 
     steps:

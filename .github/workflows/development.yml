@@ -3,16 +3,9 @@ env:
 # Choose the ID for Pull Request Reviewer / Issue Assignee
   OWNER: ${{ vars.ID_ATHEESH }}
 
-  BUG: true
-  ENHANCEMENT: true
-  HELP: true
-  INVALID: true
-  QUESTION: true
-  DUPLICATE: true
-  DOCUMENTATION: false
-
   # Choose any lable from the below options. If you are choosing more than one label, make sure no space is provided.
-  # If there is any space in a sibgle label, mark the entire label with quotations like shown below.
+  LABEL: ${{ vars.LABEL_BUG }}
+  # ${{ vars.LABEL_BUG }},${{ vars.LABEL_ENHANCEMENTS }},${{ vars.LABEL_DOCUMENTATION }}
   # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
 # ******************************************** DO NOT ALTER ANY CODE BELOW ********************************************
@@ -37,7 +30,6 @@ jobs:
     env:
       ACTION_TYPE:
       SOURCE_BRANCH:
-      LABEL:
       FLUTTER_HOME:
 
     steps:

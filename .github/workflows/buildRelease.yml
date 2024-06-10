@@ -60,9 +60,15 @@ jobs:
           id: output-data
           run: |
             echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_OUTPUT
+            echo "PUB_CACHE=$PUB_CACHE" >> $GITHUB_OUTPUT
+            echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_OUTPUT
+            echo "JAVA_HOME_17_X64=$JAVA_HOME_17_X64" >> $GITHUB_OUTPUT
 
     outputs:
       FLUTTER_ROOT: ${{ steps.output-data.outputs.FLUTTER_ROOT }}
+      PUB_CACHE: ${{ steps.output-data.outputs.PUB_CACHE }}
+      JAVA_HOME: ${{ steps.output-data.outputs.JAVA_HOME }}
+      JAVA_HOME_17_X64: ${{ steps.output-data.outputs.JAVA_HOME_17_X64 }}
 
   deploy-apk:
     name: Deploy APK
@@ -71,6 +77,9 @@ jobs:
 
     env:
       FLUTTER_ROOT: ${{ needs.groundwork.outputs.FLUTTER_ROOT }}
+      PUB_CACHE: ${{ needs.groundwork.outputs.PUB_CACHE }}
+      JAVA_HOME: ${{ needs.groundwork.outputs.JAVA_HOME }}
+      JAVA_HOME_17_X64: ${{ needs.groundwork.outputs.JAVA_HOME_17_X64 }}
 
     steps:
         - name: Logs

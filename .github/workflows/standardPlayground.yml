@@ -5,20 +5,21 @@ on:
     tags:
     - 'Run-+[0-9]+[0-9]+[0-9]'
  
-env:
-  BUG: true
-  ENHANCEMENT: true
-  HELP: true
-  INVALID: true
-  QUESTION: true
-  DUPLICATE: true
-  DOCUMENTATION: false
-  LABEL:
-  
 jobs:
   logs:
     name: Logs
     runs-on: ubuntu-latest
+
+    env:
+      BUG: true
+      ENHANCEMENT: true
+      HELP: true
+      INVALID: true
+      QUESTION: true
+      DUPLICATE: true
+      DOCUMENTATION: false
+      LABEL:
+  
     steps:
       - name: Logs
         run: |

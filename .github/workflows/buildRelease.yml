@@ -44,6 +44,12 @@ jobs:
             cp build/app/outputs/flutter-apk/app-release.apk \
               playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
 
+        # - name: Upload APK to GitHub Artifacts
+        #   uses: actions/upload-artifact@v2
+        #   with:
+        #     name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+        #     path: build/app/outputs/flutter-apk/app-release.apk
+    
         - name: Create Release Entry
           uses: softprops/action-gh-release@v1
           with:
@@ -76,7 +82,7 @@ jobs:
       - name: Download APK from GitHub Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: apk
+          name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}
 
       - name: Logs
         run: |

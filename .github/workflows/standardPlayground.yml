@@ -24,7 +24,11 @@ jobs:
     steps:
       - name: Check
         run: |
-          echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+          if [ ${{ env.BUG }} ]; then
+            echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+          else
+            echo "LABEL=${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
+          fi
           echo "LABEL=${{ env.LABEL }}"
 
       - name: Logs

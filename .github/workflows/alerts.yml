@@ -36,14 +36,13 @@ jobs:
 
         env:
             FLUTTER_HOME:
-            FLUTTER_VERSION: "3.22.0"
 
         steps:
           - name: Flutter Setup
             uses: subosito/flutter-action@v2
             with:
                 channel: "stable"
-                flutter-version: ${{ env.FLUTTER_VERSION }}
+                flutter-version: ${{ vars.FLUTTER_VERSION }}
                 cache: true
 
           - name: Flutter Clean

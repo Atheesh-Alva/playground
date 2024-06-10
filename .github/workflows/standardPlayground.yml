@@ -5,25 +5,24 @@ on:
     tags:
     - 'Run-+[0-9]+[0-9]+[0-9]'
  
+env:
+  BUG: true
+  ENHANCEMENT: true
+  HELP: true
+  INVALID: true
+  QUESTION: true
+  DUPLICATE: true
+  DOCUMENTATION: false
+  LABEL:
+  
 jobs:
-  Logs:
+  logs:
     name: Logs
     runs-on: ubuntu-latest
-
-    env:
-      SOURCE_BRANCH:
-         
-    steps: 
-      - name: Checkout source code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-        
-      - name: Get Branch
+    steps:
+      - name: Logs
         run: |
-          branch=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")
-          echo "SOURCE_BRANCH=$branch" >> $GITHUB_ENV
-
-      - name: Print Branch
-        run: |
-          echo ${{ env.SOURCE_BRANCH }}
+          echo "FLUTTER_VERSION=${{ vars.FLUTTER_VERSION }}"
+          echo "ID_ATHEESH=${{ vars.ID_ATHEESH }}"
+          echo "LABEL=${{ env.BUG == true && vars.LABEL_BUG || env.BUG }}" >> $GITHUB_ENV
+          echo "LABEL=${{ env.LABEL }}"

@@ -26,7 +26,7 @@ jobs:
         run: |
           if [ -z ${{ env.LABEL }} ]; then
             echo "EMPTY"
-            echo "${vars.LABEL_BUG} + ${vars.LABEL_ENHANCEMENT}"
+            echo "LABEL=$(${{ vars.LABEL_BUG }},${{ vars.LABEL_BUG }})" >> $GITHUB_ENV
           else
             echo "NOT EMPTY"
           fi

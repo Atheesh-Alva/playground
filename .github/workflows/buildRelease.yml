@@ -12,8 +12,8 @@ env:
 jobs:
   groundwork:
     name: Setup & Build
-    runs-on: ubuntu-latest
-    # runs-on: macos-14
+    # runs-on: ubuntu-latest
+    runs-on: macos-14
 
     steps:
         - name: Checkout Code
@@ -33,7 +33,7 @@ jobs:
             java-version: "17"
             cache: "gradle"
 
-        - name: Build Android Files
+        - name: Build Release Files
           run: |
             flutter clean
             flutter pub get

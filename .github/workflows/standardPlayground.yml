@@ -26,6 +26,7 @@ jobs:
         run: |
           if [ -z ${{ env.LABEL }} ]; then
             echo "EMPTY"
+            echo "${{ vars.LABEL_BUG }} + ${{ vars.LABEL_ENHANCEMENT }}"
           else
             echo "NOT EMPTY"
           fi

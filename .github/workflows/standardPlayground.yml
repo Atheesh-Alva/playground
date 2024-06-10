@@ -2,8 +2,8 @@ name: Standard
 
 on:
   push:
-    # tags:
-    # - 'Run-+[0-9]+[0-9]+[0-9]'
+    tags:
+    - 'Run-+[0-9]+[0-9]+[0-9]'
  
 jobs:
   logs:
@@ -14,27 +14,38 @@ jobs:
     env:
       BUG: true
       ENHANCEMENT: true
-      HELP: true
-      INVALID: true
-      QUESTION: true
-      DUPLICATE: true
       DOCUMENTATION: false
       LABEL:
   
     steps:
       - name: Check
         run: |
-          if [ -z ${{ env.LABEL }} ]; then
-            echo "EMPTY"
-            echo "LABEL=${{ vars.LABEL_BUG }},${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+
+          if [ ${{ env.BUG }} ]; then
+            echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+            if [ ${{ env.ENHANCEMENT }} ]; then
+              echo "LABEL=${{ env.LABEL }},${{ vars.LABEL_ENHANCEMENT }}" >> $GITHUB_ENV
+            elif [ ${{ env.DOCUMENTATION }} ]; then
+              echo "LABEL=${{ env.LABEL }},${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
+            else
+              echo "${{ env.LABEL }}"
+            fi
+          elif [ ${{ env.ENHANCEMENT }} ]; then
+            echo "LABEL=${{ vars.LABEL_ENHANCEMENT }}" >> $GITHUB_ENV
+          elif [ ${{ env.DOCUMENTATION }} ]; then
+            echo "LABEL=${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
           else
-            echo "NOT EMPTY"
+            echo "${{ env.LABEL }}"
           fi
-  # if [ ${{ env.BUG }} ]; then
-  #   echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
-  # else
-  #   echo "LABEL=${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
-  # fi
+
+
+
+          # if [ -z ${{ env.LABEL }} ]; then
+          #   echo "EMPTY"
+          #   echo "LABEL=${{ vars.LABEL_BUG }},${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+          # else
+          #   echo "NOT EMPTY"
+          # fi
 
       - name: Logs
         run: |

@@ -1,24 +1,19 @@
-name: Playground - Build Release Workflow Action
+name: Build
 
 on:
   push:
     tags:
-      - "App-Build-*"
-
-permissions:
-  contents: write
-  statuses: read
-  actions: read
+      - "BUILD-*"
 
 env:
   EV_BUILD_NUMBER: 1
   EV_BUILD_VERSION: 1.0.0
 
 jobs:
-  build:
-    name: Build Release Playground CI/CD
-    # runs-on: ubuntu-latest
-    runs-on: macos-14
+  groundwork:
+    name: Cleanup & Setup
+    runs-on: ubuntu-latest
+    # runs-on: macos-14
 
     steps:
         - name: Checkout Code
@@ -27,16 +22,16 @@ jobs:
         - name: Flutter Setup
           uses: subosito/flutter-action@v2
           with:
-            channel: "stable"
-            flutter-version: "3.16.0"
-            cache: true
+              channel: "stable"
+              flutter-version: ${{ vars.FLUTTER_VERSION }}
+              cache: true
 
-        # - name: Setup java for Android
-        #   uses: actions/setup-java@v3
-        #   with:
-        #     distribution: "zulu"
-        #     java-version: "17"
-        #     cache: "gradle"
+        - name: Setup JAVA for Android
+          uses: actions/setup-java@v3
+          with:
+            distribution: "zulu"
+            java-version: "17"
+            cache: "gradle"
 
         - name: Flutter Clean
           run: flutter clean
@@ -44,38 +39,45 @@ jobs:
         - name: Flutter Pub Get
           run: flutter pub get
 
-        # - name: Flutter Build Apk File
-        #   run: flutter build apk
+  build-apk:
+    name: Build APK
+    needs: groundwork
+    if: 
+    runs-on: ubuntu-latest
 
-        # - name: Create APK File in GitHub Artifacts
-        #   uses: ncipollo/release-action@v1
-        #   with:
-        #     artifacts: "build/app/outputs/flutter-apk/app-release.apk"
-        #     token: ${{ github.token }}
-        #     commit: ${{ github.sha }}
+    steps:
+        - name: Build Apk File
+          run: flutter build apk
 
-        # - name: Storing APK Files in GitHub Artifacts
-        #   uses: actions/upload-artifact@v2
-        #   with:
-        #     name: apk
-        #     path: build/app/outputs/flutter-apk/app-release.apk
+        - name: Release APK to GitHub Artifacts
+          uses: ncipollo/release-action@v1
+          with:
+            artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+            token: ${{ github.token }}
+            commit: ${{ github.sha }}
+
+        - name: Upload APK to GitHub Artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: apk
+            path: build/app/outputs/flutter-apk/app-release.apk
   
         # - name: Get APK from GitHub Artifacts
         #   uses: actions/download-artifact@v2
         #   with:
         #     name: apk
 
-        - name: Setup CodeMagic cli Tools
-          run: |
-            pip3 install codemagic-cli-tools --break-system-packages
+        # - name: Setup CodeMagic cli Tools
+        #   run: |
+        #     pip3 install codemagic-cli-tools --break-system-packages
 
-        - name: Build iOS ipa
-          run: |
-            flutter build ipa
+        # - name: Build iOS ipa
+        #   run: |
+        #     flutter build ipa
             
-        - name: 'Create release entry'
-          uses: softprops/action-gh-release@v1
-          with:
-            files: |
-              playground_ios-${{ env.EV_BUILD_VERSION }}_${{ env.EV_BUILD_NUMBER }}.ipa
+        # - name: 'Create release entry'
+        #   uses: softprops/action-gh-release@v1
+        #   with:
+        #     files: |
+        #       playground_ios-${{ env.EV_BUILD_VERSION }}_${{ env.EV_BUILD_NUMBER }}.ipa
 

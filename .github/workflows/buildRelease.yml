@@ -33,37 +33,32 @@ jobs:
             java-version: "17"
             cache: "gradle"
 
-        - name: Fetch Flutter Packages
+        - name: Build APK
           run: |
             flutter clean
             flutter pub get
+            flutter build apk
+            cp build/app/outputs/flutter-apk/app-release.apk customApk.apk
 
+        - name: Create Release Entry
+          uses: softprops/action-gh-release@v1
+          with:
+            files: |
+              playground_apk.apk
+        
         - name: Cache Flutter SDK
           uses: actions/cache@v2
           with:
             path: /opt/hostedtoolcache/flutter
             key: flutter-${{ hashFiles('**/pubspec.lock') }}
 
-        - name: Build APK File
-          run: flutter build apk
-  
-        - name: Release APK to GitHub Artifacts
-          uses: ncipollo/release-action@v1
-          with:
-            artifacts: "build/app/outputs/flutter-apk/app-release.apk"
-            token: ${{ github.token }}
-            commit: ${{ github.sha }}
+        # - name: Release APK to GitHub Artifacts
+        #   uses: ncipollo/release-action@v1
+        #   with:
+        #     artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+        #     token: ${{ github.token }}
+        #     commit: ${{ github.sha }}
 
-        - name: Copy for Release Entry
-          run: | 
-            cp build/app/outputs/flutter-apk/app-release.apk playground_apk.apk
-      
-        - name: Create Release Entry
-          uses: softprops/action-gh-release@v1
-          with:
-            files: |
-              playground_apk.apk
-      
         # - name: Upload APK to GitHub Artifacts
         #   uses: actions/upload-artifact@v2
         #   with:

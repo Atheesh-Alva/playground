@@ -6,8 +6,8 @@ on:
       - "BUILD-*"
 
 env:
-  APP_BUILD_NUMBER: 10
-  APP_BUILD_VERSION: 1.2.3
+  APP_BUILD_NUMBER: 1
+  APP_BUILD_VERSION: 0.0.1
 
 jobs:
   groundwork:
@@ -41,14 +41,14 @@ jobs:
               --build-name=${{ env.APP_BUILD_VERSION }} \
               --build-number=${{ env.APP_BUILD_NUMBER }} \
               --release
-          # cp build/app/outputs/flutter-apk/app-release.apk \
-          #   playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
+            cp build/app/outputs/flutter-apk/app-release.apk \
+              playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
 
-        # - name: Create Release Entry
-        #   uses: softprops/action-gh-release@v1
-        #   with:
-        #     files: |
-        #       playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
+        - name: Create Release Entry
+          uses: softprops/action-gh-release@v1
+          with:
+            files: |
+              playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
         
         # - name: Cache Flutter SDK
         #   uses: actions/cache@v2
@@ -67,6 +67,7 @@ jobs:
   deploy:
     name: Deploy Release
     needs: groundwork
+    if: false
     runs-on: ubuntu-latest
 
     # env:

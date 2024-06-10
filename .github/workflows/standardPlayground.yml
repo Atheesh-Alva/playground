@@ -25,6 +25,6 @@ jobs:
         run: |
           if [${{ env.BUG }}]
           then
-            echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+            echo "LABEL='${{ vars.LABEL_BUG }}'" >> $GITHUB_ENV
           fi
           echo "LABEL=${{ env.LABEL }}"

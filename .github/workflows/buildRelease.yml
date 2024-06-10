@@ -19,12 +19,6 @@ jobs:
         - name: Checkout Code
           uses: actions/checkout@v3
 
-        - name: Cache Flutter SDK
-          uses: actions/cache@v2
-          with:
-            path: /opt/hostedtoolcache/flutter
-            key: flutter-${{ hashFiles('**/pubspec.lock') }}
-  
         - name: Flutter Setup
           uses: subosito/flutter-action@v2
           with:
@@ -45,6 +39,15 @@ jobs:
         - name: Flutter Pub Get
           run: flutter pub get
 
+        - name: Cache Flutter SDK
+          uses: actions/cache@v2
+          with:
+            path: /opt/hostedtoolcache/flutter
+            key: flutter-${{ hashFiles('**/pubspec.lock') }}
+
+        - name: Build APK File
+          run: flutter build apk
+  
   build-apk:
     name: Build APK
     needs: groundwork
@@ -52,9 +55,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-        - name: Build Apk File
-          run: flutter build apk
-
         - name: Release APK to GitHub Artifacts
           uses: ncipollo/release-action@v1
           with:

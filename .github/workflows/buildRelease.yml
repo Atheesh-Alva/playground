@@ -42,13 +42,13 @@ jobs:
               --build-number=${{ env.APP_BUILD_NUMBER }} \
               --release
             cp build/app/outputs/flutter-apk/app-release.apk \
-              playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
+              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
 
         - name: Create Release Entry
           uses: softprops/action-gh-release@v1
           with:
             files: |
-              playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
+              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
         
         # - name: Cache Flutter SDK
         #   uses: actions/cache@v2

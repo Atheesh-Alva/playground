@@ -22,7 +22,8 @@ jobs:
     steps:
       - name: Logs
         run: |
-          echo "FLUTTER_VERSION=${{ vars.FLUTTER_VERSION }}"
-          echo "ID_ATHEESH=${{ vars.ID_ATHEESH }}"
-          echo "LABEL=${{ env.BUG == true && vars.LABEL_BUG || env.BUG }}" >> $GITHUB_ENV
+          if [${{ env.BUG }}]
+          then
+            echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+          fi
           echo "LABEL=${{ env.LABEL }}"

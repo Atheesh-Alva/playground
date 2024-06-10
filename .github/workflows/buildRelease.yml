@@ -65,7 +65,6 @@ jobs:
   deploy:
     name: Deploy Release
     needs: groundwork
-    if: false
     runs-on: ubuntu-latest
 
     # env:

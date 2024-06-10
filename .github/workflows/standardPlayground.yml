@@ -22,10 +22,14 @@ jobs:
       LABEL:
   
     steps:
-      - name: Logs
+      - name: Check
         run: |
           if [${{ env.BUG }}]
           then
             echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
           fi
+          echo "LABEL=${{ env.LABEL }}"
+
+      - name: Logs
+        run: |
           echo "LABEL=${{ env.LABEL }}"

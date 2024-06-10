@@ -33,7 +33,7 @@ jobs:
             java-version: "17"
             cache: "gradle"
 
-        - name: Build APK
+        - name: Build Android Files
           run: |
             flutter clean
             flutter pub get
@@ -41,20 +41,21 @@ jobs:
               --build-name=${{ env.APP_BUILD_VERSION }} \
               --build-number=${{ env.APP_BUILD_NUMBER }} \
               --release
-          # cp build/app/outputs/flutter-apk/app-release.apk \
-          #   playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+            cp build/app/outputs/flutter-apk/app-release.apk \
+              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+            flutter build appbundle \
+              --release \
+              --build-name=${{ env.APP_BUILD_VERSION }} \
+              --build-number=${{ env.APP_BUILD_NUMBER }}
+            cp build/app/outputs/bundle/release/app-release.aab \
+              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
-        - name: Upload APK to GitHub Artifacts
-          uses: actions/upload-artifact@v2
+        - name: Create Release Entry
+          uses: softprops/action-gh-release@v1
           with:
-            name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}
-            path: build/app/outputs/flutter-apk/app-release.apk
-    
-        # - name: Create Release Entry
-        #   uses: softprops/action-gh-release@v1
-        #   with:
-        #     files: |
-        #       playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+            files: |
+              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
         
         # - name: Cache Flutter SDK
         #   uses: actions/cache@v2
@@ -73,6 +74,7 @@ jobs:
   deploy:
     name: Deploy Release
     needs: groundwork
+    if: false
     runs-on: ubuntu-latest
 
     # env:

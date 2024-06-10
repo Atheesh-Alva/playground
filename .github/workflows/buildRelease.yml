@@ -33,11 +33,10 @@ jobs:
             java-version: "17"
             cache: "gradle"
 
-        - name: Flutter Clean
-          run: flutter clean
-
-        - name: Flutter Pub Get
-          run: flutter pub get
+        - name: Fetch Flutter Packages
+          run: |
+            flutter clean
+            flutter pub get
 
         - name: Cache Flutter SDK
           uses: actions/cache@v2
@@ -48,18 +47,18 @@ jobs:
         - name: Build APK File
           run: flutter build apk
   
-        - name: Release APK to GitHub Artifacts
-          uses: ncipollo/release-action@v1
-          with:
-            artifacts: "build/app/outputs/flutter-apk/app-release.apk"
-            token: ${{ github.token }}
-            commit: ${{ github.sha }}
-
-        # - name: Upload APK to GitHub Artifacts
-        #   uses: actions/upload-artifact@v2
+        # - name: Release APK to GitHub Artifacts
+        #   uses: ncipollo/release-action@v1
         #   with:
-        #     name: apk
-        #     path: build/app/outputs/flutter-apk/app-release.apk
+        #     artifacts: "build/app/outputs/flutter-apk/app-release.apk"
+        #     token: ${{ github.token }}
+        #     commit: ${{ github.sha }}
+
+        - name: Upload APK to GitHub Artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: customApkName
+            path: build/app/outputs/flutter-apk/app-release.apk
   
         # - name: Download APK to GitHub Artifacts
         #   uses: actions/download-artifact@v2

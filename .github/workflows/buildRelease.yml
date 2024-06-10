@@ -33,16 +33,16 @@ jobs:
             java-version: "17"
             cache: "gradle"
 
-        # - name: Build APK
-        #   run: |
-        #     flutter clean
-        #     flutter pub get
-        #     flutter build apk --target=lib/main.dart \
-        #       --build-name=${{ env.APP_BUILD_VERSION }} \
-        #       --build-number=${{ env.APP_BUILD_NUMBER }} \
-        #       --release
-        #     cp build/app/outputs/flutter-apk/app-release.apk \
-        #       playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
+        - name: Build APK
+          run: |
+            flutter clean
+            flutter pub get
+            flutter build apk --target=lib/main.dart \
+              --build-name=${{ env.APP_BUILD_VERSION }} \
+              --build-number=${{ env.APP_BUILD_NUMBER }} \
+              --release
+          # cp build/app/outputs/flutter-apk/app-release.apk \
+          #   playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
 
         # - name: Create Release Entry
         #   uses: softprops/action-gh-release@v1
@@ -56,39 +56,34 @@ jobs:
         #     path: /opt/hostedtoolcache/flutter
         #     key: flutter-${{ hashFiles('**/pubspec.lock') }}
 
-        - name: Output Data
-          id: output-data
-          run: |
-            echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_OUTPUT
-            echo "PUB_CACHE=$PUB_CACHE" >> $GITHUB_OUTPUT
-            echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_OUTPUT
-            echo "JAVA_HOME_17_X64=$JAVA_HOME_17_X64" >> $GITHUB_OUTPUT
+        # - name: Output Data
+        #   id: output-data
+        #   run: |
+        #     echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_OUTPUT
 
-    outputs:
-      FLUTTER_ROOT: ${{ steps.output-data.outputs.FLUTTER_ROOT }}
-      PUB_CACHE: ${{ steps.output-data.outputs.PUB_CACHE }}
-      JAVA_HOME: ${{ steps.output-data.outputs.JAVA_HOME }}
-      JAVA_HOME_17_X64: ${{ steps.output-data.outputs.JAVA_HOME_17_X64 }}
+    # outputs:
+    #   FLUTTER_ROOT: ${{ steps.output-data.outputs.FLUTTER_ROOT }}
 
-  deploy-apk:
-    name: Deploy APK
+  deploy:
+    name: Deploy Release
     needs: groundwork
     runs-on: ubuntu-latest
 
-    env:
-      FLUTTER_ROOT: ${{ needs.groundwork.outputs.FLUTTER_ROOT }}
-      PUB_CACHE: ${{ needs.groundwork.outputs.PUB_CACHE }}
-      JAVA_HOME: ${{ needs.groundwork.outputs.JAVA_HOME }}
-      JAVA_HOME_17_X64: ${{ needs.groundwork.outputs.JAVA_HOME_17_X64 }}
+    # env:
+    #   FLUTTER_ROOT: ${{ needs.groundwork.outputs.FLUTTER_ROOT }}
 
     steps:
-        - name: Logs
-          run: echo "FLUTTER_ROOT=${{ env.FLUTTER_ROOT }}"
-
-        - name: Flutter Check
+        - name: Copy Release Entry
           run: |
-            flutter doctor
+            cp build/app/outputs/flutter-apk/app-release.apk \
+              playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
 
+        - name: Create Release Entry
+          uses: softprops/action-gh-release@v1
+          with:
+            files: |
+              playground-V${{ env.APP_BUILD_VERSION }}-(Build-${{ env.APP_BUILD_NUMBER }}).apk
+        
         # - name: Setup CodeMagic cli Tools
         #   run: |
         #     pip3 install codemagic-cli-tools --break-system-packages

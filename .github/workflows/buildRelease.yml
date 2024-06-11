@@ -56,13 +56,17 @@ jobs:
               --build-name=${{ env.APP_BUILD_VERSION }} \
               --build-number=${{ env.APP_BUILD_NUMBER }}
       
-        - name: Upload Build files to GitHub Artifacts
+        - name: Upload Build APK to GitHub Artifacts
           uses: actions/upload-artifact@v4
           with:
             name: playground-apk
-            path: |
-              build/app/outputs/flutter-apk/app-release.apk
-              build/app/outputs/bundle/release/app-release.aab
+            path: build/app/outputs/flutter-apk/app-release.apk
+      
+        - name: Upload Build App Bundle to GitHub Artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: playground-aab
+            path: build/app/outputs/bundle/release/app-release.aab
 
   # flutter build ipa \
   #   --release \
@@ -104,12 +108,17 @@ jobs:
         with:
           name: playground-apk
 
+      - name: Download App Bundle from Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: playground-aab
+  
       - name: Copy downloaded artifacts
         run: |
           cp ${{ github.workspace }}/app-release.apk \
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-    # cp ${{ github.workspace }}/app-release.aab \
-    #   playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
+          cp ${{ github.workspace }}/app-release.aab \
+            playground-aab-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
       - name: Create Release Entry
         uses: softprops/action-gh-release@v2

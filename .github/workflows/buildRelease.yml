@@ -33,9 +33,11 @@ jobs:
           echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
           echo "BUILD_TYPE=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)" >> $GITHUB_OUTPUT
           if [ "$BUILD_TYPE" = 'AND' -o "$BUILD_TYPE" = 'GPS' -o "$BUILD_TYPE" = 'APK' -o "$BUILD_TYPE" = 'AAB' ]; then
+            echo "ONLY ANDROID"
             echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT
           else
             echo "OP_SYS=macos-14" >> $GITHUB_OUTPUT
+            echo "ONLY IOS"
           fi
 
     outputs:

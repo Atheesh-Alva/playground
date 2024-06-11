@@ -36,14 +36,17 @@ jobs:
         # - name: Setup Codemagic CLI Tools
         #   run: pip3 install codemagic-cli-tools --break-system-packages
       
-        - name: Build Release Files
+        - name: Flutter Clean & Get Packages
           run: |
             flutter clean
             flutter pub get
+
+        - name: Build Release Files
+          run: |
             flutter build apk --target=lib/main.dart \
-              --release
               --build-name=${{ env.APP_BUILD_VERSION }} \
-              --build-number=${{ env.APP_BUILD_NUMBER }}
+              --build-number=${{ env.APP_BUILD_NUMBER }} \
+              --release
             cp build/app/outputs/flutter-apk/app-release.apk \
               playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
 

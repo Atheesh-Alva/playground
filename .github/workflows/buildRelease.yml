@@ -113,7 +113,7 @@ jobs:
       - name: Copy downloaded files
         run: |
           echo "Working-Directory=${{ github.workspace }}"
-          cp ${{ github.workspace }}/playground-apk.apk playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+          cp ${{ github.workspace }}/app-release.apk playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
 
       - name: Create Release Entry
         uses: softprops/action-gh-release@v2

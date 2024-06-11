@@ -59,7 +59,6 @@ jobs:
         - name: Upload Build files to GitHub Artifacts
           uses: actions/upload-artifact@v4
           with:
-            name: playground-apk
             path: |
               build/app/outputs/flutter-apk/app-release.apk
 # build/app/outputs/bundle/release/app-release.aab
@@ -101,8 +100,6 @@ jobs:
 
       - name: Download APK from Artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: playground-apk
 
       - name: Copy downloaded artifacts
         run: |

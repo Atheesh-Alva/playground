@@ -4,6 +4,12 @@ on:
   push:
     tags:
     - 'Run-+[0-9]+[0-9]+[0-9]'
+
+    # APK-1.7.12-85-V01
+
+  # - "R+[0-9]+[0-9]+[0-9]+[0-9]+-[0-9]+.[0-9]+.[0-9]+-V+[0-9]+[0-9]"
+
+    - 'APK-*-*-V+[0-9]+[0-9]'
  
 jobs:
   logs:
@@ -18,25 +24,31 @@ jobs:
       LABEL:
   
     steps:
-      - name: Check
+      - name: Logs
         run: |
+          echo "ref_name=${{ github.ref_name }}"
 
-          if [ ${{ env.BUG }} ]; then
-            echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
-            if [ ${{ env.ENHANCEMENT }} ]; then
-              echo "LABEL=${{ env.LABEL }},${{ vars.LABEL_ENHANCEMENT }}" >> $GITHUB_ENV
-            elif [ ${{ env.DOCUMENTATION }} ]; then
-              echo "LABEL=${{ env.LABEL }},${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
-            else
-              echo "${{ env.LABEL }}"
-            fi
-          elif [ ${{ env.ENHANCEMENT }} ]; then
-            echo "LABEL=${{ vars.LABEL_ENHANCEMENT }}" >> $GITHUB_ENV
-          elif [ ${{ env.DOCUMENTATION }} ]; then
-            echo "LABEL=${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
-          else
-            echo "${{ env.LABEL }}"
-          fi
+
+
+      # - name: Check
+      #   run: |
+
+      #     if [ ${{ env.BUG }} ]; then
+      #       echo "LABEL=${{ vars.LABEL_BUG }}" >> $GITHUB_ENV
+      #       if [ ${{ env.ENHANCEMENT }} ]; then
+      #         echo "LABEL=${{ env.LABEL }},${{ vars.LABEL_ENHANCEMENT }}" >> $GITHUB_ENV
+      #       elif [ ${{ env.DOCUMENTATION }} ]; then
+      #         echo "LABEL=${{ env.LABEL }},${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
+      #       else
+      #         echo "${{ env.LABEL }}"
+      #       fi
+      #     elif [ ${{ env.ENHANCEMENT }} ]; then
+      #       echo "LABEL=${{ vars.LABEL_ENHANCEMENT }}" >> $GITHUB_ENV
+      #     elif [ ${{ env.DOCUMENTATION }} ]; then
+      #       echo "LABEL=${{ vars.LABEL_DOCUMENTATION }}" >> $GITHUB_ENV
+      #     else
+      #       echo "${{ env.LABEL }}"
+      #     fi
 
 
 
@@ -47,6 +59,3 @@ jobs:
           #   echo "NOT EMPTY"
           # fi
 
-      - name: Logs
-        run: |
-          echo "LABEL=${{ env.LABEL }}"

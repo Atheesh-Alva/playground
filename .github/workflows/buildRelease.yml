@@ -102,13 +102,19 @@ jobs:
           name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Create Release Entry
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            cp build/app/outputs/flutter-apk/app-release.apk \
-              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-            playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Display structure of downloaded files
+        run: ls -R path/to/artifacts
+
+      # - name: Create Release Entry
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     files: |
+      #       cp build/app/outputs/flutter-apk/app-release.apk \
+      #         playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+      #       playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
         
         # - name: Setup CodeMagic cli Tools
         #   run: |

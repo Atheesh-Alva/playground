@@ -108,15 +108,15 @@ jobs:
         run: |
           cp ${{ github.workspace }}/app-release.apk \
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-          cp ${{ github.workspace }}/app-release.aab \
-            playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
+    # cp ${{ github.workspace }}/app-release.aab \
+    #   playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
       - name: Create Release Entry
         uses: softprops/action-gh-release@v2
         with:
           files: |
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-            playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
+# playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
         
         # - name: Setup CodeMagic cli Tools
         #   run: |

@@ -33,8 +33,8 @@ jobs:
               flutter-version: ${{ vars.FLUTTER_VERSION }}
               cache: true
 
-        - name: Setup Codemagic CLI Tools
-          run: pip3 install codemagic-cli-tools --break-system-packages
+        # - name: Setup Codemagic CLI Tools
+        #   run: pip3 install codemagic-cli-tools --break-system-packages
       
         - name: Build Release Files
           run: |

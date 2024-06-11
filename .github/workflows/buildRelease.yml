@@ -106,6 +106,10 @@ jobs:
         with:
           name: playground-apk
 
+      - name: List all files in the current working directory
+        run: |
+          ls -R $GITHUB_WORKSPACE
+
       - name: Copy downloaded files
         run: |
           echo "Working-Directory=${{ github.workspace }}"

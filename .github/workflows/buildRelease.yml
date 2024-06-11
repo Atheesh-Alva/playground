@@ -50,6 +50,12 @@ jobs:
             cp build/app/outputs/flutter-apk/app-release.apk \
               playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
 
+        - name: Upload APK in GitHub Artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}
+            path: build/app/outputs/flutter-apk/app-release.apk
+  
     # flutter build appbundle \
     #   --release \
     #   --build-name=${{ env.APP_BUILD_VERSION }} \
@@ -66,11 +72,11 @@ jobs:
   #   playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.ipa
 # playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.ipa
 
-        - name: Create Release Entry
-          uses: softprops/action-gh-release@v1
-          with:
-            files: |
-              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+        # - name: Create Release Entry
+        #   uses: softprops/action-gh-release@v1
+        #   with:
+        #     files: |
+        #       playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
         
         # - name: Cache Flutter SDK
         #   uses: actions/cache@v2
@@ -101,7 +107,7 @@ jobs:
       - name: Download APK from Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+          name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Run with APK

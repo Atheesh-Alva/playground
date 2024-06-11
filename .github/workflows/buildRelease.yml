@@ -59,6 +59,7 @@ jobs:
         - name: Upload Build files to GitHub Artifacts
           uses: actions/upload-artifact@v4
           with:
+            name: playground-build-files
             path: |
               build/app/outputs/flutter-apk/app-release.apk
 # build/app/outputs/bundle/release/app-release.aab

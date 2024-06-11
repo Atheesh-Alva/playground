@@ -59,6 +59,7 @@ jobs:
         - name: Upload APK in GitHub Artifacts
           uses: actions/upload-artifact@v4
           with:
+            name: playground-apk
             path: |
               build/app/outputs/flutter-apk/app-release.apk
               build/app/outputs/bundle/release/app-release.aab
@@ -100,12 +101,14 @@ jobs:
 
       - name: Download APK from Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: playground-apk
 
       - name: Copy downloaded artifacts
         run: |
-          cp ${{ github.workspace }}/artifact/app-release.apk \
+          cp ${{ github.workspace }}/app-release.apk \
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-          cp ${{ github.workspace }}/artifact/app-release.aab \
+          cp ${{ github.workspace }}/app-release.aab \
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
       - name: Create Release Entry

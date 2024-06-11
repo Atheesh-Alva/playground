@@ -9,13 +9,8 @@ env:
   APP_BUILD_NUMBER: 1
   APP_BUILD_VERSION: 0.0.1
 
-# permissions:
-#   contents: write
-#   statuses: read
-#   actions: read
-  
 jobs:
-  groundwork:
+  build:
     name: Setup & Build
     runs-on: ubuntu-latest
     # runs-on: macos-14
@@ -67,10 +62,6 @@ jobs:
             path: |
               build/app/outputs/flutter-apk/app-release.apk
               build/app/outputs/bundle/release/app-release.aab
-  
-    # cp build/app/outputs/bundle/release/app-release.aab \
-    #   playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
-  # playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
   # flutter build ipa \
   #   --release \
@@ -95,8 +86,8 @@ jobs:
     #   FLUTTER_ROOT: ${{ steps.output-data.outputs.FLUTTER_ROOT }}
 
   deploy:
-    name: Deploy Release
-    needs: groundwork
+    name: Deploy
+    needs: build
     runs-on: ubuntu-latest
 
     env:
@@ -112,9 +103,9 @@ jobs:
 
       - name: Copy downloaded artifacts
         run: |
-          cp ${{ github.workspace }}/app-release.apk \
+          cp ${{ github.workspace }}/artifact/app-release.apk \
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-          cp ${{ github.workspace }}/app-release.aab \
+          cp ${{ github.workspace }}/artifact/app-release.aab \
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
       - name: Create Release Entry

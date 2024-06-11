@@ -36,29 +36,20 @@ jobs:
       BUILD_NUMBER:
   
     steps:
-      - name: Test
+      - name: Actions
         run: |
-          action_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
+          echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)" >> $GITHUB_ENV
           build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
-          version_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
-          echo "$action_type"
-          echo "$build_number"
-          echo "$version_number"
+          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_ENV
+          app_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
+          echo "APP_VERSION=${app_version:1}" >> $GITHUB_ENV
 
-      # - name: Actions
-      #   run: |
-      #     echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
-      #     build_number=$(echo ${{ github.ref_name }} | cut -d- -f2)
-      #     echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_ENV
-      #     app_version=$(echo ${{ github.ref_name }} | cut -d- -f3)
-      #     echo "APP_VERSION=${app_version:1}" >> $GITHUB_ENV
-
-      # - name: Logs
-      #   run: |
-      #     echo "ref_name=${{ github.ref_name }}"
-      #     echo "ACTION_TYPE=${{ env.ACTION_TYPE }}"
-      #     echo "BUILD_NUMBER=${{ env.BUILD_NUMBER }}"
-      #     echo "APP_VERSION=${{ env.APP_VERSION }}"
+      - name: Logs
+        run: |
+          echo "ref_name=${{ github.ref_name }}"
+          echo "ACTION_TYPE=${{ env.ACTION_TYPE }}"
+          echo "BUILD_NUMBER=${{ env.BUILD_NUMBER }}"
+          echo "APP_VERSION=${{ env.APP_VERSION }}"
 
 
 

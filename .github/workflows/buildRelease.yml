@@ -46,23 +46,26 @@ jobs:
             flutter clean
             flutter pub get
 
-        - name: Build Release Files
-          run: |
-            flutter build apk --target=lib/main.dart \
-              --build-name=${{ env.APP_BUILD_VERSION }} \
-              --build-number=${{ env.APP_BUILD_NUMBER }} \
-              --release
+        - name: Build APK File
+          run: flutter build apk \
+            --target=lib/main.dart \
+            --build-name=${{ env.APP_BUILD_VERSION }} \
+            --build-number=${{ env.APP_BUILD_NUMBER }} \
+            --release
 
+        - name: Build App Bundle File
+          run: flutter build appbundle \
+            --release \
+            --build-name=${{ env.APP_BUILD_VERSION }} \
+            --build-number=${{ env.APP_BUILD_NUMBER }}
+      
         - name: Upload APK in GitHub Artifacts
           uses: actions/upload-artifact@v4
           with:
-            name: playground-apk
-            path: build/app/outputs/flutter-apk/app-release.apk
+            path: |
+              build/app/outputs/flutter-apk/app-release.apk
+              build/app/outputs/bundle/release/app-release.aab
   
-    # flutter build appbundle \
-    #   --release \
-    #   --build-name=${{ env.APP_BUILD_VERSION }} \
-    #   --build-number=${{ env.APP_BUILD_NUMBER }}
     # cp build/app/outputs/bundle/release/app-release.aab \
     #   playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
   # playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
@@ -94,7 +97,8 @@ jobs:
     needs: groundwork
     runs-on: ubuntu-latest
 
-    # env:
+    env:
+      RELEASE_NAME:
     #   FLUTTER_ROOT: ${{ needs.groundwork.outputs.FLUTTER_ROOT }}
 
     steps:
@@ -103,23 +107,20 @@ jobs:
 
       - name: Download APK from Artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: playground-apk
 
-      - name: List all files in the current working directory
+      - name: Copy downloaded artifacts
         run: |
-          ls -R $GITHUB_WORKSPACE
-
-      - name: Copy downloaded files
-        run: |
-          echo "Working-Directory=${{ github.workspace }}"
-          cp ${{ github.workspace }}/app-release.apk playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+          cp ${{ github.workspace }}/app-release.apk \
+            playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+          cp ${{ github.workspace }}/app-release.aab \
+            playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
       - name: Create Release Entry
         uses: softprops/action-gh-release@v2
         with:
           files: |
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+            playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
         
         # - name: Setup CodeMagic cli Tools
         #   run: |

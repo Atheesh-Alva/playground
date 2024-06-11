@@ -101,7 +101,7 @@ jobs:
       - name: Download APK from Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}
+          name: playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Run with APK

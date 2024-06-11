@@ -125,7 +125,7 @@ jobs:
         with:
           files: |
             playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-# playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
+            playground-aab-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
         
         # - name: Setup CodeMagic cli Tools
         #   run: |

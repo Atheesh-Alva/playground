@@ -49,20 +49,20 @@ jobs:
               --build-number=${{ env.APP_BUILD_NUMBER }} \
               --release
 
-        - name: Build App Bundle File
-          run: |
-            flutter build appbundle \
-              --release \
-              --build-name=${{ env.APP_BUILD_VERSION }} \
-              --build-number=${{ env.APP_BUILD_NUMBER }}
+        # - name: Build App Bundle File
+        #   run: |
+        #     flutter build appbundle \
+        #       --release \
+        #       --build-name=${{ env.APP_BUILD_VERSION }} \
+        #       --build-number=${{ env.APP_BUILD_NUMBER }}
       
-        - name: Upload APK in GitHub Artifacts
+        - name: Upload Build files to GitHub Artifacts
           uses: actions/upload-artifact@v4
           with:
             name: playground-apk
             path: |
               build/app/outputs/flutter-apk/app-release.apk
-              build/app/outputs/bundle/release/app-release.aab
+# build/app/outputs/bundle/release/app-release.aab
 
   # flutter build ipa \
   #   --release \

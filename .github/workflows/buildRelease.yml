@@ -9,6 +9,11 @@ env:
   APP_BUILD_NUMBER: 1
   APP_BUILD_VERSION: 0.0.1
 
+# permissions:
+#   contents: write
+#   statuses: read
+#   actions: read
+  
 jobs:
   groundwork:
     name: Setup & Build
@@ -100,16 +105,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: playground-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Display structure of downloaded files
-        run: ls -R
+      - name: Copy downloaded files
+        run: |
+          cp playground-apk.apk playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
 
       - name: Create Release Entry
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            cp playground-apk.apk playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+            playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
         
         # - name: Setup CodeMagic cli Tools
         #   run: |

@@ -46,12 +46,14 @@ jobs:
               --build-number=${{ env.APP_BUILD_NUMBER }}
             cp build/app/outputs/flutter-apk/app-release.apk \
               playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-            flutter build appbundle \
-              --release \
-              --build-name=${{ env.APP_BUILD_VERSION }} \
-              --build-number=${{ env.APP_BUILD_NUMBER }}
-            cp build/app/outputs/bundle/release/app-release.aab \
-              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
+
+    # flutter build appbundle \
+    #   --release \
+    #   --build-name=${{ env.APP_BUILD_VERSION }} \
+    #   --build-number=${{ env.APP_BUILD_NUMBER }}
+    # cp build/app/outputs/bundle/release/app-release.aab \
+    #   playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
+  # playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
 
   # flutter build ipa \
   #   --release \
@@ -66,7 +68,6 @@ jobs:
           with:
             files: |
               playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
-              playground-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.aab
         
         # - name: Cache Flutter SDK
         #   uses: actions/cache@v2

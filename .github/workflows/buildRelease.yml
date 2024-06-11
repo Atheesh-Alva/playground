@@ -108,7 +108,7 @@ jobs:
 
       - name: Copy downloaded files
         run: |
-          cp playground-apk.apk playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
+          cp home/runner/work/playground/playground/playground-apk.apk playground-apk-V${{ env.APP_BUILD_VERSION }}-Build-${{ env.APP_BUILD_NUMBER }}.apk
 
       - name: Create Release Entry
         uses: softprops/action-gh-release@v2

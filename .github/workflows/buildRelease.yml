@@ -31,8 +31,8 @@ jobs:
           echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_OUTPUT
           build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
           echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
-          echo "BUILD_TYPE: $BUILD_TYPE"
           echo "BUILD_TYPE=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)" >> $GITHUB_OUTPUT
+          echo "BUILD_TYPE: $BUILD_TYPE"
           if [ "$BUILD_TYPE" = AND -o "$BUILD_TYPE" = GPS -o "$BUILD_TYPE" = APK -o "$BUILD_TYPE" = AAB ]; then
             echo "ONLY ANDROID"
             echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT

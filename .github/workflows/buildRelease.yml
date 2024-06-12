@@ -95,203 +95,203 @@ jobs:
   #             echo "No App Bundle file generated!"
   #           fi
           
-  build:
-    name: Setup & Build
-    needs: extract-build-data
-    runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
+#   build:
+#     name: Setup & Build
+#     needs: extract-build-data
+#     runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
-    env:
-      BUILD_NAME: playground-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}
+#     env:
+#       BUILD_NAME: playground-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}
 
-    steps:
-        - name: Checkout Code
-          uses: actions/checkout@v3
+#     steps:
+#         - name: Checkout Code
+#           uses: actions/checkout@v3
                 
-        - name: Setup JAVA for Android
-          uses: actions/setup-java@v3
-          with:
-            distribution: "zulu"
-            java-version: ${{ vars.JAVA_VERSION }}
-            cache: "gradle"
+#         - name: Setup JAVA for Android
+#           uses: actions/setup-java@v3
+#           with:
+#             distribution: "zulu"
+#             java-version: ${{ vars.JAVA_VERSION }}
+#             cache: "gradle"
 
-        - name: Flutter Setup
-          uses: subosito/flutter-action@v2
-          with:
-              channel: "stable"
-              flutter-version: ${{ vars.FLUTTER_VERSION }}
-              cache: true
+#         - name: Flutter Setup
+#           uses: subosito/flutter-action@v2
+#           with:
+#               channel: "stable"
+#               flutter-version: ${{ vars.FLUTTER_VERSION }}
+#               cache: true
 
-        - name: Flutter Clean & Get Packages
-          run: |
-            flutter clean
-            flutter pub get
+#         - name: Flutter Clean & Get Packages
+#           run: |
+#             flutter clean
+#             flutter pub get
 
-        - name: Cache Flutter SDK
-          uses: actions/cache@v2
-          with:
-            path: /opt/hostedtoolcache/flutter
-            key: flutter-${{ hashFiles('**/pubspec.lock') }}
+#         - name: Cache Flutter SDK
+#           uses: actions/cache@v2
+#           with:
+#             path: /opt/hostedtoolcache/flutter
+#             key: flutter-${{ hashFiles('**/pubspec.lock') }}
   
-        - name: Build APK File
-          if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
-          run: |
-            flutter build apk \
-              --target=lib/main.dart \
-              --build-name=${{ needs.extract-build-data.outputs.BUILD_VERSION }} \
-              --build-number=${{ needs.extract-build-data.outputs.BUILD_NUMBER }} \
-              --release
+#         - name: Build APK File
+#           if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
+#           run: |
+#             flutter build apk \
+#               --target=lib/main.dart \
+#               --build-name=${{ needs.extract-build-data.outputs.BUILD_VERSION }} \
+#               --build-number=${{ needs.extract-build-data.outputs.BUILD_NUMBER }} \
+#               --release
 
-        - name: Upload APK to GitHub Artifacts
-          if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
-          uses: actions/upload-artifact@v4
-          with:
-            name: 'APK_${{ env.BUILD_NAME }}'
-            path: build/app/outputs/flutter-apk/app-release.apk
+#         - name: Upload APK to GitHub Artifacts
+#           if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
+#           uses: actions/upload-artifact@v4
+#           with:
+#             name: 'APK_${{ env.BUILD_NAME }}'
+#             path: build/app/outputs/flutter-apk/app-release.apk
           
-        - name: Build App Bundle File
-          if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
-          run: |
-            flutter build appbundle \
-              --release \
-              --build-name=${{ needs.extract-build-data.outputs.BUILD_VERSION }} \
-              --build-number=${{ needs.extract-build-data.outputs.BUILD_NUMBER }}
+#         - name: Build App Bundle File
+#           if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
+#           run: |
+#             flutter build appbundle \
+#               --release \
+#               --build-name=${{ needs.extract-build-data.outputs.BUILD_VERSION }} \
+#               --build-number=${{ needs.extract-build-data.outputs.BUILD_NUMBER }}
      
-        - name: Upload App Bundle to GitHub Artifacts
-          if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
-          uses: actions/upload-artifact@v4
-          with:
-            name: 'AAB_${{ env.BUILD_NAME }}'
-            path: build/app/outputs/bundle/release/app-release.aab
+#         - name: Upload App Bundle to GitHub Artifacts
+#           if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
+#           uses: actions/upload-artifact@v4
+#           with:
+#             name: 'AAB_${{ env.BUILD_NAME }}'
+#             path: build/app/outputs/bundle/release/app-release.aab
 
-        - name: Setup Codemagic CLI Tools
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: pip3 install codemagic-cli-tools --break-system-packages
+#         - name: Setup Codemagic CLI Tools
+#           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#           run: pip3 install codemagic-cli-tools --break-system-packages
        
-        - name: Download AppStore API Private Key
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          id: apptstore_private_key
-          uses: timheuer/base64-to-file@v1.2
-          with:
-            fileName: appstore_private.key
-            encodedString: # ${{ secrets.OT_APP_STORE_AUTH_KEY_BASE64 }}
+#         - name: Download AppStore API Private Key
+#           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#           id: apptstore_private_key
+#           uses: timheuer/base64-to-file@v1.2
+#           with:
+#             fileName: appstore_private.key
+#             encodedString: # ${{ secrets.OT_APP_STORE_AUTH_KEY_BASE64 }}
 
-        - name: Download AppStore P12 Certificate
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          id: apptstore_p12_cert
-          uses: timheuer/base64-to-file@v1.2
-          with:
-            fileName: appstore_cert.p12
-            encodedString: # ${{ secrets.OT_APP_STORE_P12_BASE64 }}
+#         - name: Download AppStore P12 Certificate
+#           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#           id: apptstore_p12_cert
+#           uses: timheuer/base64-to-file@v1.2
+#           with:
+#             fileName: appstore_cert.p12
+#             encodedString: # ${{ secrets.OT_APP_STORE_P12_BASE64 }}
 
-        - name: Extract AppStore P12 Certificate Key
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: # openssl pkcs12 -in ${{ steps.apptstore_p12_cert.outputs.filePath }} -nodes -nocerts -passin pass:${{ secrets.OT_APP_STORE_P12_PASSWORD }} | openssl rsa -out $HOME/appstore_signing_cert.key
+#         - name: Extract AppStore P12 Certificate Key
+#           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#           run: # openssl pkcs12 -in ${{ steps.apptstore_p12_cert.outputs.filePath }} -nodes -nocerts -passin pass:${{ secrets.OT_APP_STORE_P12_PASSWORD }} | openssl rsa -out $HOME/appstore_signing_cert.key
 
-        - name: Setup App Store Dependencies
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: echo "No Setup App Store Dependencies found!"
-# keychain initialize
-# app-store-connect fetch-signing-files \
-#   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
-#   --key-id=${{ secrets.OT_APP_STORE_KEY_ID }} \
-#   --private-key=@file:${{ steps.apptstore_private_key.outputs.filePath }} \
-#   --certificate-key=@file:$HOME/appstore_signing_cert.key \
-#   --strict-match-identifier \
-#   --platform=IOS \
-#   --type=IOS_APP_STORE \
-#   --create \
-#   $(xcode-project detect-bundle-id)
-# keychain add-certificates
-# xcode-project use-profiles
+#         - name: Setup App Store Dependencies
+#           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#           run: echo "No Setup App Store Dependencies found!"
+# # keychain initialize
+# # app-store-connect fetch-signing-files \
+# #   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
+# #   --key-id=${{ secrets.OT_APP_STORE_KEY_ID }} \
+# #   --private-key=@file:${{ steps.apptstore_private_key.outputs.filePath }} \
+# #   --certificate-key=@file:$HOME/appstore_signing_cert.key \
+# #   --strict-match-identifier \
+# #   --platform=IOS \
+# #   --type=IOS_APP_STORE \
+# #   --create \
+# #   $(xcode-project detect-bundle-id)
+# # keychain add-certificates
+# # xcode-project use-profiles
 
-        - name: Build IPA File
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: flutter build ipa \
-            --release \
-            --build-name=${{ needs.extract-build-data.outputs.BUILD_VERSION }} \
-            --build-number=${{ needs.extract-build-data.outputs.BUILD_NUMBER }}
+#         - name: Build IPA File
+#           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#           run: flutter build ipa \
+#             --release \
+#             --build-name=${{ needs.extract-build-data.outputs.BUILD_VERSION }} \
+#             --build-number=${{ needs.extract-build-data.outputs.BUILD_NUMBER }}
 
-        - name: Upload IPA to GitHub Artifacts
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          uses: actions/upload-artifact@v4
-          with:
-            name: 'IPA_${{ env.BUILD_NAME }}'
-            path: build/ios/ipa/playground.ipa
+#         - name: Upload IPA to GitHub Artifacts
+#           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#           uses: actions/upload-artifact@v4
+#           with:
+#             name: 'IPA_${{ env.BUILD_NAME }}'
+#             path: build/ios/ipa/playground.ipa
   
-        - name: Export build name
-          id: set-build-name
-          run: echo "BUILD_NAME=${{ env.BUILD_NAME }}" >> $GITHUB_OUTPUT
+#         - name: Export build name
+#           id: set-build-name
+#           run: echo "BUILD_NAME=${{ env.BUILD_NAME }}" >> $GITHUB_OUTPUT
 
-    outputs:
-      BUILD-NAME: ${{ steps.set-build-name.outputs.BUILD_NAME }}
+#     outputs:
+#       BUILD-NAME: ${{ steps.set-build-name.outputs.BUILD_NAME }}
 
-  deploy:
-    name: Deploy
-    needs: [extract-build-data, build] 
-    runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
+#   deploy:
+#     name: Deploy
+#     needs: [extract-build-data, build] 
+#     runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
-    steps:
-      - name: Download APK from Artifacts
-        if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
-        uses: actions/download-artifact@v4
-        with:
-          name: 'APK_${{ needs.build.outputs.BUILD-NAME }}'
+#     steps:
+#       - name: Download APK from Artifacts
+#         if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: 'APK_${{ needs.build.outputs.BUILD-NAME }}'
 
-      - name: Download App Bundle from Artifacts
-        if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
-        uses: actions/download-artifact@v4
-        with:
-          name: 'AAB_${{ needs.build.outputs.BUILD-NAME }}'
+#       - name: Download App Bundle from Artifacts
+#         if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: 'AAB_${{ needs.build.outputs.BUILD-NAME }}'
   
-      - name: Download IPA from Artifacts
-        if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-        uses: actions/download-artifact@v4
-        with:
-          name: 'IPA_${{ needs.build.outputs.BUILD-NAME }}'
+#       - name: Download IPA from Artifacts
+#         if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: 'IPA_${{ needs.build.outputs.BUILD-NAME }}'
     
-      - name: Copy downloaded artifacts
-        run: |
-          if ${{ needs.extract-build-data.outputs.BUILD_APK != '' && needs.extract-build-data.outputs.BUILD_APK }}; then
-            cp ${{ github.workspace }}/app-release.apk ${{ needs.build.outputs.BUILD-NAME }}.apk
-          else
-            echo "No APK file generated!"
-          fi
-          if ${{ needs.extract-build-data.outputs.BUILD_AAB != '' && needs.extract-build-data.outputs.BUILD_AAB }}; then
-            cp ${{ github.workspace }}/app-release.aab ${{ needs.build.outputs.BUILD-NAME }}.aab
-          else
-            echo "No App Bundle file generated!"
-          fi
-          if ${{ needs.extract-build-data.outputs.BUILD_IPA != '' && needs.extract-build-data.outputs.BUILD_IPA }}; then
-            cp ${{ github.workspace }}/playground.ipa ${{ needs.build.outputs.BUILD-NAME }}.ipa
-          else
-            echo "No IPA file generated!"
-          fi
+#       - name: Copy downloaded artifacts
+#         run: |
+#           if ${{ needs.extract-build-data.outputs.BUILD_APK != '' && needs.extract-build-data.outputs.BUILD_APK }}; then
+#             cp ${{ github.workspace }}/app-release.apk ${{ needs.build.outputs.BUILD-NAME }}.apk
+#           else
+#             echo "No APK file generated!"
+#           fi
+#           if ${{ needs.extract-build-data.outputs.BUILD_AAB != '' && needs.extract-build-data.outputs.BUILD_AAB }}; then
+#             cp ${{ github.workspace }}/app-release.aab ${{ needs.build.outputs.BUILD-NAME }}.aab
+#           else
+#             echo "No App Bundle file generated!"
+#           fi
+#           if ${{ needs.extract-build-data.outputs.BUILD_IPA != '' && needs.extract-build-data.outputs.BUILD_IPA }}; then
+#             cp ${{ github.workspace }}/playground.ipa ${{ needs.build.outputs.BUILD-NAME }}.ipa
+#           else
+#             echo "No IPA file generated!"
+#           fi
  
-      - name: Create Release Entry
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            ${{ needs.build.outputs.BUILD-NAME }}.apk
-            ${{ needs.build.outputs.BUILD-NAME }}.aab
-            ${{ needs.build.outputs.BUILD-NAME }}.ipa
+#       - name: Create Release Entry
+#         uses: softprops/action-gh-release@v2
+#         with:
+#           files: |
+#             ${{ needs.build.outputs.BUILD-NAME }}.apk
+#             ${{ needs.build.outputs.BUILD-NAME }}.aab
+#             ${{ needs.build.outputs.BUILD-NAME }}.ipa
 
-      - name: Release App to Play Store Internal Track
-        if: ${{ needs.extract-build-data.outputs.BUILD_PSI }}
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: # ${{ secrets.OT_PLAY_STORE_SERVICE_ACCOUNT_KEY }}
-          packageName: com.ostrumtech.ostrum
-          releaseFiles: app-release.aab
-          track: internal
-          inAppUpdatePriority: 2
-          status: completed # completed or draft
+#       - name: Release App to Play Store Internal Track
+#         if: ${{ needs.extract-build-data.outputs.BUILD_PSI }}
+#         uses: r0adkll/upload-google-play@v1
+#         with:
+#           serviceAccountJsonPlainText: # ${{ secrets.OT_PLAY_STORE_SERVICE_ACCOUNT_KEY }}
+#           packageName: com.ostrumtech.ostrum
+#           releaseFiles: app-release.aab
+#           track: internal
+#           inAppUpdatePriority: 2
+#           status: completed # completed or draft
 
-      - name: Release App to App Store TestFlight
-        if: ${{ needs.extract-build-data.outputs.BUILD_ATF }}
-        run: echo "No release to App Store Testflight found!"
-# app-store-connect publish \
-#   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
-#   --key-id=${{ secrets.OT_APP_STORE_KEY_ID }} \
-#   --private-key=@file:${{ steps.apptstore_private_key.outputs.filePath }} \
-#   --path /Users/runner/work/ostrum-flutter/ostrum-flutter/build/ios/ipa/*.ipa
+#       - name: Release App to App Store TestFlight
+#         if: ${{ needs.extract-build-data.outputs.BUILD_ATF }}
+#         run: echo "No release to App Store Testflight found!"
+# # app-store-connect publish \
+# #   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
+# #   --key-id=${{ secrets.OT_APP_STORE_KEY_ID }} \
+# #   --private-key=@file:${{ steps.apptstore_private_key.outputs.filePath }} \
+# #   --path /Users/runner/work/ostrum-flutter/ostrum-flutter/build/ios/ipa/*.ipa
 

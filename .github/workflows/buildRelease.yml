@@ -18,6 +18,12 @@ on:
       # IPA/B21/V1.7.12 - IPA
       - 'IPA/B*/V*'
 
+env:
+  BUILD_TYPE: 
+  BUILD_NUMBER: 
+  BUILD_VERSION: 
+  OP_SYS: 
+
 jobs:
   build-data:
     name: Find build data
@@ -25,47 +31,44 @@ jobs:
 
     steps:
       - name: Extract tag details
-        id: set-build-data
+        # id: set-build-data
         run: |
-          build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
-          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_OUTPUT
-          build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
-          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
           build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
-          echo "BUILD_TYPE=$build_type" >> $GITHUB_OUTPUT
+          echo "BUILD_TYPE=$build_type" >> $GITHUB_ENV
           if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
-            echo "ONLY ANDROID"
-            echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "OP_SYS=ubuntu-latest" >> $GITHUB_ENV
           else
-            echo "OP_SYS=macos-14" >> $GITHUB_OUTPUT
-            echo "ONLY IOS"
+            echo "OP_SYS=macos-14" >> $GITHUB_ENV
           fi
+          build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
+          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_ENV
+          build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
+          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_ENV
 
-    outputs:
-      BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}
-      BUILD_NUMBER: ${{ steps.set-build-data.outputs.BUILD_NUMBER }}
-      BUILD_VERSION: ${{ steps.set-build-data.outputs.BUILD_VERSION }}
-      OP_SYS: ${{ steps.set-build-data.outputs.OP_SYS }}
+    # outputs:
+    #   BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}
+    #   BUILD_NUMBER: ${{ steps.set-build-data.outputs.BUILD_NUMBER }}
+    #   BUILD_VERSION: ${{ steps.set-build-data.outputs.BUILD_VERSION }}
+    #   OP_SYS: ${{ steps.set-build-data.outputs.OP_SYS }}
 
   logs:
     name: Logs
     needs: build-data
-    runs-on: ${{ needs.build-data.outputs.OP_SYS }}
+    runs-on: ubuntu-latest
 
     steps:
         - name: Logs
           run: |
-            echo "BUILD_TYPE=${{ needs.build-data.outputs.BUILD_TYPE }}"
-            echo "BUILD_NUMBER=${{ needs.build-data.outputs.BUILD_NUMBER }}"
-            echo "BUILD_VERSION=${{ needs.build-data.outputs.BUILD_VERSION }}"
-            echo "OP_SYS=${{ needs.build-data.outputs.OP_SYS }}"
+            echo "BUILD_TYPE=${{ env.BUILD_TYPE }}"
+            echo "BUILD_NUMBER=${{ env.BUILD_NUMBER }}"
+            echo "BUILD_VERSION=${{ env.BUILD_VERSION }}"
+            echo "OP_SYS=${{ env.OP_SYS }}"
 
   build:
     name: Setup & Build
     needs: build-data
-    runs-on: ubuntu-latest
     if: false
-    # runs-on: macos-14
+    runs-on: ${{ needs.build-data.outputs.OP_SYS }}
 
     steps:
         - name: Checkout Code
@@ -85,29 +88,30 @@ jobs:
               flutter-version: ${{ vars.FLUTTER_VERSION }}
               cache: true
 
-        # - name: Setup Codemagic CLI Tools
-        #   run: pip3 install codemagic-cli-tools --break-system-packages
-      
         - name: Flutter Clean & Get Packages
           run: |
             flutter clean
             flutter pub get
 
         - name: Build APK File
+          if: ${{ needs.build-data.outputs.BUILD_TYPE == 'APK' }}
           run: |
             flutter build apk \
               --target=lib/main.dart \
-              --build-name=${{ env.APP_BUILD_VERSION }} \
-              --build-number=${{ env.APP_BUILD_NUMBER }} \
+              --build-name=${{ needs.build-data.outputs.BUILD_VERSION }} \
+              --build-number=${{ needs.build-data.outputs.BUILD_NUMBER }} \
               --release
 
         - name: Build App Bundle File
           run: |
             flutter build appbundle \
               --release \
-              --build-name=${{ env.APP_BUILD_VERSION }} \
-              --build-number=${{ env.APP_BUILD_NUMBER }}
-      
+              --build-name=${{ needs.build-data.outputs.BUILD_VERSION}} \
+              --build-number=${{ needs.build-data.outputs.BUILD_NUMBER }}
+     
+        - name: Setup Codemagic CLI Tools
+          run: pip3 install codemagic-cli-tools --break-system-packages
+       
         - name: Upload Build APK to GitHub Artifacts
           uses: actions/upload-artifact@v4
           with:

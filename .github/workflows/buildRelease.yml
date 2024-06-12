@@ -35,6 +35,7 @@ jobs:
           build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
           echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
           build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
+          echo "BUILD_TYPE=$build_type" >> $GITHUB_ENV
           echo "BUILD_TYPE=$build_type" >> $GITHUB_OUTPUT
           if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
             echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT

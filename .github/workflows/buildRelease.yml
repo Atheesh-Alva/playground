@@ -189,7 +189,7 @@ jobs:
 
         - name: Setup App Store Dependencies
           if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: |
+          run: echo "No Setup App Store Dependencies found!"
 # keychain initialize
 # app-store-connect fetch-signing-files \
 #   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
@@ -288,7 +288,7 @@ jobs:
 
       - name: Release App to App Store TestFlight
         if: ${{ needs.extract-build-data.outputs.BUILD_ATF }}
-        run: |
+        run: echo "No release to App Store Testflight found!"
 # app-store-connect publish \
 #   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
 #   --key-id=${{ secrets.OT_APP_STORE_KEY_ID }} \

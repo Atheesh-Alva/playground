@@ -26,7 +26,7 @@ jobs:
                 include-files: false
                 custom-facts: |
                   - name: Alert Action
-                    value: ${{ github.event.action }}
+                    value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
 
     pr-check:
         name: Pull Request Check

@@ -47,27 +47,27 @@ jobs:
         id: set-build-conditions
         run: |
           if ${{ env.BUILD_TYPE == 'AND' }}; then
-            echo "BUILD_APK=true" >> $GITHUB_OUTPUT
-            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
-            echo "BUILD_PSI=true" >> $GITHUB_OUTPUT
+            echo "BUILD_APK=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_AAB=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_PSI=${{ true }}" >> $GITHUB_OUTPUT
           elif ${{ env.BUILD_TYPE == 'GPS' }}; then
-            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
-            echo "BUILD_PSI=true" >> $GITHUB_OUTPUT
+            echo "BUILD_AAB=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_PSI=${{ true }}" >> $GITHUB_OUTPUT
           elif ${{ env.BUILD_TYPE == 'IOS' }}; then
-            echo "BUILD_IPA=true" >> $GITHUB_OUTPUT
-            echo "BUILD_ATF=true" >> $GITHUB_OUTPUT
+            echo "BUILD_IPA=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_ATF=${{ true }}" >> $GITHUB_OUTPUT
           elif ${{ env.BUILD_TYPE == 'APK' }}; then
-            echo "BUILD_APK=true" >> $GITHUB_OUTPUT
+            echo "BUILD_APK=${{ true }}" >> $GITHUB_OUTPUT
           elif ${{ env.BUILD_TYPE == 'AAB' }}; then
-            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
+            echo "BUILD_AAB=${{ true }}" >> $GITHUB_OUTPUT
           elif ${{ env.BUILD_TYPE == 'IPA' }}; then
-            echo "BUILD_IPA=true" >> $GITHUB_OUTPUT
+            echo "BUILD_IPA=${{ true }}" >> $GITHUB_OUTPUT
           else
-            echo "BUILD_APK=true" >> $GITHUB_OUTPUT
-            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
-            echo "BUILD_IPA=true" >> $GITHUB_OUTPUT
-            echo "BUILD_PSI=true" >> $GITHUB_OUTPUT
-            echo "BUILD_ATF=true" >> $GITHUB_OUTPUT
+            echo "BUILD_APK=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_AAB=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_IPA=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_PSI=${{ true }}" >> $GITHUB_OUTPUT
+            echo "BUILD_ATF=${{ true }}" >> $GITHUB_OUTPUT
           fi
 
     outputs:
@@ -84,20 +84,13 @@ jobs:
   # logs:
   #   name: Logs
   #   needs: extract-build-data
-  #   runs-on: ${{ needs.build-data.outputs.OP_SYS }}
+  #   runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
   #   steps:
   #       - name: Logs
   #         run: |
-  #           echo "BUILD_TYPE=${{ needs.build-data.outputs.BUILD_TYPE }}"
-  #           echo "BUILD_NUMBER=${{ needs.build-data.outputs.BUILD_NUMBER }}"
-  #           echo "BUILD_VERSION=${{ needs.build-data.outputs.BUILD_VERSION }}"
-  #           echo "OP_SYS=${{ needs.build-data.outputs.OP_SYS }}"
-  #           echo "BUILD_APK=${{ needs.build-data.outputs.BUILD_APK }}"
-  #           echo "BUILD_AAB=${{ needs.build-data.outputs.BUILD_AAB }}"
-  #           echo "BUILD_IPA=${{ needs.build-data.outputs.BUILD_IPA }}"
-  #           echo "BUILD_PSI=${{ needs.build-data.outputs.BUILD_PSI }}"
-  #           echo "BUILD_ATF=${{ needs.build-data.outputs.BUILD_ATF }}"
+  #           echo "APK Condition!"
+  #         if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
 
   build:
     name: Setup & Build
@@ -199,10 +192,18 @@ jobs:
   
       - name: Copy downloaded artifacts
         run: |
-          cp ${{ github.workspace }}/app-release.apk \
-            playground-apk-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.apk
-          cp ${{ github.workspace }}/app-release.aab \
-            playground-aab-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.aab
+          if ${{ needs.extract-build-data.outputs.BUILD_APK == true }}; then
+            cp ${{ github.workspace }}/app-release.apk \
+              playground-apk-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.apk
+          else
+            echo "No APK file generated!"
+          fi
+          if ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}; then
+            cp ${{ github.workspace }}/app-release.aab \
+              playground-aab-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.aab
+          else
+            echo "No App Bundle file generated!"
+          fi
 
       - name: Create Release Entry
         uses: softprops/action-gh-release@v2

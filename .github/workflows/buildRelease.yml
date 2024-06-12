@@ -45,16 +45,29 @@ jobs:
       - name: Extract build & deploy conditions
         id: set-build-conditions
         run: |
-          build_apk=${{ env.BUILD_TYPE == 'GPS' && false || env.BUILD_TYPE == 'IOS' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'IPA' && false || true }}
-          echo "BUILD_APK=$build_apk" >> $GITHUB_OUTPUT
-          build_aab=${{ env.BUILD_TYPE == 'IOS' && false || env.BUILD_TYPE == 'APK' && false || env.BUILD_TYPE == 'IPA' && false || true }}
-          echo "BUILD_AAB=$build_aab" >> $GITHUB_OUTPUT
-          build_ipa=${{ env.BUILD_TYPE == 'AND' && false || env.BUILD_TYPE == 'GPS' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'APK' && false || true }}
-          echo "BUILD_IPA=$build_ipa" >> $GITHUB_OUTPUT
-          build_psi=${{ env.BUILD_TYPE == 'IOS' && false || env.BUILD_TYPE == 'APK' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'IPA' && false || true }}
-          echo "BUILD_PSI=$build_psi" >> $GITHUB_OUTPUT
-          build_atf=${{ env.BUILD_TYPE == 'AND' && false || env.BUILD_TYPE == 'GPS' && false || env.BUILD_TYPE == 'APK' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'IPA' && false || true }}
-          echo "BUILD_ATF=$build_atf" >> $GITHUB_OUTPUT
+          if [ ${{ env.BUILD_TYPE == 'AND' }} ]; then
+            echo "BUILD_APK=true" >> $GITHUB_OUTPUT
+            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
+            echo "BUILD_PSI=true" >> $GITHUB_OUTPUT
+          elif [ ${{ env.BUILD_TYPE == 'GPS' }} ]; then
+            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
+            echo "BUILD_PSI=true" >> $GITHUB_OUTPUT
+          elif [ ${{ env.BUILD_TYPE == 'IOS' }} ]; then
+            echo "BUILD_IPA=true" >> $GITHUB_OUTPUT
+            echo "BUILD_ATF=true" >> $GITHUB_OUTPUT
+          elif [ ${{ env.BUILD_TYPE == 'APK' }} ]; then
+            echo "BUILD_APK=true" >> $GITHUB_OUTPUT
+          elif [ ${{ env.BUILD_TYPE == 'AAB' }} ]; then
+            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
+          elif [ ${{ env.BUILD_TYPE == 'IPA' }} ]; then
+            echo "BUILD_IPA=true" >> $GITHUB_OUTPUT
+          else
+            echo "BUILD_APK=true" >> $GITHUB_OUTPUT
+            echo "BUILD_AAB=true" >> $GITHUB_OUTPUT
+            echo "BUILD_IPA=true" >> $GITHUB_OUTPUT
+            echo "BUILD_PSI=true" >> $GITHUB_OUTPUT
+            echo "BUILD_ATF=true" >> $GITHUB_OUTPUT
+          fi
 
     outputs:
       BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}

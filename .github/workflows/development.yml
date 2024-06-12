@@ -3,7 +3,7 @@ env:
 # Choose the ID for Pull Request Reviewer / Issue Assignee
   OWNER: ${{ vars.ID_ATHEESH }}
 
-  # Choose any lable from the below options. If you are choosing more than one label, make sure no space is provided.
+  # Choose any label from the below options. If you are choosing more than one label, make sure no space is provided.
   LABEL: ${{ vars.LABEL_BUG }}
   # ${{ vars.LABEL_BUG }},${{ vars.LABEL_ENHANCEMENTS }},${{ vars.LABEL_DOCUMENTATION }}
   # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix

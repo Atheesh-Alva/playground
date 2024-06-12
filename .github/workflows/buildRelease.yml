@@ -34,16 +34,16 @@ jobs:
         id: set-build-data
         run: |
           build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
-          echo ::set-output name=BUILD_TYPE::$build_type
+          echo "BUILD_TYPE=$build_type" >> $GITHUB_ENV
           if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
-            echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "OP_SYS=ubuntu-latest" >> $GITHUB_ENV
           else
-            echo "OP_SYS=macos-14" >> $GITHUB_OUTPUT
+            echo "OP_SYS=macos-14" >> $GITHUB_ENV
           fi
           build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
-          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_OUTPUT
+          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_ENV
           build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
-          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
+          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_ENV
 
     outputs:
       BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}

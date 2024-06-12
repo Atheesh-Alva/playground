@@ -21,7 +21,7 @@ on:
 jobs:
   extract-build-data:
     name: Extract build data
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.LINUX_OS }}
 
     env:
       BUILD_TYPE:
@@ -81,19 +81,21 @@ jobs:
       BUILD_PSI: ${{ steps.set-build-conditions.outputs.BUILD_PSI }}
       BUILD_ATF: ${{ steps.set-build-conditions.outputs.BUILD_ATF }}
 
-  # logs:
-  #   name: Logs
-  #   needs: extract-build-data
-  #   runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
+  logs:
+    name: Logs
+    needs: extract-build-data
+    runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
-  #   steps:
-  #       - name: Logs
-  #         run: |
-  #           echo "APK Condition!"
-  #         if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
+    steps:
+        - name: Logs
+          run: |
+            echo "APK Condition!"
+            echo "BUILD_APK=${{ needs.extract-build-data.outputs.BUILD_APK }}"
+            echo "Condition=${{ needs.extract-build-data.outputs.BUILD_APK == true }}"
 
   build:
     name: Setup & Build
+    if: false
     needs: extract-build-data
     runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 

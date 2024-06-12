@@ -81,41 +81,28 @@ jobs:
       BUILD_PSI: ${{ steps.set-build-conditions.outputs.BUILD_PSI }}
       BUILD_ATF: ${{ steps.set-build-conditions.outputs.BUILD_ATF }}
 
-  # logs:
-  #   name: Logs
-  #   needs: extract-build-data
-  #   runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
+  logs:
+    name: Logs
+    needs: extract-build-data
+    runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
-  #   steps:
-  #       - name: Logs
-  #         run: |
-  #           echo "BUILD_APK=${{ needs.extract-build-data.outputs.BUILD_APK }}"
-  #           echo "Condition=${{ needs.extract-build-data.outputs.BUILD_APK == true }}"
-
-  #       - name: Check1
-  #         if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
-  #         run: |
-  #           echo "APK Condition!"
-          
-  #       - name: Check2
-  #         if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
-  #         run: |
-  #           echo "APK Condition!"
-          
-  #       - name: Check3
-  #         if: ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}
-  #         run: |
-  #           echo "AAB Condition!"
-          
-  #       - name: Check4
-  #         if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
-  #         run: |
-  #           echo "AAB Condition!"
+    steps:
+        - name: Logs
+          run: |
+            if ${{ needs.extract-build-data.outputs.BUILD_AAB != '' && needs.extract-build-data.outputs.BUILD_AAB }}; then
+              echo "App Bundle file generated!"
+            else
+              echo "No App Bundle file generated!"
+            fi
           
   build:
     name: Setup & Build
+    if: false
     needs: extract-build-data
     runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
+
+    env:
+      BUILD_NAME: playground-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}
 
     steps:
         - name: Checkout Code
@@ -165,14 +152,14 @@ jobs:
           if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
           uses: actions/upload-artifact@v4
           with:
-            name: playground-apk
+            name: 'APK_${{ env.BUILD_NAME }}'
             path: build/app/outputs/flutter-apk/app-release.apk
       
         - name: Upload Build App Bundle to GitHub Artifacts
           if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
           uses: actions/upload-artifact@v4
           with:
-            name: playground-aab
+            name: 'AAB_${{ env.BUILD_NAME }}'
             path: build/app/outputs/bundle/release/app-release.aab
 
   # flutter build ipa \
@@ -189,6 +176,13 @@ jobs:
             path: /opt/hostedtoolcache/flutter
             key: flutter-${{ hashFiles('**/pubspec.lock') }}
 
+        - name: Export build name
+          id: set-build-name
+          run: echo "BUILD_NAME=${{ env.BUILD_NAME }}" >> $GITHUB_OUTPUT
+
+    outputs:
+      BUILD-NAME: ${{ steps.set-build-name.outputs.BUILD_NAME }}
+
   deploy:
     name: Deploy
     needs: [extract-build-data, build] 
@@ -202,13 +196,13 @@ jobs:
         if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
         uses: actions/download-artifact@v4
         with:
-          name: playground-apk
+          name: 'APK_${{ needs.build.outputs.BUILD-NAME }}'
 
       - name: Download App Bundle from Artifacts
         if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
         uses: actions/download-artifact@v4
         with:
-          name: playground-aab
+          name: 'AAB_${{ needs.build.outputs.BUILD-NAME }}'
   
       - name: Copy downloaded artifacts
         run: |

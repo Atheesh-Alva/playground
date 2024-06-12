@@ -18,57 +18,64 @@ on:
       # IPA/B21/V1.7.12 - IPA
       - 'IPA/B*/V*'
 
-env:
-  BUILD_TYPE: 
-  BUILD_NUMBER: 
-  BUILD_VERSION: 
-  OP_SYS: 
-
 jobs:
   build-data:
     name: Find build data
     runs-on: ubuntu-latest
 
+    env:
+      BUILD_TYPE:
+
     steps:
       - name: Extract tag details
         id: set-build-data
         run: |
-          build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
-          echo "BUILD_TYPE=$build_type" >> $GITHUB_ENV
-          if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
-            echo "OP_SYS=ubuntu-latest" >> $GITHUB_ENV
-          else
-            echo "OP_SYS=macos-14" >> $GITHUB_ENV
-          fi
           build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
-          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_OUTPUT
           build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
-          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_ENV
+          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
+          build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
+          echo "BUILD_TYPE=$build_type" >> $GITHUB_OUTPUT
+          if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
+            echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT
+          else
+            echo "OP_SYS=macos-14" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract tag details
+        id: set-build
+        run: |
+          echo "BUILD_APK=${{ env.BUILD_TYPE == 'APK' && true || false }}" >> $GITHUB_OUTPUT
 
     outputs:
       BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}
       BUILD_NUMBER: ${{ steps.set-build-data.outputs.BUILD_NUMBER }}
       BUILD_VERSION: ${{ steps.set-build-data.outputs.BUILD_VERSION }}
       OP_SYS: ${{ steps.set-build-data.outputs.OP_SYS }}
+      BUILD_APK: ${{ steps.set-build-data.outputs.BUILD_APK }}
 
   logs:
     name: Logs
     needs: build-data
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.build-data.outputs.OP_SYS }}
 
     steps:
         - name: Logs
           run: |
-            echo "BUILD_TYPE=${{ env.BUILD_TYPE }}"
-            echo "BUILD_NUMBER=${{ env.BUILD_NUMBER }}"
-            echo "BUILD_VERSION=${{ env.BUILD_VERSION }}"
-            echo "OP_SYS=${{ env.OP_SYS }}"
+            echo "BUILD_TYPE=${{ needs.build-data.outputs.BUILD_TYPE }}"
+            echo "BUILD_NUMBER=${{ needs.build-data.outputs.BUILD_NUMBER }}"
+            echo "BUILD_VERSION=${{ needs.build-data.outputs.BUILD_VERSION }}"
+            echo "OP_SYS=${{ needs.build-data.outputs.OP_SYS }}"
+            echo "BUILD_APK=${{ needs.build-data.outputs.BUILD_APK }}"
 
   build:
     name: Setup & Build
     needs: build-data
     if: false
     runs-on: ${{ needs.build-data.outputs.OP_SYS }}
+
+    env:
+      BUILD_APK: 
 
     steps:
         - name: Checkout Code

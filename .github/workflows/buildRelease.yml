@@ -89,10 +89,29 @@ jobs:
     steps:
         - name: Logs
           run: |
-            echo "APK Condition!"
             echo "BUILD_APK=${{ needs.extract-build-data.outputs.BUILD_APK }}"
             echo "Condition=${{ needs.extract-build-data.outputs.BUILD_APK == true }}"
 
+        - name: Check1
+          if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
+          run: |
+            echo "APK Condition!"
+          
+        - name: Check2
+          if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
+          run: |
+            echo "APK Condition!"
+          
+        - name: Check3
+          if: ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}
+          run: |
+            echo "AAB Condition!"
+          
+        - name: Check4
+          if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
+          run: |
+            echo "AAB Condition!"
+          
   build:
     name: Setup & Build
     if: false

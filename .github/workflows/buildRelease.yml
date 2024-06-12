@@ -31,25 +31,25 @@ jobs:
 
     steps:
       - name: Extract tag details
-        # id: set-build-data
+        id: set-build-data
         run: |
           build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
-          echo "BUILD_TYPE=$build_type" >> $GITHUB_ENV
+          echo "BUILD_TYPE=$build_type" >> $GITHUB_OUTPUT
           if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
-            echo "OP_SYS=ubuntu-latest" >> $GITHUB_ENV
+            echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT
           else
-            echo "OP_SYS=macos-14" >> $GITHUB_ENV
+            echo "OP_SYS=macos-14" >> $GITHUB_OUTPUT
           fi
           build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
-          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_OUTPUT
           build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
-          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_ENV
+          echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
 
-    # outputs:
-    #   BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}
-    #   BUILD_NUMBER: ${{ steps.set-build-data.outputs.BUILD_NUMBER }}
-    #   BUILD_VERSION: ${{ steps.set-build-data.outputs.BUILD_VERSION }}
-    #   OP_SYS: ${{ steps.set-build-data.outputs.OP_SYS }}
+    outputs:
+      BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}
+      BUILD_NUMBER: ${{ steps.set-build-data.outputs.BUILD_NUMBER }}
+      BUILD_VERSION: ${{ steps.set-build-data.outputs.BUILD_VERSION }}
+      OP_SYS: ${{ steps.set-build-data.outputs.OP_SYS }}
 
   logs:
     name: Logs

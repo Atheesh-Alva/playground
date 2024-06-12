@@ -45,6 +45,7 @@ jobs:
       - name: Extract build & deploy conditions
         id: set-build-conditions
         run: |
+          echo "BUILD_TYPE=${{ env.BUILD_TYPE }}"
           if [ ${{ env.BUILD_TYPE == 'AND' }} ]; then
             echo "BUILD_APK=true" >> $GITHUB_OUTPUT
             echo "BUILD_AAB=true" >> $GITHUB_OUTPUT

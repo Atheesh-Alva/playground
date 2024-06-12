@@ -3,13 +3,13 @@ name: Build
 on:
   push:
     tags:
-      # R24-0503/B21/V1.7.12 - APK, AAB, IPA, Play Store - Internal, TestFlight
+      # R24-0503/B21/V1.7.12 - APK, AAB, IPA, PSI, ATF
       - 'R*/B*/V*'
-      # AND/B21/V1.7.12 - APK, AAB, Play Store - Internal
+      # AND/B21/V1.7.12 - APK, AAB, PSI
       - 'AND/B*/V*'
-      # GPS/B21/V1.7.12 - AAB, Play Store - Internal
+      # GPS/B21/V1.7.12 - AAB, PSI
       - 'GPS/B*/V*'
-      # IOS/B21/V1.7.12 - IPA, TestFlight
+      # IOS/B21/V1.7.12 - IPA, ATF
       - 'IOS/B*/V*'
       # APK/B21/V1.7.12 - APK
       - 'APK/B*/V*'
@@ -42,17 +42,30 @@ jobs:
             echo "OP_SYS=macos-14" >> $GITHUB_OUTPUT
           fi
 
-      - name: Extract tag details
-        id: set-build
+      - name: Extract build & deploy conditions
+        id: set-build-conditions
         run: |
-          echo "BUILD_APK=${{ env.BUILD_TYPE == 'APK' && true || false }}" >> $GITHUB_OUTPUT
+          build_apk=${{ env.BUILD_TYPE == 'GPS' && false || env.BUILD_TYPE == 'IOS' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'IPA' && false || true }}
+          echo "BUILD_APK=$build_apk" >> $GITHUB_OUTPUT
+          build_aab=${{ env.BUILD_TYPE == 'IOS' && false || env.BUILD_TYPE == 'APK' && false || env.BUILD_TYPE == 'IPA' && false || true }}
+          echo "BUILD_AAB=$build_aab" >> $GITHUB_OUTPUT
+          build_ipa=${{ env.BUILD_TYPE == 'AND' && false || env.BUILD_TYPE == 'GPS' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'APK' && false || true }}
+          echo "BUILD_IPA=$build_ipa" >> $GITHUB_OUTPUT
+          build_psi=${{ env.BUILD_TYPE == 'IOS' && false || env.BUILD_TYPE == 'APK' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'IPA' && false || true }}
+          echo "BUILD_PSI=$build_psi" >> $GITHUB_OUTPUT
+          build_atf=${{ env.BUILD_TYPE == 'AND' && false || env.BUILD_TYPE == 'GPS' && false || env.BUILD_TYPE == 'APK' && false || env.BUILD_TYPE == 'AAB' && false || env.BUILD_TYPE == 'IPA' && false || true }}
+          echo "BUILD_ATF=$build_atf" >> $GITHUB_OUTPUT
 
     outputs:
       BUILD_TYPE: ${{ steps.set-build-data.outputs.BUILD_TYPE }}
       BUILD_NUMBER: ${{ steps.set-build-data.outputs.BUILD_NUMBER }}
       BUILD_VERSION: ${{ steps.set-build-data.outputs.BUILD_VERSION }}
       OP_SYS: ${{ steps.set-build-data.outputs.OP_SYS }}
-      BUILD_APK: ${{ steps.set-build.outputs.BUILD_APK }}
+      BUILD_APK: ${{ steps.set-build-conditions.outputs.BUILD_APK }}
+      BUILD_AAB: ${{ steps.set-build-conditions.outputs.BUILD_AAB }}
+      BUILD_IPA: ${{ steps.set-build-conditions.outputs.BUILD_IPA }}
+      BUILD_PSI: ${{ steps.set-build-conditions.outputs.BUILD_PSI }}
+      BUILD_ATF: ${{ steps.set-build-conditions.outputs.BUILD_ATF }}
 
   logs:
     name: Logs
@@ -67,6 +80,10 @@ jobs:
             echo "BUILD_VERSION=${{ needs.build-data.outputs.BUILD_VERSION }}"
             echo "OP_SYS=${{ needs.build-data.outputs.OP_SYS }}"
             echo "BUILD_APK=${{ needs.build-data.outputs.BUILD_APK }}"
+            echo "BUILD_AAB=${{ needs.build-data.outputs.BUILD_AAB }}"
+            echo "BUILD_IPA=${{ needs.build-data.outputs.BUILD_IPA }}"
+            echo "BUILD_PSI=${{ needs.build-data.outputs.BUILD_PSI }}"
+            echo "BUILD_ATF=${{ needs.build-data.outputs.BUILD_ATF }}"
 
   build:
     name: Setup & Build

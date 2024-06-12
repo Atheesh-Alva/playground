@@ -52,7 +52,7 @@ jobs:
       BUILD_NUMBER: ${{ steps.set-build-data.outputs.BUILD_NUMBER }}
       BUILD_VERSION: ${{ steps.set-build-data.outputs.BUILD_VERSION }}
       OP_SYS: ${{ steps.set-build-data.outputs.OP_SYS }}
-      BUILD_APK: ${{ steps.set-build-data.outputs.BUILD_APK }}
+      BUILD_APK: ${{ steps.set-build.outputs.BUILD_APK }}
 
   logs:
     name: Logs

@@ -81,23 +81,22 @@ jobs:
       BUILD_PSI: ${{ steps.set-build-conditions.outputs.BUILD_PSI }}
       BUILD_ATF: ${{ steps.set-build-conditions.outputs.BUILD_ATF }}
 
-  logs:
-    name: Logs
-    needs: extract-build-data
-    runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
+  # logs:
+  #   name: Logs
+  #   needs: extract-build-data
+  #   runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
-    steps:
-        - name: Logs
-          run: |
-            if ${{ needs.extract-build-data.outputs.BUILD_AAB != '' && needs.extract-build-data.outputs.BUILD_AAB }}; then
-              echo "App Bundle file generated!"
-            else
-              echo "No App Bundle file generated!"
-            fi
+  #   steps:
+  #       - name: Logs
+  #         run: |
+  #           if ${{ needs.extract-build-data.outputs.BUILD_AAB != '' && needs.extract-build-data.outputs.BUILD_AAB }}; then
+  #             echo "App Bundle file generated!"
+  #           else
+  #             echo "No App Bundle file generated!"
+  #           fi
           
   build:
     name: Setup & Build
-    if: false
     needs: extract-build-data
     runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
@@ -206,13 +205,13 @@ jobs:
   
       - name: Copy downloaded artifacts
         run: |
-          if ${{ needs.extract-build-data.outputs.BUILD_APK }}; then
+          if ${{ needs.extract-build-data.outputs.BUILD_APK != '' && needs.extract-build-data.outputs.BUILD_APK }}; then
             cp ${{ github.workspace }}/app-release.apk \
               playground-apk-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.apk
           else
             echo "No APK file generated!"
           fi
-          if ${{ needs.extract-build-data.outputs.BUILD_AAB }}; then
+          if ${{ needs.extract-build-data.outputs.BUILD_AAB != '' && needs.extract-build-data.outputs.BUILD_AAB }}; then
             cp ${{ github.workspace }}/app-release.aab \
               playground-aab-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.aab
           else

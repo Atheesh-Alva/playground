@@ -26,7 +26,7 @@ jobs:
                 include-files: false
                 custom-facts: |
                   - name: Alert Action
-                    value: ${{ github.event.action }}
+                    value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
 
     pr-check:
         name: Pull Request Check
@@ -34,8 +34,27 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
         runs-on: ubuntu-latest
 
+        env:
+            FLUTTER_HOME:
+
         steps:
-          - name: Logs
-            run: |
-                echo "event_name=${{ github.event_name }}"
-                echo "action=${{ github.event.action }}"
+          - name: Flutter Setup
+            uses: subosito/flutter-action@v2
+            with:
+                channel: "stable"
+                flutter-version: ${{ vars.FLUTTER_VERSION }}
+                cache: true
+
+          - name: Flutter Clean
+            run: flutter clean
+
+          - name: Flutter Pub Get
+            run: flutter pub get
+        
+          - name: Cache Pub Dependencies
+            uses: actions/cache@v3
+            with:
+                path: ${{ env.FLUTTER_HOME }}/.pub-cache
+                key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+                restore-keys: ${{ runner.os }}-pub-
+  

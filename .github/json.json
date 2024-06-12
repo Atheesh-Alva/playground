@@ -1,12 +1,36 @@
 {
-    "pr": {
-        "title": "PR Title",
-        "body": "PR Body",
-        "label": "enhancement"
-    },
-    "issue": {
-        "title": "Issue Title",
-        "body": "Issue Body",
-        "label": "bug"
+    "bug": {
+        "true": {
+            "enhancement": {
+                "true": {
+                    "documentation": {
+                        "true": "bug,enhancement,documentation",
+                        "false": "bug,enhancement"
+                    }
+                },
+                "false": {
+                    "documentation": {
+                        "true": "bug,documentation",
+                        "false": "bug"
+                    }
+                }
+            }
+        },
+        "false": {
+            "enhancement": {
+                "true": {
+                    "documentation": {
+                        "true": "enhancement,documentation",
+                        "false": "enhancement"
+                    }
+                },
+                "false": {
+                    "documentation": {
+                        "true": "documentation",
+                        "false": ""
+                    }
+                }
+            }
+        }
     }
 }

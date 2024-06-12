@@ -81,40 +81,39 @@ jobs:
       BUILD_PSI: ${{ steps.set-build-conditions.outputs.BUILD_PSI }}
       BUILD_ATF: ${{ steps.set-build-conditions.outputs.BUILD_ATF }}
 
-  logs:
-    name: Logs
-    needs: extract-build-data
-    runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
+  # logs:
+  #   name: Logs
+  #   needs: extract-build-data
+  #   runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
-    steps:
-        - name: Logs
-          run: |
-            echo "BUILD_APK=${{ needs.extract-build-data.outputs.BUILD_APK }}"
-            echo "Condition=${{ needs.extract-build-data.outputs.BUILD_APK == true }}"
+  #   steps:
+  #       - name: Logs
+  #         run: |
+  #           echo "BUILD_APK=${{ needs.extract-build-data.outputs.BUILD_APK }}"
+  #           echo "Condition=${{ needs.extract-build-data.outputs.BUILD_APK == true }}"
 
-        - name: Check1
-          if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
-          run: |
-            echo "APK Condition!"
+  #       - name: Check1
+  #         if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
+  #         run: |
+  #           echo "APK Condition!"
           
-        - name: Check2
-          if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
-          run: |
-            echo "APK Condition!"
+  #       - name: Check2
+  #         if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
+  #         run: |
+  #           echo "APK Condition!"
           
-        - name: Check3
-          if: ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}
-          run: |
-            echo "AAB Condition!"
+  #       - name: Check3
+  #         if: ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}
+  #         run: |
+  #           echo "AAB Condition!"
           
-        - name: Check4
-          if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
-          run: |
-            echo "AAB Condition!"
+  #       - name: Check4
+  #         if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
+  #         run: |
+  #           echo "AAB Condition!"
           
   build:
     name: Setup & Build
-    if: false
     needs: extract-build-data
     runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
 
@@ -142,7 +141,7 @@ jobs:
             flutter pub get
 
         - name: Build APK File
-          if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
+          if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
           run: |
             flutter build apk \
               --target=lib/main.dart \
@@ -151,7 +150,7 @@ jobs:
               --release
 
         - name: Build App Bundle File
-          if: ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}
+          if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
           run: |
             flutter build appbundle \
               --release \
@@ -163,14 +162,14 @@ jobs:
           run: pip3 install codemagic-cli-tools --break-system-packages
        
         - name: Upload Build APK to GitHub Artifacts
-          if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
+          if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
           uses: actions/upload-artifact@v4
           with:
             name: playground-apk
             path: build/app/outputs/flutter-apk/app-release.apk
       
         - name: Upload Build App Bundle to GitHub Artifacts
-          if: ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}
+          if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
           uses: actions/upload-artifact@v4
           with:
             name: playground-aab
@@ -200,26 +199,26 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download APK from Artifacts
-        if: ${{ needs.extract-build-data.outputs.BUILD_APK == true }}
+        if: ${{ needs.extract-build-data.outputs.BUILD_APK }}
         uses: actions/download-artifact@v4
         with:
           name: playground-apk
 
       - name: Download App Bundle from Artifacts
-        if: ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}
+        if: ${{ needs.extract-build-data.outputs.BUILD_AAB }}
         uses: actions/download-artifact@v4
         with:
           name: playground-aab
   
       - name: Copy downloaded artifacts
         run: |
-          if ${{ needs.extract-build-data.outputs.BUILD_APK == true }}; then
+          if ${{ needs.extract-build-data.outputs.BUILD_APK }}; then
             cp ${{ github.workspace }}/app-release.apk \
               playground-apk-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.apk
           else
             echo "No APK file generated!"
           fi
-          if ${{ needs.extract-build-data.outputs.BUILD_AAB == true }}; then
+          if ${{ needs.extract-build-data.outputs.BUILD_AAB }}; then
             cp ${{ github.workspace }}/app-release.aab \
               playground-aab-V${{ needs.extract-build-data.outputs.BUILD_VERSION }}-Build-${{ needs.extract-build-data.outputs.BUILD_NUMBER }}.aab
           else

@@ -34,7 +34,7 @@ jobs:
         id: set-build-data
         run: |
           build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
-          echo "BUILD_TYPE=$build_type" >> $GITHUB_OUTPUT
+          echo ::set-output name=BUILD_TYPE::$build_type
           if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
             echo "OP_SYS=ubuntu-latest" >> $GITHUB_OUTPUT
           else

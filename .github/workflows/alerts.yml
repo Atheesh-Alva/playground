@@ -7,13 +7,14 @@ on:
     issues:
         types: [ opened, deleted, closed, reopened ]
 
+env:
+  PR_LINK: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+  ISSUE_LINK: ${{ github.server_url }}/${{ github.repository }}/issues/${{ github.event.issue.number }}
+
 jobs:
     alert:
         name: PR / Issue Alert
         runs-on: ${{ vars.LINUX_OS }}
-
-        env:
-          NOTIFY:
 
         steps:
           - name: Logs
@@ -22,7 +23,6 @@ jobs:
               echo "action=${{ github.event.action }}"
               echo "issue.url=${{ github.event.issue.url }}"
               echo "issue.number=${{ github.event.issue.number }}"
-              echo "link=${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 
           - name: MS Teams Notification - Flutter Team
             if: ${{ always() && (github.event_name != 'pull_request' || github.event.action == 'closed') }}
@@ -40,7 +40,7 @@ jobs:
                     value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
                 custom-actions: |
                   - text: ${{ github.event_name == 'pull_request' && 'Go to Pull Request' || 'Go to Issue' }}
-                    url: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+                    url: ${{ github.event_name == 'pull_request' && env.PR_LINK || env.ISSUE_LINK  }}
 
     pr-check:
         name: Pull Request Check
@@ -49,8 +49,8 @@ jobs:
         runs-on: ${{ vars.LINUX_OS }}
 
         steps:
-          - name: Checkout Code
-            uses: actions/checkout@v3
+          # - name: Checkout Code
+          #   uses: actions/checkout@v3
 
           - name: MS Teams Notification - Flutter Team
             if: always()
@@ -68,23 +68,23 @@ jobs:
                     value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
                 custom-actions: |
                   - text: Go to Pull Request
-                    url: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+                    url: ${{ env.PR_LINK }}
 
-          - name: Flutter Setup
-            uses: subosito/flutter-action@v2
-            with:
-                channel: "stable"
-                flutter-version: ${{ vars.FLUTTER_VERSION }}
-                cache: true
+          # - name: Flutter Setup
+          #   uses: subosito/flutter-action@v2
+          #   with:
+          #       channel: "stable"
+          #       flutter-version: ${{ vars.FLUTTER_VERSION }}
+          #       cache: true
   
-          - name: Flutter Clean & Get Packages
-            run: |
-              flutter clean
-              flutter pub get
+          # - name: Flutter Clean & Get Packages
+          #   run: |
+          #     flutter clean
+          #     flutter pub get
   
-          - name: Cache Flutter SDK
-            uses: actions/cache@v2
-            with:
-              path: /opt/hostedtoolcache/flutter
-              key: flutter-${{ hashFiles('**/pubspec.lock') }}
+          # - name: Cache Flutter SDK
+          #   uses: actions/cache@v2
+          #   with:
+          #     path: /opt/hostedtoolcache/flutter
+          #     key: flutter-${{ hashFiles('**/pubspec.lock') }}
     

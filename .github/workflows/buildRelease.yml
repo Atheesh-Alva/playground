@@ -2,21 +2,15 @@ name: Build Release
 
 on:
   push:
-    tags:
-      # R24-0503/B21/V1.7.12 - APK, AAB, IPA, PSI, ATF
-      - 'R*/B*/V*'
-      # AND/B21/V1.7.12 - APK, AAB, PSI
-      - 'AND/B*/V*'
-      # GPS/B21/V1.7.12 - AAB, PSI
-      - 'GPS/B*/V*'
-      # IOS/B21/V1.7.12 - IPA, ATF
-      - 'IOS/B*/V*'
-      # APK/B21/V1.7.12 - APK
-      - 'APK/B*/V*'
-      # AAB/B21/V1.7.12 - AAB
-      - 'AAB/B*/V*'
-      # IPA/B21/V1.7.12 - IPA
-      - 'IPA/B*/V*'
+    tags: [
+      'B*/V*/R*',  # Builds APK, AAB & IPA files; uplaods to Play Store - Internal & TestFlight; e.g., B21/V1.7.12/R24-0503
+      'B*/V*/AND', # Builds APK & AAB files; uplaods to Play Store - Internal; e.g., B21/V1.7.12/AND
+      'B*/V*/GPS', # Builds AAB file; uplaods to Play Store - Internal; e.g., B21/V1.7.12/GPS
+      'B*/V*/IOS', # Builds IPA file; uplaods to TestFlight; e.g., B21/V1.7.12/IOS
+      'B*/V*/APK', # Builds APK file; e.g., B21/V1.7.12/APK
+      'B*/V*/AAB', # Builds AAB file; e.g., B21/V1.7.12/AAB
+      'B*/V*/IPA'  # Builds IPA file; e.g., B21/V1.7.12/IPA
+    ]
 
 jobs:
   extract-build-data:
@@ -30,11 +24,11 @@ jobs:
       - name: Extract tag details
         id: set-build-data
         run: |
-          build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
+          build_number=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
           echo "BUILD_NUMBER=${build_number:1}" >> $GITHUB_OUTPUT
-          build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
+          build_version=$(echo ${{ github.ref_name }} | cut -d '/' -f 2)
           echo "BUILD_VERSION=${build_version:1}" >> $GITHUB_OUTPUT
-          build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 1)
+          build_type=$(echo ${{ github.ref_name }} | cut -d '/' -f 3)
           echo "BUILD_TYPE=$build_type" >> $GITHUB_ENV
           echo "BUILD_TYPE=$build_type" >> $GITHUB_OUTPUT
           if [ "$build_type" = AND -o "$build_type" = GPS -o "$build_type" = APK -o "$build_type" = AAB ]; then
@@ -80,21 +74,7 @@ jobs:
       BUILD_IPA: ${{ steps.set-build-conditions.outputs.BUILD_IPA }}
       BUILD_PSI: ${{ steps.set-build-conditions.outputs.BUILD_PSI }}
       BUILD_ATF: ${{ steps.set-build-conditions.outputs.BUILD_ATF }}
-
-  # logs:
-  #   name: Logs
-  #   needs: extract-build-data
-  #   runs-on: ${{ needs.extract-build-data.outputs.OP_SYS }}
-
-  #   steps:
-  #       - name: Logs
-  #         run: |
-  #           if ${{ needs.extract-build-data.outputs.BUILD_AAB != '' && needs.extract-build-data.outputs.BUILD_AAB }}; then
-  #             echo "App Bundle file generated!"
-  #           else
-  #             echo "No App Bundle file generated!"
-  #           fi
-          
+       
   build:
     name: Setup & Build
     needs: extract-build-data

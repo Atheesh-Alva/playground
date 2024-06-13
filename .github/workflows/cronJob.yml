@@ -13,7 +13,7 @@ permissions:
 jobs:
   build:
     name: Cron Schedule Playground CI/CD
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.LINUX_OS }}
     
     steps:
         - name: 'Checkout Code' 

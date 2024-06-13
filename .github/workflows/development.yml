@@ -24,7 +24,7 @@ on:
 jobs:
   dev-jobs:
     name: PR / Issues
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.LINUX_OS }}
     permissions: write-all
 
     env:

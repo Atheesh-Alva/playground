@@ -38,6 +38,9 @@ jobs:
                 custom-facts: |
                   - name: Alert Action
                     value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
+                custom-actions: |
+                  - text: ${{ github.event_name == 'pull_request' && 'Go to Pull Request' || 'Go to Issue' }}
+                    url: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
 
     pr-check:
         name: Pull Request Check
@@ -64,8 +67,8 @@ jobs:
                   - name: Alert Action
                     value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
                 custom-actions: |
-                  - text: Go to PR
-                    url: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
+                  - text: Go to Pull Request
+                    url: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
 
           - name: Flutter Setup
             uses: subosito/flutter-action@v2

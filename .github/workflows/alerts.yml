@@ -60,7 +60,7 @@ jobs:
 
     issue-alert:
         name: Issue Alert
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'issues'
         runs-on: ${{ vars.LINUX_OS }}
 
         steps:

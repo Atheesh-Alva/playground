@@ -18,7 +18,7 @@ jobs:
               echo "event_name=${{ github.event_name }}"
               echo "action=${{ github.event.action }}"
               echo "issue.url=${{ github.event.issue.url }}"
-              echo "pull_request.url=${{ github.event.pull_request.url }}"
+              echo "html_url=${{ github.event.issue.html_url }}"
 
           # - name: MS Teams Notification - Flutter Team
           #   if: always() && ${{ github.event_name != 'pull_request' || github.event.action == 'closed' }}

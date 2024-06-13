@@ -2,7 +2,7 @@ name: Alerts
 
 on:
     pull_request:
-        types: [ opened, closed, reopened ]
+        types: [ opened, closed, reopened, synchronize ]
 
     issues:
         types: [ opened, deleted, closed, reopened ]
@@ -11,29 +11,32 @@ jobs:
     alert:
         name: PR / Issue Alert
         runs-on: ${{ vars.LINUX_OS }}
-    
+
+        env:
+          NOTIFY:
+
         steps:
           - name: Logs
             run: |
               echo "event_name=${{ github.event_name }}"
               echo "action=${{ github.event.action }}"
               echo "issue.url=${{ github.event.issue.url }}"
-              echo "html_url=${{ github.event.issue.html_url }}"
+              echo "pull_request.html_url=${{ github.event.issue.pull_request.html_url }}"
 
-          # - name: MS Teams Notification - Flutter Team
-          #   if: always() && ${{ github.event_name != 'pull_request' || github.event.action == 'closed' }}
-          #   uses: freenet-actions/ms-teams-deploy-card@master
-          #   id: ms_teams_ostrum
-          #   with:
-          #       github-token: ${{ github.token }}
-          #       webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-          #       show-on-start: false
-          #       card-layout-exit: complete
-          #       enable-review-diffs-action: false
-          #       include-files: false
-          #       custom-facts: |
-          #         - name: Alert Action
-          #           value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
+          - name: MS Teams Notification - Flutter Team
+            if: always() && (${{ github.event_name != 'pull_request' || github.event.action == 'closed' }})
+            uses: freenet-actions/ms-teams-deploy-card@master
+            id: ms_teams_ostrum
+            with:
+                github-token: ${{ github.token }}
+                webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+                show-on-start: false
+                card-layout-exit: complete
+                enable-review-diffs-action: false
+                include-files: false
+                custom-facts: |
+                  - name: Alert Action
+                    value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
 
     pr-check:
         name: Pull Request Check

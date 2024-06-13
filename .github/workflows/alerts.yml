@@ -7,50 +7,16 @@ on:
     issues:
         types: [ opened, deleted, closed, reopened ]
 
-env:
-  PR_LINK: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
-  ISSUE_LINK: ${{ github.server_url }}/${{ github.repository }}/issues/${{ github.event.issue.number }}
-
 jobs:
-    alert:
-        name: PR / Issue Alert
+    pr-alert:
+        name: PR Alert
+        if: github.event_name == 'pull_request'
         runs-on: ${{ vars.LINUX_OS }}
 
         steps:
-          - name: Logs
-            run: |
-              echo "event_name=${{ github.event_name }}"
-              echo "action=${{ github.event.action }}"
-              echo "issue.url=${{ github.event.issue.url }}"
-              echo "issue.number=${{ github.event.issue.number }}"
-
-          - name: MS Teams Notification - Flutter Team
-            if: ${{ always() && (github.event_name != 'pull_request' || github.event.action == 'closed') }}
-            uses: freenet-actions/ms-teams-deploy-card@master
-            id: ms_teams_ostrum
-            with:
-                github-token: ${{ github.token }}
-                webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-                show-on-start: false
-                card-layout-exit: complete
-                enable-review-diffs-action: false
-                include-files: false
-                custom-facts: |
-                  - name: Alert Action
-                    value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
-                custom-actions: |
-                  - text: ${{ github.event_name == 'pull_request' && 'Go to Pull Request' || 'Go to Issue' }}
-                    url: ${{ github.event_name == 'pull_request' && env.PR_LINK || env.ISSUE_LINK  }}
-
-    pr-check:
-        name: Pull Request Check
-        needs: alert
-        if: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
-        runs-on: ${{ vars.LINUX_OS }}
-
-        steps:
-          # - name: Checkout Code
-          #   uses: actions/checkout@v3
+          - name: Checkout Code
+            if: github.event.action != 'closed'
+            uses: actions/checkout@v3
 
           - name: MS Teams Notification - Flutter Team
             if: always()
@@ -67,24 +33,51 @@ jobs:
                   - name: Alert Action
                     value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
                 custom-actions: |
-                  - text: Go to Pull Request
-                    url: ${{ env.PR_LINK }}
+                  - text: 'Go to Pull Request'
+                    url: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
 
-          # - name: Flutter Setup
-          #   uses: subosito/flutter-action@v2
-          #   with:
-          #       channel: "stable"
-          #       flutter-version: ${{ vars.FLUTTER_VERSION }}
-          #       cache: true
+          - name: Flutter Setup
+            if: github.event.action != 'closed'
+            uses: subosito/flutter-action@v2
+            with:
+                channel: "stable"
+                flutter-version: ${{ vars.FLUTTER_VERSION }}
+                cache: true
   
-          # - name: Flutter Clean & Get Packages
-          #   run: |
-          #     flutter clean
-          #     flutter pub get
+          - name: Flutter Clean & Get Packages
+            if: github.event.action != 'closed'
+            run: |
+              flutter clean
+              flutter pub get
   
-          # - name: Cache Flutter SDK
-          #   uses: actions/cache@v2
-          #   with:
-          #     path: /opt/hostedtoolcache/flutter
-          #     key: flutter-${{ hashFiles('**/pubspec.lock') }}
-    
+          - name: Cache Flutter SDK
+            if: github.event.action != 'closed'
+            uses: actions/cache@v2
+            with:
+              path: /opt/hostedtoolcache/flutter
+              key: flutter-${{ hashFiles('**/pubspec.lock') }}
+              
+
+    issue-alert:
+        name: Issue Alert
+        if: github.event_name == 'issues'
+        runs-on: ${{ vars.LINUX_OS }}
+
+        steps:
+          - name: MS Teams Notification - Flutter Team
+            if: always()
+            uses: freenet-actions/ms-teams-deploy-card@master
+            id: ms_teams_ostrum
+            with:
+                github-token: ${{ github.token }}
+                webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+                show-on-start: false
+                card-layout-exit: complete
+                enable-review-diffs-action: false
+                include-files: false
+                custom-facts: |
+                  - name: Alert Action
+                    value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
+                custom-actions: |
+                  - text: Go to Issue
+                    url: ${{ github.server_url }}/${{ github.repository }}/issues/${{ github.event.issue.number }}

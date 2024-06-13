@@ -7,8 +7,6 @@ on:
     issues:
         types: [ opened, deleted, closed, reopened ]
 
-# TODO : Alert MS only after PR check
-
 jobs:
     alert:
         name: PR / Issue Alert
@@ -16,9 +14,9 @@ jobs:
     
         steps:
           - name: MS Teams Notification - Flutter Team
+            if: always() && ${{ github.event_name != 'pull_request' || github.event.action == 'closed' }}
             uses: freenet-actions/ms-teams-deploy-card@master
             id: ms_teams_ostrum
-            if: always()
             with:
                 github-token: ${{ github.token }}
                 webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
@@ -36,27 +34,25 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
         runs-on: ubuntu-latest
 
-        env:
-            FLUTTER_HOME:
-
         steps:
+          - name: Checkout Code
+            uses: actions/checkout@v3
+
           - name: Flutter Setup
             uses: subosito/flutter-action@v2
             with:
                 channel: "stable"
                 flutter-version: ${{ vars.FLUTTER_VERSION }}
                 cache: true
-
-          - name: Flutter Clean
-            run: flutter clean
-
-          - name: Flutter Pub Get
-            run: flutter pub get
-        
-          - name: Cache Pub Dependencies
-            uses: actions/cache@v3
-            with:
-                path: ${{ env.FLUTTER_HOME }}/.pub-cache
-                key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-                restore-keys: ${{ runner.os }}-pub-
   
+          - name: Flutter Clean & Get Packages
+            run: |
+              flutter clean
+              flutter pub get
+  
+          - name: Cache Flutter SDK
+            uses: actions/cache@v2
+            with:
+              path: /opt/hostedtoolcache/flutter
+              key: flutter-${{ hashFiles('**/pubspec.lock') }}
+    

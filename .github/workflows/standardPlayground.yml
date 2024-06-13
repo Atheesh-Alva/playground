@@ -14,14 +14,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Actions
-        run: sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/js.json
+      # - name: Actions
+      #   run: sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/js.json
 
-      - name: Read user_data.json
-        id: user_data
+      - name: Read js.json
+        id: js
         uses: juliangruber/read-file-action@v1
         with:
-          path: assets/raw_json/user_data.json
+          path: assets/raw/js.json
 
-      - name: Echo user_data.json
-        run: echo "${{ steps.user_data.outputs.content }}"
+      - name: Echo js.json
+        run: echo "${{ steps.js.outputs.content }}"

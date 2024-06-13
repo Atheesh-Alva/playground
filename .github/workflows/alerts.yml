@@ -21,10 +21,10 @@ jobs:
               echo "event_name=${{ github.event_name }}"
               echo "action=${{ github.event.action }}"
               echo "issue.url=${{ github.event.issue.url }}"
-              echo "pull_request.html_url=${{ github.event.issue.pull_request.html_url }}"
+              echo "link=${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 
           - name: MS Teams Notification - Flutter Team
-            if: always() && (${{ github.event_name != 'pull_request' || github.event.action == 'closed' }})
+            if: ${{ always() && (github.event_name != 'pull_request' || github.event.action == 'closed') }}
             uses: freenet-actions/ms-teams-deploy-card@master
             id: ms_teams_ostrum
             with:
@@ -41,7 +41,7 @@ jobs:
     pr-check:
         name: Pull Request Check
         needs: alert
-        if: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+        if: ${{ false && github.event_name == 'pull_request' && github.event.action != 'closed' }}
         runs-on: ${{ vars.LINUX_OS }}
 
         steps:

@@ -52,7 +52,7 @@ jobs:
                 custom-facts: |
                   - name: Alert Action
                     value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
-
+              
           - name: Flutter Setup
             uses: subosito/flutter-action@v2
             with:

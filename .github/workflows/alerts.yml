@@ -56,7 +56,6 @@ jobs:
             with:
               path: /opt/hostedtoolcache/flutter
               key: flutter-${{ hashFiles('**/pubspec.lock') }}
-              
 
     issue-alert:
         name: Issue Alert

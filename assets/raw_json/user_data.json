@@ -1,0 +1,23 @@
+{
+    "name": "Playground - Debug",
+    "origin": "Developer Mode",
+    "places": [
+        {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        {
+            "city": "Mangalore",
+            "country": "India"
+        },
+        {
+            "city": "Bangalore",
+            "country": "India"
+        }
+    ],
+    "occupation": {
+        "role": "Senior Developer",
+        "company": "Oracle Redbull Racing"
+    },
+    "colour": false
+}

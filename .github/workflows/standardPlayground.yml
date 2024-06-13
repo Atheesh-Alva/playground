@@ -14,8 +14,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # - name: Actions
-      #   run: sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/js.json
+      - name: Actions
+        run: sed -i 's|.*|'"${{ vars.DEBUG_JSON }}"'|' assets/raw/js.json
+        # sed -i '' 's|cognitoBase64 = \x27\x27|cognitoBase64 = \x27${{ secrets.ES_COGNITO_CREDENTIALS_JSON_BASE64 }}\x27|' lib/app/app_credentials.dart
 
       - name: Read js.json
         id: js

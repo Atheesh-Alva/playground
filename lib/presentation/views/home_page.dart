@@ -21,9 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _loadJsonData() async {
-    final String jsonString = await rootBundle.loadString(
-      'assets/raw_json/user_data.json',
-    );
+    final String jsonString = await rootBundle.loadString('assets/raw/js.json');
     if (mounted) {
       setState(() {
         _data = jsonDecode(jsonString);

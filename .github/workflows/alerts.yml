@@ -38,6 +38,21 @@ jobs:
           - name: Checkout Code
             uses: actions/checkout@v3
 
+          - name: MS Teams Notification - Flutter Team
+            if: always()
+            uses: freenet-actions/ms-teams-deploy-card@master
+            id: ms_teams_ostrum
+            with:
+                github-token: ${{ github.token }}
+                webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+                show-on-start: false
+                card-layout-exit: complete
+                enable-review-diffs-action: false
+                include-files: false
+                custom-facts: |
+                  - name: Alert Action
+                    value: '${{ github.event.action }} by ${{ github.event.sender.login }}'
+
           - name: Flutter Setup
             uses: subosito/flutter-action@v2
             with:

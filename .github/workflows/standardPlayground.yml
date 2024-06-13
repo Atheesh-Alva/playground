@@ -11,5 +11,17 @@ jobs:
     runs-on: ${{ vars.LINUX_OS }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Actions
         run: sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|g' assets/raw_json/user_data.json
+
+      - name: Read user_data.json
+        id: user_data
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: assets/raw_json/user_data.json
+
+      - name: Echo user_data.json
+        run: echo "${{ steps.user_data.outputs.content }}"

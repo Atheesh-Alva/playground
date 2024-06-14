@@ -16,43 +16,45 @@ jobs:
 
       - name: Actions
         run: |
-          sed -i "s/.*/${{ vars.DEBUG_JSON }}/" assets/raw/js.json
+          DEBUG_JSON=${{ vars.DEBUG_JSON }}
+          sed -i "s/.*/${DEBUG_JSON}/" assets/raw/js.json
         # sed -i 's|.*|'"${{ vars.DEBUG_JSON }}"'|' assets/raw/js.json
         # sed -i '' 's|cognitoBase64 = \x27\x27|cognitoBase64 = \x27${{ secrets.ES_COGNITO_CREDENTIALS_JSON_BASE64 }}\x27|' lib/app/app_credentials.dart
 
-      - name: Setup JAVA for Android
-        uses: actions/setup-java@v3
+      - name: Read js.json
+        id: js
+        uses: juliangruber/read-file-action@v1
         with:
-          distribution: "zulu"
-          java-version: ${{ vars.JAVA_VERSION }}
-          cache: "gradle"
+          path: assets/raw/js.json
 
-      - name: Flutter Setup
-        uses: subosito/flutter-action@v2
-        with:
-            channel: "stable"
-            flutter-version: ${{ vars.FLUTTER_VERSION }}
-            cache: true
-
-      - name: Build APK File
+      - name: Echo js.json
         run: |
-          flutter build apk \
-            --target=lib/main.dart \
-            --release
+          output=${{ steps.js.outputs.content }}
+          echo -n "$output
 
-      - name: Upload APK to GitHub Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'APK_JSON'
-          path: build/app/outputs/flutter-apk/app-release.apk
-            
-      # - name: Read js.json
-      #   id: js
-      #   uses: juliangruber/read-file-action@v1
+      # - name: Setup JAVA for Android
+      #   uses: actions/setup-java@v3
       #   with:
-      #     path: assets/raw/js.json
+      #     distribution: "zulu"
+      #     java-version: ${{ vars.JAVA_VERSION }}
+      #     cache: "gradle"
 
-      # - name: Echo js.json
+      # - name: Flutter Setup
+      #   uses: subosito/flutter-action@v2
+      #   with:
+      #       channel: "stable"
+      #       flutter-version: ${{ vars.FLUTTER_VERSION }}
+      #       cache: true
+
+      # - name: Build APK File
       #   run: |
-      #     output=${{ steps.js.outputs.content }}
-      #     echo -n "$output
+      #     flutter build apk \
+      #       --target=lib/main.dart \
+      #       --release
+
+      # - name: Upload APK to GitHub Artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: 'APK_JSON'
+      #     path: build/app/outputs/flutter-apk/app-release.apk
+            

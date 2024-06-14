@@ -28,5 +28,5 @@ jobs:
 
       - name: Echo js.json
         run: |
-          output=$({{ steps.js.outputs.content }})
+          output=${{ steps.js.outputs.content }}
           echo -n "$output

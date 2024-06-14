@@ -11,23 +11,30 @@ jobs:
     runs-on: ${{ vars.LINUX_OS }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Edit file
+      - name: Create file
         run: |
-          sed -i 's/.*/_test = \x27${{ vars.ID_ATHEESH }}\x27/' lib/main.dart
-        # sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
+          printf "Hello\nWorld\n" > hw.txt
+          echo First > other.txt
+          echo Second Line >> other.txt
+          echo Third >> other.txt
+          
+      # - name: Checkout repository
+      #   uses: actions/checkout@v3
 
-      - name: Read lib/main.dart
-        id: encoded
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: lib/main.dart
+      # - name: Edit file
+      #   run: |
+      #     sed -i 's|.*|${{ vars.ID_ATHEESH }}|' assets/raw/encoded.base64
+      #   # sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
 
-      - name: Echo lib/main.dart
-        run: |
-          echo "${{ steps.encoded.outputs.content }}"
+      # - name: Read encoded.base64
+      #   id: encoded
+      #   uses: juliangruber/read-file-action@v1
+      #   with:
+      #     path: assets/raw/encoded.base64
+
+      # - name: Echo encoded.base64
+      #   run: |
+      #     echo "${{ steps.encoded.outputs.content }}"
 
       # - name: Setup JAVA for Android
       #   uses: actions/setup-java@v3

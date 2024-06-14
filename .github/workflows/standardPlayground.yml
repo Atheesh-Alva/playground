@@ -29,8 +29,7 @@ jobs:
 
       - name: Echo js.json
         run: |
-          output=${{ steps.js.outputs.content }}
-          echo -n "$output
+          echo "${{ steps.js.outputs.content }}"
 
       # - name: Setup JAVA for Android
       #   uses: actions/setup-java@v3

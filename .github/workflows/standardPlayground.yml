@@ -38,8 +38,6 @@ jobs:
         run: |
           flutter build apk \
             --target=lib/main.dart \
-            --build-name=1 \
-            --build-number=0.0.1 \
             --release
 
       - name: Upload APK to GitHub Artifacts

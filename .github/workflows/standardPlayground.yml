@@ -16,20 +16,18 @@ jobs:
 
       - name: Actions
         run: |
-          DEBUG_JSON=${{ vars.DEBUG_JSON }}
-          sed -i "s/.*/${DEBUG_JSON}/" assets/raw/js.json
-        # sed -i 's|.*|'"${{ vars.DEBUG_JSON }}"'|' assets/raw/js.json
+          sed -i 's|.*|'"${{ vars.DEBUG_JSON }}"'|' assets/raw/encoded.base64
         # sed -i '' 's|cognitoBase64 = \x27\x27|cognitoBase64 = \x27${{ secrets.ES_COGNITO_CREDENTIALS_JSON_BASE64 }}\x27|' lib/app/app_credentials.dart
 
-      - name: Read js.json
-        id: js
+      - name: Read encoded.base64
+        id: encoded
         uses: juliangruber/read-file-action@v1
         with:
-          path: assets/raw/js.json
+          path: assets/raw/encoded.base64
 
-      - name: Echo js.json
+      - name: Echo encoded.base64
         run: |
-          echo "${{ steps.js.outputs.content }}"
+          echo "${{ steps.encoded.outputs.content }}"
 
       # - name: Setup JAVA for Android
       #   uses: actions/setup-java@v3

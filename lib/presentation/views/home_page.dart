@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,10 +20,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _loadJsonData() async {
-    final String jsonString = await rootBundle.loadString('assets/raw/js.json');
+    final String base64String = await rootBundle.loadString(
+      'assets/raw/encoded.base64',
+    );
+    final dataInBytes = base64Decode(base64String);
+    final jsonData = jsonDecode(utf8.decode(dataInBytes));
     if (mounted) {
       setState(() {
-        _data = jsonDecode(jsonString);
+        _data = jsonData;
       });
     }
   }

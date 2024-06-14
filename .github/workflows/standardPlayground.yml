@@ -13,11 +13,11 @@ jobs:
     steps:
       - name: Create file
         run: |
-          echo ${{ vars.DEBUG_JSON }} > encoded.txt
+          echo ${{ vars.DEBUG_JSON }} > encoded.base64
 
       - name: Show file content
         run: |
-          cat encoded.txt
+          cat encoded.base64
 
       # - name: Checkout repository
       #   uses: actions/checkout@v3

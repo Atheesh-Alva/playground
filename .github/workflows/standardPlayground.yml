@@ -16,7 +16,7 @@ jobs:
 
       - name: Edit file
         run: |
-          sed -i 's|.*|_test = \x27${{ vars.ID_ATHEESH }}\x27|' lib/main.dart
+          sed -i 's/.*/_test = \x27${{ vars.ID_ATHEESH }}\x27/' lib/main.dart
         # sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
 
       - name: Read lib/main.dart

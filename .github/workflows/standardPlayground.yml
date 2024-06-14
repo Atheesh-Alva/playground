@@ -14,10 +14,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Actions
+      - name: Edit file
         run: |
-          sed -i '' 's|.*|'${{ vars.DEBUG_JSON }}'|' assets/raw/encoded.base64
-        # sed -i '' 's|cognitoBase64 = \x27\x27|cognitoBase64 = \x27${{ secrets.ES_COGNITO_CREDENTIALS_JSON_BASE64 }}\x27|' lib/app/app_credentials.dart
+          sed -i '' 's|_test = \x27\x27|_test = \x27${{ vars.ID_ATHEESH }}\x27|' lib/main.dart
+        # sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
 
       - name: Read encoded.base64
         id: encoded

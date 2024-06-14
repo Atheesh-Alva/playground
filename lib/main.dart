@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String _test = '';
     return MaterialApp(
       title: 'Playground',
       theme: ThemeData(

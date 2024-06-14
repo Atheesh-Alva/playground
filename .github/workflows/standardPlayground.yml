@@ -23,4 +23,4 @@ jobs:
         run: pip install awscli
 
       - name: Get AppSync schema
-        run: aws appsync get-schema --api-id ${{ secrets.AWS_APPSYNC_API_ID }} --output text > schema.graphql
+        run: aws appsync get-schema --api-id ${{ secrets.AWS_APPSYNC_API_ID }} --output text --debug > schema.graphql

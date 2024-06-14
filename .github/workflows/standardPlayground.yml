@@ -31,15 +31,15 @@ jobs:
           sed -i 's|assets/raw/encoded.base64|encoded.base64|' lib/presentation/views/home_page.dart
         # sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
 
-      - name: Read encoded.base64
+      - name: Read lib/presentation/views/home_page.dart
         id: encoded
         uses: juliangruber/read-file-action@v1
         with:
-          path: assets/raw/encoded.base64
+          path: lib/presentation/views/home_page.dart
 
-      # - name: Echo encoded.base64
-      #   run: |
-      #     echo "${{ steps.encoded.outputs.content }}"
+      - name: Echo encoded.base64
+        run: |
+          echo "${{ steps.encoded.outputs.content }}"
 
       # - name: Setup JAVA for Android
       #   uses: actions/setup-java@v3

@@ -16,16 +16,16 @@ jobs:
 
       - name: Edit file
         run: |
-          sed -i '' 's|_test = \x27\x27|_test = \x27${{ vars.ID_ATHEESH }}\x27|' lib/main.dart
+          sed -i '' 's|_test = \x27\x27|_test = \x27Hello\x27|' lib/main.dart
         # sed -i '' 's|.*|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
 
-      - name: Read encoded.base64
+      - name: Read lib/main.dart
         id: encoded
         uses: juliangruber/read-file-action@v1
         with:
-          path: assets/raw/encoded.base64
+          path: lib/main.dart
 
-      - name: Echo encoded.base64
+      - name: Echo lib/main.dart
         run: |
           echo "${{ steps.encoded.outputs.content }}"
 

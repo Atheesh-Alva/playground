@@ -10,47 +10,17 @@ jobs:
     name: Actions
     runs-on: ${{ vars.LINUX_OS }}
 
+    env:
+      AWS_ACCESS_KEY_ID: 'https://nalw7rwuybdp5juqqq5m3t26rm.appsync-api.eu-west-2.amazonaws.com/graphql'
+      AWS_SECRET_ACCESS_KEY: 'da2-cfoextlqxbbxhiyqfqmyza57fa'
+      AWS_REGION: 'eu-west-2'
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Update encoded.base64
-        run: |
-          sed -i 's|^.*$|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
+      - name: Install AWS CLI
+        run: pip install awscli
 
-      - name: Read encoded.base64
-        id: encoded
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: assets/raw/encoded.base64
-
-      - name: Echo encoded.base64
-        run: |
-          echo "${{ steps.encoded.outputs.content }}"
-
-      - name: Setup JAVA for Android
-        uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: ${{ vars.JAVA_VERSION }}
-          cache: "gradle"
-
-      - name: Flutter Setup
-        uses: subosito/flutter-action@v2
-        with:
-            channel: "stable"
-            flutter-version: ${{ vars.FLUTTER_VERSION }}
-            cache: true
-
-      - name: Build APK File
-        run: |
-          flutter build apk \
-            --target=lib/main.dart \
-            --release
-
-      - name: Upload APK to GitHub Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'APK_JSON'
-          path: build/app/outputs/flutter-apk/app-release.apk
-            
+      - name: Get AppSync schema
+        run: aws appsync get-schema --api-id 5bf7gyppzzczna7vog65dthndi --output file://schema.graphql

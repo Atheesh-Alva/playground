@@ -25,7 +25,8 @@ jobs:
         uses: juliangruber/read-file-action@v1
         with:
           path: assets/raw/js.json
-      
+
       - name: Echo js.json
         run: |
-          echo "${{ steps.js.outputs.content }}"
+          output=$({{ steps.js.outputs.content }})
+          echo -n "$output

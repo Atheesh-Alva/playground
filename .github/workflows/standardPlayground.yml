@@ -27,7 +27,7 @@ jobs:
           AWS_REGION: ${{ env.AWS_REGION }}
           AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
         run: |
-          aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION > schema.graphql
+          aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --outfile schema.graphql
 
       # - name: Get AppSync schema
       #   run: aws appsync get-schema --api-id ${{ secrets.AWS_APPSYNC_API_ID }} --output text --debug > schema.graphql

@@ -26,6 +26,9 @@ jobs:
         run: npm install -g aws-appsync
 
       - name: Set AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: aws configure --profile Atheesh_OT
 
       - name: Fetch AppSync Schema

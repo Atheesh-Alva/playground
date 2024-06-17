@@ -17,20 +17,20 @@ jobs:
       AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Testing
         run: |
           echo '{"name": "Developer"}' >> test.json
           cat test.json
           base64 test.json > test.base64
-          sed -i '1,$d' schema.base64 > assets/raw/encoded.base64
+          sed -i '1,$d' test.base64 > assets/raw/encoded.base64
           ls
           cd assets/raw
           echo "CHANGED DIR!"
           ls
           cat encoded.base64
-
-      # - name: Checkout code
-      #   uses: actions/checkout@v3
 
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v1

@@ -33,7 +33,9 @@ jobs:
           aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --no-include-directives schema.json
           base64 schema.json > schema.base64
           sed -i '1,$d' schema.base64 > assets/raw/encoded.base64
-          cat assets/raw/encoded.base64
+          cd assets/raw
+          ls
+          cat encoded.base64
         # base64 -i test_json.json -o test_json.base64 FOR MACOS
 
       # - name: Setup JAVA for Android

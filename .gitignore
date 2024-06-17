@@ -42,4 +42,4 @@ licenses_beta.json
 licenses_prod.json
 
 #   Ignore raw sensive data
-assets/raw/
+assets/raw/*.json

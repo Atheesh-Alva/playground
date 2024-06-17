@@ -22,19 +22,11 @@ jobs:
 
       - name: Testing
         run: |
+          cd assets/raw
           echo '{"name": "Developer"}' >> test.json
           cat test.json
           base64 test.json > test.base64
           cat test.base64
-          sed -i '1,$d' test.base64 > assets/raw/encoded.base64
-          ls
-          cd assets/raw
-          echo "CHANGED DIR!"
-          ls
-          echo "DISPLAY ENCODED!"
-          cat encoded.base64
-          echo "DISPLAY JS!"
-          cat js.json
 
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v1

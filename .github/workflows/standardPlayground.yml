@@ -44,8 +44,7 @@ jobs:
           AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
         run: |
           aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --no-include-directives outfile=schema.graphql
+          ls
+          cat schema.graphql
         # aws-appsync get-schema --api-id $AWS_API_ID --region $AWS_REGION --output json > schema.json
         # run: aws appsync get-schema --api-id ${{ secrets.AWS_APPSYNC_API_ID }} --output text --debug > schema.graphql
-
-      - name: Print schema.graphql
-        run: cat schema.graphql

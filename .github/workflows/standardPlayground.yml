@@ -29,6 +29,7 @@ jobs:
 
       - name: Fetch AWS AppSync Schema
         run: |
+          cd assets/raw
           npm install -g aws-appsync
           aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --no-include-directives schema.json
           cd assets/raw

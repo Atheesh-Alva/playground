@@ -32,7 +32,6 @@ jobs:
           cd assets/raw
           npm install -g aws-appsync
           aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --no-include-directives schema.json
-          cd assets/raw
           base64 schema.json > encoded.base64
           cat encoded.base64
         # base64 -i test_json.json -o test_json.base64 FOR MACOS

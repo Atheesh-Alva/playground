@@ -14,6 +14,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: 'eu-west-2'
+      AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
 
     steps:
       - name: Checkout code
@@ -26,25 +27,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # - name: Install AWS CLI
-      #   run: pip install awscli
-
-      - name: Install aws-appsync
-        run: npm install -g aws-appsync
-
-      # - name: Set AWS credentials
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #   run: aws configure --profile Atheesh_OT
-
-      - name: Fetch AppSync Schema
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
+      - name: Fetch AWS AppSync Schema
         run: |
+          npm install -g aws-appsync
           aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --no-include-directives schema.json
-          ls
           cat schema.json
-        # aws-appsync get-schema --api-id $AWS_API_ID --region $AWS_REGION --output json > schema.json
-        # run: aws appsync get-schema --api-id ${{ secrets.AWS_APPSYNC_API_ID }} --output text --debug > schema.graphql

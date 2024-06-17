@@ -19,8 +19,8 @@ jobs:
     steps:
       - name: Convert file to base64
         run: |
-          echo "This is the data to be inserted" >> test_json.txt
-          cat test_json.txt
+          echo '{"name":"jsdaniell", "password":"mypass"}' >> test_json.json
+          cat test_json.json
         # base64 -i clientJson.json -o client.base64
 
 

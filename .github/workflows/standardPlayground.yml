@@ -33,7 +33,13 @@ jobs:
           npm install -g aws-appsync
           aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --no-include-directives schema.json
           base64 schema.json > schema.base64
-          cat schema.base64
+          ls
+          cd ..
+          echo "CHANGED TO ASSETS"
+          ls
+          cd ..
+          echo "CHANGED TO MAIN"
+          ls
         # base64 -i test_json.json -o test_json.base64 FOR MACOS
 
       # - name: Setup JAVA for Android

@@ -20,14 +20,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _loadJsonData() async {
-    final String base64String = await rootBundle.loadString(
-      'assets/raw/encoded.base64',
+    final String jsonString = await rootBundle.loadString(
+      'assets/raw/schema.json',
     );
-    final dataInBytes = base64Decode(base64String);
-    final jsonData = jsonDecode(utf8.decode(dataInBytes));
+    // final dataInBytes = base64Decode(jsonString);
+    // final jsonData = jsonDecode(utf8.decode(dataInBytes));
     if (mounted) {
       setState(() {
-        _data = jsonData;
+        _data = jsonDecode(jsonString);
       });
     }
   }
@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: (_data.isEmpty)
             ? Theme.of(context).colorScheme.inversePrimary
-            : _data["colour"]
+            : _data["colour"] ?? false
                 ? Colors.greenAccent
                 : Colors.redAccent,
         title: Text(widget.title),
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         color: (_data.isEmpty)
             ? Theme.of(context).colorScheme.inversePrimary
-            : _data["colour"]
+            : _data["colour"] ?? false
                 ? Colors.greenAccent.shade100
                 : Colors.redAccent.shade100,
         child: ListView(

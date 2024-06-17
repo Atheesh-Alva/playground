@@ -38,14 +38,14 @@ jobs:
       #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #   run: aws configure --profile Atheesh_OT
 
-      # - name: Fetch AppSync Schema
-      #   env:
-      #     AWS_REGION: ${{ env.AWS_REGION }}
-      #     AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
-      #   run: |
-      #     aws-appsync get-schema --api-id $AWS_API_ID --region $AWS_REGION --output json > schema.json
+      - name: Fetch AppSync Schema
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
+        run: |
+          aws-appsync get-schema --api-id $AWS_API_ID --region $AWS_REGION --output json > schema.json
         # aws appsync get-introspection-schema --api-id $AWS_API_ID --format SDL --region $AWS_REGION --no-include-directives outfile=schema.graphql
         # run: aws appsync get-schema --api-id ${{ secrets.AWS_APPSYNC_API_ID }} --output text --debug > schema.graphql
 
-      # - name: Print schema
-      #   run: cat schema.json
+      - name: Print schema
+        run: cat schema.json

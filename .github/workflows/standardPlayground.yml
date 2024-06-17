@@ -47,5 +47,5 @@ jobs:
         # aws-appsync get-schema --api-id $AWS_API_ID --region $AWS_REGION --output json > schema.json
         # run: aws appsync get-schema --api-id ${{ secrets.AWS_APPSYNC_API_ID }} --output text --debug > schema.graphql
 
-      - name: Print schema
-        run: cat schema.json
+      - name: Print schema.graphql
+        run: cat schema.graphql

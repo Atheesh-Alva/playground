@@ -21,7 +21,8 @@ jobs:
         run: |
           echo '{"name":"jsdaniell", "password":"mypass"}' >> test_json.json
           cat test_json.json
-        # base64 -i clientJson.json -o client.base64
+          base64 -i test_json.json -o test_json.base64
+          cat test_json.base64
 
 
       # - name: Checkout code

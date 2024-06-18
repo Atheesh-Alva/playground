@@ -10,7 +10,7 @@ env:
   # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
 # ******************************************** DO NOT ALTER ANY CODE BELOW ********************************************
-  
+    
 name: Development Actions
 
 on:

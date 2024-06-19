@@ -28,7 +28,8 @@ jobs:
             --api-id $AWS_API_ID \
             --format SDL \
             --region $AWS_REGION \
-            --no-include-directives schema.json
+            --no-include-directives schema.graphql
+          graphql --schema ./schema.graphql --out schema.json
           ls
           cat schema.json
           

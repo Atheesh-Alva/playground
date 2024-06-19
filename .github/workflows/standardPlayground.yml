@@ -22,6 +22,7 @@ jobs:
 
       - name: Coping schema
         run: |
+          cd assets/raw/release
           npm install -g aws-appsync
           aws appsync get-introspection-schema \
             --api-id $AWS_API_ID \
@@ -29,7 +30,6 @@ jobs:
             --region $AWS_REGION \
             --no-include-directives appsync_schema.json
           sed -i 's|^.*$|$(cat appsync_schema.json)|' assets/raw/release/schema.json
-          cd assets/raw/release
           ls
           cat schema.json
           

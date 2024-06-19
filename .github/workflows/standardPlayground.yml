@@ -31,6 +31,8 @@ jobs:
             --no-include-directives appsync_schema.json
           sed -i 's|^.*$|$(cat appsync_schema.json)|' schema.json
           ls
+          cat appsync_schema.json
+          echo "********************************************************************************************************************************************"
           cat schema.json
           
 

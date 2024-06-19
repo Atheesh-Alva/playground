@@ -26,10 +26,9 @@ jobs:
           npm install -g aws-appsync
           aws appsync get-introspection-schema \
             --api-id $AWS_API_ID \
-            --format SDL \
+            --format JSON \
             --region $AWS_REGION \
-            --no-include-directives schema.graphql
-          graphql --schema ./schema.graphql --out schema.json
+            --no-include-directives schema.json
           ls
           cat schema.json
           

@@ -1,0 +1,25 @@
+{
+    "dart.debugExternalPackageLibraries": true,
+    "dart.debugSdkLibraries": false,
+    "dart.renameFilesWithClasses": "always",
+    "dart.lineLength": 150,
+    "[dart]": {
+        "editor.rulers": [
+            150,
+        ],
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.suggest.insertMode": "replace",
+        "editor.defaultFormatter": "Dart-Code.dart-code",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.formatOnType": true,
+        "editor.comments.insertSpace": true,
+    },
+    // licenser: https://marketplace.visualstudio.com/items?itemName=ymotongpoo.licenser
+    "licenser.author": "Atheesh",
+    "licenser.customHeader": "Playground App for test platform!",
+    "licenser.customSPDXId": "Custom",
+    "licenser.license": "Custom",
+}

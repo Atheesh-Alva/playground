@@ -29,6 +29,7 @@ jobs:
             --region $AWS_REGION \
             --no-include-directives appsync_schema.json
           sed -i 's|^.*$|$(cat appsync_schema.json)|' assets/raw/release/schema.json
+          cd assets/raw/release
           ls
           
 

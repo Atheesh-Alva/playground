@@ -20,7 +20,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Coping schema
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fetch AWS AppSync-Schema
         run: |
           cd assets/raw/release
           npm install -g aws-appsync
@@ -29,29 +36,8 @@ jobs:
             --format JSON \
             --region $AWS_REGION \
             --no-include-directives schema.json
-          ls
           cat schema.json
           
-
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: ${{ env.AWS_REGION }}
-
-      # - name: Fetch AWS AppSync Schema
-      #   run: |
-      #     cd assets/raw
-      #     npm install -g aws-appsync
-      #     aws appsync get-introspection-schema \
-      #       --api-id $AWS_API_ID \
-      #       --format SDL \
-      #       --region $AWS_REGION \
-      #       --no-include-directives schema.json
-        # base64 schema.json > schema.base64 FOR LINUXOS
-        # base64 -i test_json.json -o test_json.base64 FOR MACOS
-
       # - name: Setup JAVA for Android
       #   uses: actions/setup-java@v3
       #   with:

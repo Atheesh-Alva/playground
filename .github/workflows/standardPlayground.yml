@@ -11,8 +11,6 @@ jobs:
     runs-on: ${{ vars.LINUX_OS }}
 
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: 'eu-west-2'
       AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
 
@@ -29,9 +27,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: List CodeCommit Repositories
+      - name: Fetch AWS AppSync-Schema
         run: |
-          aws codecommit list-repositories
+          cd assets/raw/release
+          npm install -g aws-appsync
+          aws appsync get-introspection-schema \
+            --api-id $AWS_API_ID \
+            --format JSON \
+            --region $AWS_REGION \
+            --no-include-directives schema.json
+          cat schema.json
+            
+      # - name: List CodeCommit Repositories
+      #   run: |
+      #     aws codecommit list-repositories
 
     # - name: Push to CodeCommit
     #   run: |

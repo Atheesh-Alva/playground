@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:playground/data/schema_parser.dart';
 import 'package:playground/raw/mode.dart';
+import 'package:aws_client/sqs_2012_11_05.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -36,33 +37,28 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _designText({required Map<String, dynamic> api}) => InkWell(
         onTap: () => log(api["api"]),
         child: Container(
-          margin: EdgeInsets.symmetric(vertical: 4.0),
-          decoration: new BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
-            border: Border.all(
-              color: Colors.purple,
-            ),
+          margin: const EdgeInsets.symmetric(vertical: 4.0),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+            border: Border.all(color: Colors.purple),
             color: Colors.white,
           ),
           child: Column(
             children: [
               Text(
                 api["apiName"],
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-              Text(
+              const Text(
                 'Input Parameters',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
-              Text(
+              const Text(
                 'Output Parameters:',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -78,33 +74,57 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: (_data.isEmpty) ? Theme.of(context).colorScheme.inversePrimary : Colors.greenAccent,
         title: Text(widget.title),
-        actions: [
+        actions: const [
           IconButton(
             onPressed: null,
-            icon: const Icon(
+            icon: Icon(
               Icons.info,
               color: Colors.black,
             ),
           ),
         ],
       ),
-      body: Container(
-        color: (_data.isEmpty) ? Theme.of(context).colorScheme.inversePrimary : Colors.greenAccent.shade100,
-        child: ListView(
-          children: [
-            const Center(
-              child: Image(image: AssetImage('assets/images/playground.jpeg')),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              AwsClientCredentials(
+                accessKey: "",
+                secretKey: "",
+              );
+              final Sqs sqs = Sqs(region: 'eu-west-2');
+              SendMessageResult sendMessageResult = await sqs.sendMessage(
+                messageBody: 'Hello from Dart client!',
+                queueUrl: "",
+              );
+              log("SendMessageResult: $sendMessageResult");
+              sqs.close();
+            },
+            child: const Text("SQS"),
+          ),
+          Expanded(
+            child: Container(
+              color: (_data.isEmpty) ? Theme.of(context).colorScheme.inversePrimary : Colors.greenAccent.shade100,
+              child: ListView(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                children: [
+                  const Center(
+                    child: Image(image: AssetImage('assets/images/playground.jpeg')),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const ScrollPhysics(),
+                    itemCount: _data.length,
+                    itemBuilder: (_, int index) {
+                      return _designText(api: _data[index]);
+                    },
+                  ),
+                ],
+              ),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const ScrollPhysics(),
-              itemCount: _data.length,
-              itemBuilder: (_, int index) {
-                return _designText(api: _data[index]);
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

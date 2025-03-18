@@ -12,11 +12,13 @@ jobs:
           - name: Checkout the code
             uses: actions/checkout@v2
 
-          - name: Install and set Flutter version
-            uses: subosito/flutter-action@v1.4.0
+          - name: Flutter Setup
+            uses: subosito/flutter-action@v2
             with:
-              flutter-version: ${{ vars.FLUTTER_VERSION }}
-
+                channel: "stable"
+                flutter-version: ${{ vars.FLUTTER_VERSION }}
+                cache: true
+                
           - name: Restore packages
             run: flutter pub get
             

@@ -18,7 +18,7 @@ jobs:
                 channel: "stable"
                 flutter-version: ${{ vars.FLUTTER_VERSION }}
                 cache: true
-                
+
           - name: Restore packages
             run: flutter pub get
             
@@ -27,3 +27,7 @@ jobs:
 
           - name: Run tests
             run: flutter test --coverage
+
+          - name: Upload coverage to codecov
+            run: curl -s https://codecov.io/bash
+            shell: bash

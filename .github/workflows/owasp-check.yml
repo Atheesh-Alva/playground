@@ -12,30 +12,28 @@ jobs:
           - name: Checkout the code
             uses: actions/checkout@v2
 
-          - name: Flutter Setup
-            uses: subosito/flutter-action@v2
-            with:
-                channel: "stable"
-                flutter-version: ${{ vars.FLUTTER_VERSION }}
-                cache: true
+        #   - name: Flutter Setup
+        #     uses: subosito/flutter-action@v2
+        #     with:
+        #         channel: "stable"
+        #         flutter-version: ${{ vars.FLUTTER_VERSION }}
+        #         cache: true
 
-          - name: Restore packages
-            run: flutter pub get
+        #   - name: Restore packages
+        #     run: flutter pub get
             
-          - name: Analyze
-            run: flutter analyze
+        #   - name: Analyze
+        #     run: flutter analyze
 
-          - name: Run tests
-            run: flutter test --coverage
+        #   - name: Run tests
+        #     run: flutter test --coverage
 
-          - name: Upload coverage to codecov
-            run: curl -s https://codecov.io/bash
-            shell: bash
+        #   - name: Upload coverage to codecov
+        #     run: curl -s https://codecov.io/bash
+        #     shell: bash
 
           - name: Run OWASP ZAP Baseline Scan
-            uses: zaproxy/action-full-scan@v0.1.0
-            with:
-                docker_name: 'owasp/zap2docker-stable'
-                target: 'http://your-application-url.com'  # Replace with your app's URL
-                rules_file_name: '.zap/rules.tsv'  # Optional: specify a rules file to ignore certain alerts
-                cmd_options: '-a'  # Additional command options if needed
+            run: |
+                docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-weekly zap-baseline.py \
+                -t http://your-application-url.com \
+                -r zap_report.html

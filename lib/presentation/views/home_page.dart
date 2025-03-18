@@ -11,7 +11,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Map<String, dynamic>> _data = [];
+  // final List<Map<String, dynamic>> _data = [];
 
   @override
   void initState() {
@@ -30,45 +30,45 @@ class _MyHomePageState extends State<MyHomePage> {
     // }
   }
 
-  Widget _designText({required Map<String, dynamic> api}) => InkWell(
-        onTap: () => log(api["api"]),
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 4.0),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-            border: Border.all(color: Colors.purple),
-            color: Colors.white,
-          ),
-          child: Column(
-            children: [
-              Text(
-                api["apiName"],
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-              ),
-              const Text(
-                'Input Parameters',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              const Text(
-                'Output Parameters:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+  // Widget _designText({required Map<String, dynamic> api}) => InkWell(
+  //       onTap: () => log(api["api"]),
+  //       child: Container(
+  //         margin: const EdgeInsets.symmetric(vertical: 4.0),
+  //         decoration: BoxDecoration(
+  //           borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+  //           border: Border.all(color: Colors.purple),
+  //           color: Colors.white,
+  //         ),
+  //         child: Column(
+  //           children: [
+  //             Text(
+  //               api["apiName"],
+  //               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+  //             ),
+  //             const Text(
+  //               'Input Parameters',
+  //               style: TextStyle(
+  //                 fontWeight: FontWeight.bold,
+  //                 fontSize: 16,
+  //               ),
+  //             ),
+  //             const Text(
+  //               'Output Parameters:',
+  //               style: TextStyle(
+  //                 fontWeight: FontWeight.bold,
+  //                 fontSize: 16,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: (_data.isEmpty) ? Theme.of(context).colorScheme.inversePrimary : Colors.greenAccent,
+        backgroundColor: Colors.greenAccent, // (_data.isEmpty) ? Theme.of(context).colorScheme.inversePrimary : Colors.greenAccent,
         title: Text(widget.title),
         actions: const [
           IconButton(
@@ -98,28 +98,28 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: const Text("SQS"),
           ),
-          Expanded(
-            child: Container(
-              color: (_data.isEmpty) ? Theme.of(context).colorScheme.inversePrimary : Colors.greenAccent.shade100,
-              child: ListView(
-                shrinkWrap: true,
-                physics: const ScrollPhysics(),
-                children: [
-                  const Center(
-                    child: Image(image: AssetImage('assets/images/playground.jpeg')),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const ScrollPhysics(),
-                    itemCount: _data.length,
-                    itemBuilder: (_, int index) {
-                      return _designText(api: _data[index]);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: Container(
+          //     color: (_data.isEmpty) ? Theme.of(context).colorScheme.inversePrimary : Colors.greenAccent.shade100,
+          //     child: ListView(
+          //       shrinkWrap: true,
+          //       physics: const ScrollPhysics(),
+          //       children: [
+          //         const Center(
+          //           child: Image(image: AssetImage('assets/images/playground.jpeg')),
+          //         ),
+          //         ListView.builder(
+          //           shrinkWrap: true,
+          //           physics: const ScrollPhysics(),
+          //           itemCount: _data.length,
+          //           itemBuilder: (_, int index) {
+          //             return _designText(api: _data[index]);
+          //           },
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

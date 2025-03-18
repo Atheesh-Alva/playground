@@ -1,0 +1,37 @@
+name: OWASP Dependency Check
+
+on:
+  push:
+
+jobs:
+  security-checks:
+    name: OWASP Dependency Check
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Java (required for OWASP Dependency Check)
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      # Step 3: Run OWASP Dependency Check
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'FlutterProject'
+          path: '.'
+          format: 'HTML'
+          out: 'dependency-check-reports'
+
+      # Step 4: Upload the report as an artifact
+      - name: Upload OWASP Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: owasp-report
+          path: dependency-check-reports/

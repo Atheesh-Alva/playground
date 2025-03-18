@@ -32,14 +32,10 @@ jobs:
             run: curl -s https://codecov.io/bash
             shell: bash
 
-          - name: MS Teams Notification
-            if: always()
-            uses: freenet-actions/ms-teams-deploy-card@master
-            id: ms_teams_ostrum
+          - name: Run OWASP ZAP Baseline Scan
+            uses: zaproxy/action-full-scan@v0.1.0
             with:
-                github-token: ${{ github.token }}
-                webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-                show-on-start: false
-                card-layout-exit: complete
-                enable-review-diffs-action: false
-                include-files: false
+                docker_name: 'owasp/zap2docker-stable'
+                target: 'http://your-application-url.com'  # Replace with your app's URL
+                rules_file_name: '.zap/rules.tsv'  # Optional: specify a rules file to ignore certain alerts
+                cmd_options: '-a'  # Additional command options if needed

@@ -1,9 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:playground/data/schema_parser.dart';
-import 'package:playground/raw/mode.dart';
 import 'package:aws_client/sqs_2012_11_05.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,14 +20,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _loadJsonData() async {
-    final String jsonString = await rootBundle.loadString(
-      AppMode.developerMode() ? 'assets/raw/dev/schema.json' : 'assets/raw/release/schema.json',
-    );
-    if (mounted && jsonString.isNotEmpty) {
-      setState(() {
-        _data = SchemaParser.fetchAppSyncApis(schema: jsonDecode(jsonString));
-      });
-    }
+    // final String jsonString = await rootBundle.loadString(
+    //   AppMode.developerMode() ? 'assets/raw/dev/schema.json' : 'assets/raw/release/schema.json',
+    // );
+    // if (mounted && jsonString.isNotEmpty) {
+    //   setState(() {
+    //     _data = SchemaParser.fetchAppSyncApis(schema: jsonDecode(jsonString));
+    //   });
+    // }
   }
 
   Widget _designText({required Map<String, dynamic> api}) => InkWell(

@@ -147,34 +147,34 @@ jobs:
             name: 'AAB_${{ env.BUILD_NAME }}'
             path: build/app/outputs/bundle/release/app-release.aab
 
-        - name: Setup Codemagic CLI Tools
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: pip3 install codemagic-cli-tools --break-system-packages
+        # - name: Setup Codemagic CLI Tools
+        #   if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+        #   run: pip3 install codemagic-cli-tools --break-system-packages
        
-        - name: Download AppStore API Private Key
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          id: apptstore_private_key
-          uses: timheuer/base64-to-file@v1.2
-          with:
-            fileName: appstore_private.key
-            encodedString: # ${{ secrets.OT_APP_STORE_AUTH_KEY_BASE64 }}
+        # - name: Download AppStore API Private Key
+        #   if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+        #   id: apptstore_private_key
+        #   uses: timheuer/base64-to-file@v1.2
+        #   with:
+        #     fileName: appstore_private.key
+        #     encodedString: # ${{ secrets.OT_APP_STORE_AUTH_KEY_BASE64 }}
 
-        - name: Download AppStore P12 Certificate
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          id: apptstore_p12_cert
-          uses: timheuer/base64-to-file@v1.2.4
-          with:
-            fileName: appstore_cert.p12
-            encodedString: # ${{ secrets.OT_APP_STORE_P12_BASE64 }}
+        # - name: Download AppStore P12 Certificate
+        #   if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+        #   id: apptstore_p12_cert
+        #   uses: timheuer/base64-to-file@v1.2.4
+        #   with:
+        #     fileName: appstore_cert.p12
+        #     encodedString: # ${{ secrets.OT_APP_STORE_P12_BASE64 }}
 
-        - name: Extract AppStore P12 Certificate Key
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: echo "No Extract AppStore P12 Certificate Key found!"
-            # openssl pkcs12 -in ${{ steps.apptstore_p12_cert.outputs.filePath }} -nodes -nocerts -passin pass:${{ secrets.OT_APP_STORE_P12_PASSWORD }} | openssl rsa -out $HOME/appstore_signing_cert.key
+        # - name: Extract AppStore P12 Certificate Key
+        #   if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+        #   run: echo "No Extract AppStore P12 Certificate Key found!"
+        #     # openssl pkcs12 -in ${{ steps.apptstore_p12_cert.outputs.filePath }} -nodes -nocerts -passin pass:${{ secrets.OT_APP_STORE_P12_PASSWORD }} | openssl rsa -out $HOME/appstore_signing_cert.key
 
-        - name: Setup App Store Dependencies
-          if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
-          run: echo "No Setup App Store Dependencies found!"
+        # - name: Setup App Store Dependencies
+        #   if: ${{ needs.extract-build-data.outputs.BUILD_IPA }}
+        #   run: echo "No Setup App Store Dependencies found!"
 # keychain initialize
 # app-store-connect fetch-signing-files \
 #   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
@@ -260,20 +260,20 @@ jobs:
             ${{ needs.build.outputs.BUILD-NAME }}.aab
             ${{ needs.build.outputs.BUILD-NAME }}.ipa
 
-      - name: Release App to Play Store Internal Track
-        if: ${{ needs.extract-build-data.outputs.BUILD_PSI }}
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: # ${{ secrets.OT_PLAY_STORE_SERVICE_ACCOUNT_KEY }}
-          packageName: com.ostrumtech.ostrum
-          releaseFiles: app-release.aab
-          track: internal
-          inAppUpdatePriority: 2
-          status: completed # completed or draft
+      # - name: Release App to Play Store Internal Track
+      #   if: ${{ needs.extract-build-data.outputs.BUILD_PSI }}
+      #   uses: r0adkll/upload-google-play@v1
+      #   with:
+      #     serviceAccountJsonPlainText: # ${{ secrets.OT_PLAY_STORE_SERVICE_ACCOUNT_KEY }}
+      #     packageName: com.ostrumtech.ostrum
+      #     releaseFiles: app-release.aab
+      #     track: internal
+      #     inAppUpdatePriority: 2
+      #     status: completed # completed or draft
 
-      - name: Release App to App Store TestFlight
-        if: ${{ needs.extract-build-data.outputs.BUILD_ATF }}
-        run: echo "No release to App Store Testflight found!"
+      # - name: Release App to App Store TestFlight
+      #   if: ${{ needs.extract-build-data.outputs.BUILD_ATF }}
+      #   run: echo "No release to App Store Testflight found!"
 # app-store-connect publish \
 #   --issuer-id=${{ secrets.OT_APP_STORE_ISSUER_ID }} \
 #   --key-id=${{ secrets.OT_APP_STORE_KEY_ID }} \

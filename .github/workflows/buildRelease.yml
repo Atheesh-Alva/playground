@@ -89,7 +89,7 @@ jobs:
                 
         - name: Update encoded.base64
           run: |
-            sed -i 's|^.*$|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
+            sed -i '' 's|^.*$|${{ vars.DEBUG_JSON }}|' assets/raw/encoded.base64
 
         - name: Setup JAVA for Android
           uses: actions/setup-java@v4

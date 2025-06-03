@@ -87,7 +87,7 @@ jobs:
 
       - name: Cache Flutter SDK
         if: ${{ env.ACTION_TYPE == 'PR' }}
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /opt/hostedtoolcache/flutter
           key: flutter-${{ hashFiles('**/pubspec.lock') }}

@@ -78,7 +78,7 @@ jobs:
     #       flutter pub get
 
     #   - name: Cache Flutter SDK
-    #     uses: actions/cache@v2
+    #     uses: actions/cache@v3
     #     with:
     #       path: /opt/hostedtoolcache/flutter
     #       key: flutter-${{ hashFiles('**/pubspec.lock') }}

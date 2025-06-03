@@ -1,7 +1,9 @@
 name: OWASP Dependency Check
 
 on:
-  pull_request:
+  push:
+    tags:
+    - 'OWASP-*'
 
 
 jobs:
@@ -9,31 +11,23 @@ jobs:
         runs-on: ubuntu-latest
     
         steps:
-          - name: Checkout the code
-            uses: actions/checkout@v2
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  # Needed for some analyses
 
-        #   - name: Flutter Setup
-        #     uses: subosito/flutter-action@v2
-        #     with:
-        #         channel: "stable"
-        #         flutter-version: ${{ vars.FLUTTER_VERSION }}
-        #         cache: true
+        - name: Flutter Setup
+          uses: subosito/flutter-action@v2
+          with:
+              channel: "stable"
+              flutter-version: ${{ vars.FLUTTER_VERSION }}
+              cache: true
 
-        #   - name: Restore packages
-        #     run: flutter pub get
+        - name: Restore packages
+          run: flutter pub get
             
-        #   - name: Analyze
-        #     run: flutter analyze
+        - name: Run Flutter analyze (static code analysis)
+          run: flutter analyze
 
-        #   - name: Run tests
-        #     run: flutter test --coverage
-
-        #   - name: Upload coverage to codecov
-        #     run: curl -s https://codecov.io/bash
-        #     shell: bash
-
-          # - name: Run OWASP ZAP Baseline Scan
-          #   run: |
-          #       docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-weekly zap-baseline.py \
-          #       -t http://your-application-url.com \
-          #       -r zap_report.html
+        - name: Run Flutter tests with coverage
+          run: flutter test --coverage

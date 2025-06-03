@@ -29,9 +29,9 @@ jobs:
     permissions: write-all
 
     env:
-      ACTION_TYPE:
-      SOURCE_BRANCH:
-      FLUTTER_HOME:
+      ACTION_TYPE: ''
+      SOURCE_BRANCH: ''
+      FLUTTER_HOME: ''
 
     steps:
       - name: Checkout Code
@@ -87,7 +87,7 @@ jobs:
 
       - name: Cache Flutter SDK
         if: ${{ env.ACTION_TYPE == 'PR' }}
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: /opt/hostedtoolcache/flutter
           key: flutter-${{ hashFiles('**/pubspec.lock') }}

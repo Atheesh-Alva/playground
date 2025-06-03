@@ -34,11 +34,40 @@ jobs:
       FLUTTER_HOME: ''
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-            fetch-depth: 0
+          fetch-depth: 0  # Needed for some analyses
 
+      - name: Flutter Setup
+        uses: subosito/flutter-action@v2
+        with:
+            channel: "stable"
+            flutter-version: ${{ vars.FLUTTER_VERSION }}
+            cache: true
+
+      - name: Restore packages
+        run: flutter pub get
+          
+      - name: Run Flutter analyze (Static Code Analysis)
+        run: flutter analyze
+
+      - name: Run Flutter tests with coverage
+        run: flutter test --coverage
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: '.' # adjust path to your Flutter project
+          format: table
+          exit-code: 1
+          severity: HIGH,CRITICAL,LOW,MEDIUM,UNKNOWN
+          output: trivy-report.txt  # or json, sarif, etc.
+
+      - name: Display Trivy scan report
+        run: cat trivy-report.txt
+        
       - name: Extract Tag details
         if: github.ref_type == 'tag'
         run: echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV

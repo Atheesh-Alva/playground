@@ -38,17 +38,11 @@ jobs:
             scan-type: fs
             scan-ref: '.' # adjust path to your Flutter project
             format: sarif
-            exit-code: 0
-            severity: CRITICAL,HIGH
-            output: trivy-results.sarif
+            exit-code: 1
+            severity: HIGH,CRITICAL,LOW,MEDIUM,UNKNOWN
+            output: table  # or json, sarif, etc.
 
-        - name: Upload Trivy results to GitHub Security
-          uses: github/codeql-action/upload-sarif@v3
-          with:
-            sarif_file: trivy-results.sarif
-
-        - name: Upload Trivy SARIF results as artifact
-          uses: actions/upload-artifact@v3
-          with:
-            name: trivy-sarif-results
-            path: trivy-results.sarif
+        # - name: Upload Trivy results to GitHub Security
+        #   uses: github/codeql-action/upload-sarif@v3
+        #   with:
+        #     sarif_file: trivy-results.sarif

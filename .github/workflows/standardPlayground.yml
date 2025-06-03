@@ -11,14 +11,14 @@ jobs:
     runs-on: ${{ vars.LINUX_OS }}
 
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: 'eu-west-2'
       AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -27,51 +27,70 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Fetch AWS AppSync Schema
+      - name: Fetch AWS AppSync-Schema
         run: |
-          cd assets/raw
+          cd assets/raw/release
           npm install -g aws-appsync
           aws appsync get-introspection-schema \
             --api-id $AWS_API_ID \
-            --format SDL \
+            --format JSON \
             --region $AWS_REGION \
             --no-include-directives schema.json
-        # base64 schema.json > schema.base64 FOR LINUXOS
-        # base64 -i test_json.json -o test_json.base64 FOR MACOS
+          cat schema.json
+            
+      # - name: List CodeCommit Repositories
+      #   run: |
+      #     aws codecommit list-repositories
 
-      - name: Setup JAVA for Android
-        uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: ${{ vars.JAVA_VERSION }}
-          cache: "gradle"
+    # - name: Push to CodeCommit
+    #   run: |
+    #     git remote add codecommit https://${{ secrets.CODECOMMIT_REPO_URL }}
+    #     git push codecommit master --force
 
-      - name: Flutter Setup
-        uses: subosito/flutter-action@v2
-        with:
-            channel: "stable"
-            flutter-version: ${{ vars.FLUTTER_VERSION }}
-            cache: true
+    #   - name: Fetch AWS AppSync-Schema
+    #     run: |
+    #       cd assets/raw/release
+    #       npm install -g aws-appsync
+    #       aws appsync get-introspection-schema \
+    #         --api-id $AWS_API_ID \
+    #         --format JSON \
+    #         --region $AWS_REGION \
+    #         --no-include-directives schema.json
+    #       cat schema.json
+          
+    #   - name: Setup JAVA for Android
+    #     uses: actions/setup-java@v3
+    #     with:
+    #       distribution: "zulu"
+    #       java-version: ${{ vars.JAVA_VERSION }}
+    #       cache: "gradle"
 
-      - name: Flutter Clean & Get Packages
-        run: |
-          flutter clean
-          flutter pub get
+    #   - name: Flutter Setup
+    #     uses: subosito/flutter-action@v2
+    #     with:
+    #         channel: "stable"
+    #         flutter-version: ${{ vars.FLUTTER_VERSION }}
+    #         cache: true
 
-      - name: Cache Flutter SDK
-        uses: actions/cache@v2
-        with:
-          path: /opt/hostedtoolcache/flutter
-          key: flutter-${{ hashFiles('**/pubspec.lock') }}
+    #   - name: Flutter Clean & Get Packages
+    #     run: |
+    #       flutter clean
+    #       flutter pub get
 
-      - name: Build APK File
-        run: |
-          flutter build apk \
-            --target=lib/main.dart \
-            --release
+    #   - name: Cache Flutter SDK
+    #     uses: actions/cache@v2
+    #     with:
+    #       path: /opt/hostedtoolcache/flutter
+    #       key: flutter-${{ hashFiles('**/pubspec.lock') }}
 
-      - name: Upload APK to GitHub Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: 'APK_TEST'
-          path: build/app/outputs/flutter-apk/app-release.apk
+    #   - name: Build APK File
+    #     run: |
+    #       flutter build apk \
+    #         --target=lib/main.dart \
+    #         --release
+
+    #   - name: Upload APK to GitHub Artifacts
+    #     uses: actions/upload-artifact@v4
+    #     with:
+    #       name: 'APK_TEST'
+    #       path: build/app/outputs/flutter-apk/app-release.apk

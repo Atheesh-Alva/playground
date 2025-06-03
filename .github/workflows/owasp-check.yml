@@ -1,0 +1,33 @@
+name: OWASP Dependency Check
+
+on:
+  push:
+    tags:
+    - 'OWASP-*'
+
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  # Needed for some analyses
+
+        - name: Flutter Setup
+          uses: subosito/flutter-action@v2
+          with:
+              channel: "stable"
+              flutter-version: ${{ vars.FLUTTER_VERSION }}
+              cache: true
+
+        - name: Restore packages
+          run: flutter pub get
+            
+        - name: Run Flutter analyze (static code analysis)
+          run: flutter analyze
+
+        - name: Run Flutter tests with coverage
+          run: flutter test --coverage

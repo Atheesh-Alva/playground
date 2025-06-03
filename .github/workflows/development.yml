@@ -29,9 +29,9 @@ jobs:
     permissions: write-all
 
     env:
-      ACTION_TYPE:
-      SOURCE_BRANCH:
-      FLUTTER_HOME:
+      ACTION_TYPE: ''
+      SOURCE_BRANCH: ''
+      FLUTTER_HOME: ''
 
     steps:
       - name: Checkout Code

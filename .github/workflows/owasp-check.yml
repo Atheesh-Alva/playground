@@ -26,8 +26,23 @@ jobs:
         - name: Restore packages
           run: flutter pub get
             
-        - name: Run Flutter analyze (static code analysis)
+        - name: Run Flutter analyze (Static Code Analysis)
           run: flutter analyze
 
         - name: Run Flutter tests with coverage
           run: flutter test --coverage
+
+        - name: Run Trivy scan
+          uses: aquasecurity/trivy-action@master
+          with:
+            scan-type: fs
+            scan-ref: '.' # adjust path to your Flutter project
+            format: sarif
+            exit-code: 0
+            severity: CRITICAL,HIGH
+            output: trivy-results.sarif
+
+        - name: Upload Trivy results to GitHub Security
+          uses: github/codeql-action/upload-sarif@v3
+          with:
+            sarif_file: trivy-results.sarif

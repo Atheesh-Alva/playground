@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:playground/presentation/views/home_page.dart';
+// Insecure random number generator usage
+import 'dart:math';
 
 void main() {
+  const String apiKey = "dummy_insecure_api_key_12345";
+
+  print(apiKey);
+
+  var rng = Random();
+
   runApp(const MyApp());
 }
 

@@ -44,8 +44,3 @@ jobs:
 
         - name: Display Trivy scan report
           run: cat trivy-report.txt
-
-        # - name: Upload Trivy results to GitHub Security
-        #   uses: github/codeql-action/upload-sarif@v3
-        #   with:
-        #     sarif_file: trivy-results.sarif

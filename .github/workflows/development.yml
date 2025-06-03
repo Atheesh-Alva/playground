@@ -34,11 +34,7 @@ jobs:
       FLUTTER_HOME: ''
 
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 0  # Needed for some analyses
-
+      
       - name: MS Teams Notification - Flutter Team
         if: always()
         uses: freenet-actions/ms-teams-deploy-card@master
@@ -56,6 +52,11 @@ jobs:
             custom-actions: |
               - text: While Merging PR
                 url: "https://www.ostrumtech.com/privacy-policy/"
+
+      - name: Checkout Source Code
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 0  # Needed for some analyses
 
       - name: Flutter Setup with Version ${{ vars.FLUTTER_VERSION }}
         uses: subosito/flutter-action@v2

@@ -63,6 +63,7 @@ jobs:
 
 
   display:
+      if: false
       needs: extract-details
       runs-on: ${{ vars.LINUX_OS }}
       steps:

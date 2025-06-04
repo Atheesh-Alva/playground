@@ -79,6 +79,7 @@ jobs:
 
       needs: [extract-details, display]
       runs-on: ${{ vars.LINUX_OS }}
+      if: always()
 
       steps:
 

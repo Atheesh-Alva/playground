@@ -32,6 +32,7 @@ jobs:
       ACTION_TYPE: ''
 
     outputs:
+      ACTION_TYPE: ${{ steps.read-json.outputs.ACTION_TYPE }}
       title: ${{ steps.read-json.outputs.title }}
       comment: ${{ steps.read-json.outputs.comment }}
       bug: ${{ steps.read-json.outputs.bug }}
@@ -42,29 +43,6 @@ jobs:
       - name: Extract Tag details
         if: github.ref_type == 'tag'
         run: echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
-
-
-      - name: MS Teams Notification - Flutter Team
-        if: always()
-        uses: freenet-actions/ms-teams-deploy-card@master
-        id: ms_teams_ostrum
-        with:
-            github-token: ${{ github.token }}
-            webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-            show-on-start: false
-            card-layout-exit: complete
-            enable-review-diffs-action: false
-            include-files: false
-            custom-facts: |
-              - name: Action Type
-                value: ${{ env.ACTION_TYPE }}
-            custom-actions: |
-              - text: Ostrum tech LTD
-                url: "https://www.ostrumtech.com"
-              - text: Privacy Policy
-                url: "https://www.ostrumtech.com/privacy-policy"
-              - text: Ostrum Web (DEV)
-                url: "https://ltn.ui.dev.ostrumtech.com"
 
       - name: Checkout Source Code
         if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
@@ -81,6 +59,7 @@ jobs:
           echo "enhancement=$(echo $json | jq -r '.enhancement')" >> $GITHUB_OUTPUT
           echo "title=$(echo $json | jq -r '.Title')" >> $GITHUB_OUTPUT
           echo "comment=$(echo $json | jq -r '.Comment')" >> $GITHUB_OUTPUT
+          echo "ACTION_TYPE=${{ env.ACTION_TYPE }}" >> $GITHUB_OUTPUT
 
 
   display:
@@ -89,11 +68,40 @@ jobs:
       steps:
         - name: Display JSON values
           run: |
-            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
-            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
+            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
             echo "Title: ${{ needs.extract-details.outputs.title }}"
             echo "Comment: ${{ needs.extract-details.outputs.comment }}"
+            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
+            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
 
+  ms-teams-notification:
+
+      needs: [extract-details, display]
+      runs-on: ${{ vars.LINUX_OS }}
+
+      steps:
+
+        - name: MS Teams Notification - Flutter Team
+          if: always()
+          uses: freenet-actions/ms-teams-deploy-card@master
+          id: ms_teams_ostrum
+          with:
+              github-token: ${{ github.token }}
+              webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+              show-on-start: false
+              card-layout-exit: complete
+              enable-review-diffs-action: false
+              include-files: false
+              custom-facts: |
+                - name: Action Type
+                  value: ${{ needs.extract-details.outputs.ACTION_TYPE }}
+              custom-actions: |
+                - text: Ostrum tech LTD
+                  url: "https://www.ostrumtech.com"
+                - text: Privacy Policy
+                  url: "https://www.ostrumtech.com/privacy-policy"
+                - text: Ostrum Web (DEV)
+                  url: "https://ltn.ui.dev.ostrumtech.com"
 
 
 

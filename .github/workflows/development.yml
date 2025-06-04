@@ -34,7 +34,7 @@ jobs:
       FLUTTER_HOME: ''
 
     steps:
-      
+
       - name: MS Teams Notification - Flutter Team
         if: always()
         uses: freenet-actions/ms-teams-deploy-card@master

@@ -6,9 +6,15 @@ on:
     - 'Run-+[0-9]+[0-9]+[0-9]'
 
 jobs:
-  logs:
+  read-json:
     name: Actions
     runs-on: ${{ vars.LINUX_OS }}
+
+    outputs:
+      bug: ${{ steps.read-json.outputs.bug }}
+      enhancement: ${{ steps.read-json.outputs.enhancement }}
+      title: ${{ steps.read-json.outputs.title }}
+      comment: ${{ steps.read-json.outputs.comment }}
 
     env:
       AWS_REGION: 'eu-west-2'
@@ -16,23 +22,36 @@ jobs:
 
     steps:
 
-      - name: MS Teams Notification - Flutter Team
-        if: always()
-        uses: freenet-actions/ms-teams-deploy-card@master
-        id: ms_teams_ostrum
-        with:
-            github-token: ${{ github.token }}
-            webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-            show-on-start: false
-            card-layout-exit: complete
-            enable-review-diffs-action: false
-            include-files: false
-            custom-facts: |
-              - name: While Merging PR
-                value: "https://www.ostrumtech.com/"
-            custom-actions: |
-              - text: While Merging PR
-                url: "https://www.ostrumtech.com/privacy-policy/"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Read JSON file and set outputs
+        id: read-json
+        run: |
+          json=$(cat lib/workflow.json)
+          echo "bug=$(echo $json | jq -r '.bug')" >> $GITHUB_OUTPUT
+          echo "enhancement=$(echo $json | jq -r '.enhancement')" >> $GITHUB_OUTPUT
+          echo "title=$(echo $json | jq -r '.Title')" >> $GITHUB_OUTPUT
+          echo "comment=$(echo $json | jq -r '.Comment')" >> $GITHUB_OUTPUT
+
+  display:
+      needs: read-json
+      runs-on: ubuntu-latest
+      steps:
+        - name: Display JSON values
+          run: |
+            echo "Bug: ${{ needs.read-json.outputs.bug }}"
+            echo "Enhancement: ${{ needs.read-json.outputs.enhancement }}"
+            echo "Title: ${{ needs.read-json.outputs.title }}"
+            echo "Comment: ${{ needs.read-json.outputs.comment }}"
+
+
+
+
+
+
+
+################################################################################################################################################################
 
       # - name: Checkout code
       #   uses: actions/checkout@v3

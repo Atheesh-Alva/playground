@@ -66,6 +66,12 @@ jobs:
       needs: extract-details
       runs-on: ${{ vars.LINUX_OS }}
       steps:
+
+        - name: Checkout Source Code
+          uses: actions/checkout@master
+          with:
+            fetch-depth: 0
+
         - name: Display output values
           run: |
             echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
@@ -106,34 +112,36 @@ jobs:
           run: cat trivy-report.txt
 
   notification:
+    needs: [extract-details, code-vulnerability-checks]
+    runs-on: ${{ vars.LINUX_OS }}
+    if: always()
 
-      needs: [extract-details, code-vulnerability-checks]
-      runs-on: ${{ vars.LINUX_OS }}
-      if: always()
+    env:
+      OVERALL_STATUS: ${{ (needs.extract-details.result == 'failure' || needs.code-vulnerability-checks.result == 'failure') && 'Failure' || 'Success' }}
 
-      steps:
-
-        - name: MS Teams Notification - Flutter Team
-          if: always()
-          uses: freenet-actions/ms-teams-deploy-card@master
-          id: ms_teams_ostrum
-          with:
-              github-token: ${{ github.token }}
-              webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
-              show-on-start: false
-              card-layout-exit: complete
-              enable-review-diffs-action: false
-              include-files: false
-              custom-facts: |
-                - name: Action Type
-                  value: ${{ needs.extract-details.outputs.ACTION_TYPE }}
-              custom-actions: |
-                - text: Ostrum tech LTD
-                  url: "https://www.ostrumtech.com"
-                - text: Privacy Policy
-                  url: "https://www.ostrumtech.com/privacy-policy"
-                - text: Ostrum Web (DEV)
-                  url: "https://ltn.ui.dev.ostrumtech.com"
+    steps:
+      - name: MS Teams Notification - Flutter Team
+        uses: freenet-actions/ms-teams-deploy-card@master
+        id: ms_teams_ostrum
+        with:
+          github-token: ${{ github.token }}
+          webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+          show-on-start: false
+          card-layout-exit: complete
+          enable-review-diffs-action: false
+          include-files: false
+          custom-facts: |
+            - name: Action Type
+              value: ${{ needs.extract-details.outputs.ACTION_TYPE }}
+            - name: Workflow Status
+              value: ${{ env.OVERALL_STATUS }}
+          custom-actions: |
+            - text: Ostrum tech LTD
+              url: "https://www.ostrumtech.com"
+            - text: Privacy Policy
+              url: "https://www.ostrumtech.com/privacy-policy"
+            - text: Ostrum Web (DEV)
+              url: "https://ltn.ui.dev.ostrumtech.com"
 
       # - name: Check PR Review Approved
       #   if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'

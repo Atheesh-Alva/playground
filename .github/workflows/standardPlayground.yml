@@ -13,7 +13,7 @@ jobs:
     outputs:
       title: ${{ steps.read-json.outputs.title }}
       description: ${{ steps.read-json.outputs.description }}
-      commit_details: ${{ steps.read-json.outputs.commit_details }}
+      bug: ${{ steps.read-json.outputs.bug }}
 
     env:
       AWS_REGION: 'eu-west-2'
@@ -30,7 +30,7 @@ jobs:
           json=$(cat lib/workflow.json)
           echo "title=$(echo $json | jq -r '.title')" >> $GITHUB_OUTPUT
           echo "description=$(echo $json | jq -r '.description')" >> $GITHUB_OUTPUT
-          echo "commit_details=$(echo $json | jq -r '.commit_details')" >> $GITHUB_OUTPUT
+          echo "bug=$(echo $json | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
 
   display:
       needs: read-json
@@ -40,7 +40,7 @@ jobs:
           run: |
             echo "title: ${{ needs.read-json.outputs.title }}"
             echo "description: ${{ needs.read-json.outputs.description }}"
-            echo "commit_details: ${{ needs.read-json.outputs.commit_details }}"
+            echo "bug: ${{ needs.read-json.outputs.bug }}"
 
 
 

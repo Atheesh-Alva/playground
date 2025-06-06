@@ -123,6 +123,11 @@ jobs:
             echo "Bug: ${{ needs.extract-details.outputs.bug }}"
             echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
 
+        - name: Checkout Source Code
+          uses: actions/checkout@master
+          with:
+            fetch-depth: 0
+
         - name: Get Source Branch
           run: |
               branch=$(git branch -r --contains ${{ github.ref }} --format "%(refname:lstrip=3)")

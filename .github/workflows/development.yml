@@ -107,7 +107,7 @@ jobs:
     name: Create Pull Request
     runs-on: ${{ vars.LINUX_OS }}
     needs: [extract-details, code-vulnerability-checks]
-    if: false && ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
+    if: false
     # permissions: write-all
 
     steps:

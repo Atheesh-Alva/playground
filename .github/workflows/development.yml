@@ -120,11 +120,21 @@ jobs:
       OVERALL_STATUS: ${{ (needs.extract-details.result == 'failure' || needs.code-vulnerability-checks.result == 'failure') && 'Failure' || 'Success' }}
 
     steps:
+
+      - name: Set Workflow Status
+        id: set_status
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "::set-output name=status::success"
+          else
+            echo "::set-output name=status::failure"
+          fi
+
       - name: MS Teams Notification - Flutter Team
         uses: freenet-actions/ms-teams-deploy-card@master
         id: ms_teams_ostrum
         with:
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
           show-on-start: false
           card-layout-exit: complete
@@ -134,7 +144,7 @@ jobs:
             - name: Action Type
               value: ${{ needs.extract-details.outputs.ACTION_TYPE }}
             - name: Workflow Status
-              value: ${{ env.OVERALL_STATUS }}
+              value: ${{ steps.set_status.outputs.status == 'success' && 'Workflow Succeeded ✅' || 'Workflow Failed ❌' }}
           custom-actions: |
             - text: Ostrum tech LTD
               url: "https://www.ostrumtech.com"

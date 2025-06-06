@@ -20,13 +20,13 @@ on:
       - 'ISSUE-*'
 
   pull_request:
-      types: [ opened, closed, reopened, synchronize ]
+      types: [ edited, reopened, synchronize ]
 
   issues:
-      types: [ opened, deleted, closed, reopened ]
+      types: [ edited, deleted, reopened ]
 
   pull_request_review:
-      types: [ submitted ]
+      types: [ submitted, edited, dismissed ]
 
 jobs:
   extract-details:
@@ -39,9 +39,13 @@ jobs:
     outputs:
       ACTION_TYPE: ${{ steps.read-json.outputs.ACTION_TYPE }}
       title: ${{ steps.read-json.outputs.title }}
-      comment: ${{ steps.read-json.outputs.comment }}
+      description: ${{ steps.read-json.outputs.description }}
       bug: ${{ steps.read-json.outputs.bug }}
+      documentation: ${{ steps.read-json.outputs.documentation }}
       enhancement: ${{ steps.read-json.outputs.enhancement }}
+      help_wanted: ${{ steps.read-json.outputs.help_wanted }}
+      invalid: ${{ steps.read-json.outputs.invalid }}
+      question: ${{ steps.read-json.outputs.question }}
 
     steps:
 
@@ -63,12 +67,16 @@ jobs:
         id: read-json
         if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
         run: |
-          json=$(cat lib/workflow.json)
-          echo "bug=$(echo $json | jq -r '.bug')" >> $GITHUB_OUTPUT
-          echo "enhancement=$(echo $json | jq -r '.enhancement')" >> $GITHUB_OUTPUT
-          echo "title=$(echo $json | jq -r '.Title')" >> $GITHUB_OUTPUT
-          echo "comment=$(echo $json | jq -r '.Comment')" >> $GITHUB_OUTPUT
           echo "ACTION_TYPE=${{ env.ACTION_TYPE }}" >> $GITHUB_OUTPUT
+          json=$(cat lib/workflow.json)
+          echo "title=$(echo $json | jq -r '.title')" >> $GITHUB_OUTPUT
+          echo "description=$(echo $json | jq -r '.description')" >> $GITHUB_OUTPUT
+          echo "bug=$(echo $json | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
+          echo "documentation=$(echo $json | jq -r '.commit_details.documentation')" >> $GITHUB_OUTPUT
+          echo "enhancement=$(echo $json | jq -r '.commit_details.enhancement')" >> $GITHUB_OUTPUT
+          echo "help_wanted=$(echo $json | jq -r '.commit_details.help_wanted')" >> $GITHUB_OUTPUT
+          echo "invalid=$(echo $json | jq -r '.commit_details.invalid')" >> $GITHUB_OUTPUT
+          echo "question=$(echo $json | jq -r '.commit_details.question')" >> $GITHUB_OUTPUT
 
   code-vulnerability-checks:
       name: OWASP Checks
@@ -115,6 +123,7 @@ jobs:
           run: cat trivy-report.txt
 
   pr:
+    
     name: Create Pull Request
     runs-on: ${{ vars.LINUX_OS }}
     needs: [extract-details, code-vulnerability-checks]
@@ -141,7 +150,7 @@ jobs:
               --base ${{ vars.PR_DESTINATION_BRANCH }} \
               --head ${{ env.SOURCE_BRANCH }} \
               --title '[AUTO] Tag - ${{ github.ref_name }} - ${{ needs.extract-details.outputs.title }}' \
-              --body 'Auto created by @${{ github.event.sender.login }}: ${{ needs.extract-details.outputs.comment }}' \
+              --body 'Auto created by @${{ github.event.sender.login }}: ${{ needs.extract-details.outputs.description }}' \
               --reviewer ${{ env.OWNER }} \
               --assignee ${{ github.event.sender.login }} \
               --label ${{ env.LABEL }}
@@ -173,14 +182,6 @@ jobs:
 
     steps:
 
-        - name: Display output values
-          run: |
-            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
-            echo "Title: ${{ needs.extract-details.outputs.title }}"
-            echo "Comment: ${{ needs.extract-details.outputs.comment }}"
-            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
-            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
-
         - name: Checkout Source Code
           uses: actions/checkout@master
           with:
@@ -202,6 +203,12 @@ jobs:
         run: |
           if [ "${{ needs.extract-details.result }}" != "success" ]; then
             echo "status=❌ Extracting workflow details ${{ needs.extract-details.result }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "status=Pull Request: ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "issues" ]]; then
+            echo "status=Issue: ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "pull_request_review" ]]; then
+            echo "status=Pull Request Review: ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
           elif [[ "${{ needs.code-vulnerability-checks.result }}" == "failure" ]]; then
             echo "status=❌ Failed while checking code vulnerabilities" >> $GITHUB_OUTPUT
           elif [[ "${{ needs.pr.result }}" == "failure" ]]; then
@@ -236,13 +243,3 @@ jobs:
               url: "https://www.ostrumtech.com/privacy-policy"
             - text: Ostrum Web (DEV)
               url: "https://ltn.ui.dev.ostrumtech.com"
-
-      # - name: Check PR Review Approved
-      #   if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
-      #   run: echo "ACTION_TYPE=PR_MERGE" >> $GITHUB_ENV
-
-      # - name: Auto-Merge Pull Request on Approval
-      #   if: ${{ env.ACTION_TYPE == 'PR_MERGE' }}
-      #   run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
-      #   env:
-      #       GH_TOKEN: ${{ github.token }}

@@ -115,14 +115,6 @@ jobs:
 
     steps:
 
-        - name: Display output values
-          run: |
-            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
-            echo "Title: ${{ needs.extract-details.outputs.title }}"
-            echo "Comment: ${{ needs.extract-details.outputs.comment }}"
-            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
-            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
-
         - name: Checkout Source Code
           uses: actions/checkout@master
           with:
@@ -146,11 +138,35 @@ jobs:
           env:
               GITHUB_TOKEN: ${{ github.token }}
     
+  issue:
+    name: Create Issue
+    runs-on: ${{ vars.LINUX_OS }}
+    needs: [extract-details, code-vulnerability-checks]
+    if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'ISSUE' }}
+
+    steps:
+
+        - name: Display output values
+          run: |
+            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
+            echo "Title: ${{ needs.extract-details.outputs.title }}"
+            echo "Comment: ${{ needs.extract-details.outputs.comment }}"
+            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
+            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
+
+        - name: Create an Issue
+          uses: actions-ecosystem/action-create-issue@v1
+          with:
+              github_token: ${{ github.token }}
+              title: '[AUTO] Tag - ${{ github.ref_name }}'
+              body: 'Auto created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
+              labels: ${{ env.LABEL }}
+              assignees: ${{ env.OWNER }}
 
   notify:
     name: Notification to Flutter team
     runs-on: ubuntu-latest
-    needs: [extract-details, code-vulnerability-checks, pr]
+    needs: [extract-details, code-vulnerability-checks, pr, issue]
     if: always()  
     steps:
       - name: Set workflow status
@@ -162,6 +178,8 @@ jobs:
             echo "status=❌ Failed while checking code vulnerabilities" >> $GITHUB_OUTPUT
           elif [[ "${{ needs.pr.result }}" == "failure" ]]; then
             echo "status=❌ Failed while creating Pull Request" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.issue.result }}" == "failure" ]]; then
+            echo "status=❌ Failed while creating Issue" >> $GITHUB_OUTPUT
           else
             echo "status=✅ Workflow Succeeded" >> $GITHUB_OUTPUT
           fi
@@ -198,13 +216,3 @@ jobs:
       #   run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
       #   env:
       #       GH_TOKEN: ${{ github.token }}
-
-      # - name: Create an Issue
-      #   if: ${{ env.ACTION_TYPE == 'ISSUE' }}
-      #   uses: actions-ecosystem/action-create-issue@v1
-      #   with:
-      #       github_token: ${{ github.token }}
-      #       title: '[AUTO] Tag - ${{ github.ref_name }}'
-      #       body: 'Auto created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
-      #       labels: ${{ env.LABEL }}
-      #       assignees: ${{ env.OWNER }}

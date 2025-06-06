@@ -111,23 +111,19 @@ jobs:
         - name: Trivy Scan Report
           run: cat trivy-report.txt
 
-  notification:
+  notify:
+    runs-on: ubuntu-latest
     needs: [extract-details, code-vulnerability-checks]
-    runs-on: ${{ vars.LINUX_OS }}
-    if: always()
-
-    env:
-      OVERALL_STATUS: ${{ (needs.extract-details.result == 'failure' || needs.code-vulnerability-checks.result == 'failure') && 'Failure' || 'Success' }}
-
+    if: always()  # Run even if previous jobs fail
     steps:
-
-      - name: Set Workflow Status
+      - name: Set workflow status
         id: set_status
         run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            echo "::set-output name=status::success"
+          # Check if any dependent job failed
+          if [[ "${{ needs.extract-details.result }}" != "success" ]] || [[ "${{ needs.code-vulnerability-checks.result }}" != "success" ]]; then
+            echo "status=failure" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=status::failure"
+            echo "status=success" >> $GITHUB_OUTPUT
           fi
 
       - name: MS Teams Notification - Flutter Team

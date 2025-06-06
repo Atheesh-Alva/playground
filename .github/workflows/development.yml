@@ -19,14 +19,19 @@ on:
       - 'PR-*'
       - 'ISSUE-*'
 
+  pull_request:
+      types: [ opened, closed, reopened, synchronize ]
+
+  issues:
+      types: [ opened, deleted, closed, reopened ]
+
   pull_request_review:
-      types: [submitted]
+      types: [ submitted ]
 
 jobs:
   extract-details:
     name: Data Extraction
     runs-on: ${{ vars.LINUX_OS }}
-    # permissions: write-all
 
     env:
       ACTION_TYPE: ''
@@ -40,9 +45,13 @@ jobs:
 
     steps:
 
-      - name: Extract Tag details
-        if: github.ref_type == 'tag'
-        run: echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
+      - name: Extract Workflow details
+        run: |
+          if ${{ github.ref_type == 'tag' }}
+            echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
+          else
+            echo "ACTION_TYPE=${{ github.event_name }}" >> $GITHUB_ENV
+          fi
 
       - name: Checkout Source Code
         if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
@@ -65,6 +74,8 @@ jobs:
       name: OWASP Checks
       needs: extract-details
       runs-on: ${{ vars.LINUX_OS }}
+      if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
+
       steps:
 
         - name: Checkout Source Code

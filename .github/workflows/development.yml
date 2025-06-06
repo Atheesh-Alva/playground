@@ -61,13 +61,12 @@ jobs:
           echo "comment=$(echo $json | jq -r '.Comment')" >> $GITHUB_OUTPUT
           echo "ACTION_TYPE=${{ env.ACTION_TYPE }}" >> $GITHUB_OUTPUT
 
-
-  display:
-      if: false
+  code-vulnerability-checks:
+      if: true
       needs: extract-details
       runs-on: ${{ vars.LINUX_OS }}
       steps:
-        - name: Display JSON values
+        - name: Display output values
           run: |
             echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
             echo "Title: ${{ needs.extract-details.outputs.title }}"
@@ -75,9 +74,40 @@ jobs:
             echo "Bug: ${{ needs.extract-details.outputs.bug }}"
             echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
 
-  ms-teams-notification:
+        - name: Flutter Setup with Version ${{ vars.FLUTTER_VERSION }}
+          uses: subosito/flutter-action@v2
+          with:
+              channel: "stable"
+              flutter-version: ${{ vars.FLUTTER_VERSION }}
+              cache: true
 
-      needs: [extract-details, display]
+        - name: Flutter Clean & Get Packages
+          run: |
+            flutter clean
+            flutter pub get
+
+        - name: Flutter Analyze (Static Code Analysis)
+          run: flutter analyze
+
+        - name: Flutter Unit Tests with Coverage
+          run: flutter test --coverage
+
+        - name: Trivy scan for Code Vulnerabilities
+          uses: aquasecurity/trivy-action@master
+          with:
+            scan-type: fs
+            scan-ref: '.' # adjust path to your Flutter project
+            format: table
+            exit-code: 1
+            severity: HIGH,CRITICAL,LOW,MEDIUM,UNKNOWN
+            output: trivy-report.txt  # or json, sarif, etc.
+
+        - name: Trivy Scan Report
+          run: cat trivy-report.txt
+
+  notification:
+
+      needs: [extract-details, code-vulnerability-checks]
       runs-on: ${{ vars.LINUX_OS }}
       if: always()
 
@@ -104,39 +134,6 @@ jobs:
                   url: "https://www.ostrumtech.com/privacy-policy"
                 - text: Ostrum Web (DEV)
                   url: "https://ltn.ui.dev.ostrumtech.com"
-
-
-
-      # - name: Flutter Setup with Version ${{ vars.FLUTTER_VERSION }}
-      #   uses: subosito/flutter-action@v2
-      #   with:
-      #       channel: "stable"
-      #       flutter-version: ${{ vars.FLUTTER_VERSION }}
-      #       cache: true
-
-      # - name: Flutter Clean & Get Packages
-      #   run: |
-      #     flutter clean
-      #     flutter pub get
-
-      # - name: Flutter Analyze (Static Code Analysis)
-      #   run: flutter analyze
-
-      # - name: Flutter Unit Tests with Coverage
-      #   run: flutter test --coverage
-
-      # - name: Trivy scan for Code Vulnerabilities
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     scan-type: fs
-      #     scan-ref: '.' # adjust path to your Flutter project
-      #     format: table
-      #     exit-code: 1
-      #     severity: HIGH,CRITICAL,LOW,MEDIUM,UNKNOWN
-      #     output: trivy-report.txt  # or json, sarif, etc.
-
-      # - name: Trivy Scan Report
-      #   run: cat trivy-report.txt
 
       # - name: Check PR Review Approved
       #   if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'

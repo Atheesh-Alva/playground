@@ -11,10 +11,9 @@ jobs:
     runs-on: ${{ vars.LINUX_OS }}
 
     outputs:
-      bug: ${{ steps.read-json.outputs.bug }}
-      enhancement: ${{ steps.read-json.outputs.enhancement }}
       title: ${{ steps.read-json.outputs.title }}
-      comment: ${{ steps.read-json.outputs.comment }}
+      description: ${{ steps.read-json.outputs.description }}
+      bug: ${{ steps.read-json.outputs.bug }}
 
     env:
       AWS_REGION: 'eu-west-2'
@@ -29,10 +28,9 @@ jobs:
         id: read-json
         run: |
           json=$(cat lib/workflow.json)
-          echo "bug=$(echo $json | jq -r '.bug')" >> $GITHUB_OUTPUT
-          echo "enhancement=$(echo $json | jq -r '.enhancement')" >> $GITHUB_OUTPUT
-          echo "title=$(echo $json | jq -r '.Title')" >> $GITHUB_OUTPUT
-          echo "comment=$(echo $json | jq -r '.Comment')" >> $GITHUB_OUTPUT
+          echo "title=$(echo $json | jq -r '.title')" >> $GITHUB_OUTPUT
+          echo "description=$(echo $json | jq -r '.description')" >> $GITHUB_OUTPUT
+          echo "bug=$(echo $json | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
 
   display:
       needs: read-json
@@ -40,10 +38,9 @@ jobs:
       steps:
         - name: Display JSON values
           run: |
-            echo "Bug: ${{ needs.read-json.outputs.bug }}"
-            echo "Enhancement: ${{ needs.read-json.outputs.enhancement }}"
-            echo "Title: ${{ needs.read-json.outputs.title }}"
-            echo "Comment: ${{ needs.read-json.outputs.comment }}"
+            echo "title: ${{ needs.read-json.outputs.title }}"
+            echo "description: ${{ needs.read-json.outputs.description }}"
+            echo "bug: ${{ needs.read-json.outputs.bug }}"
 
 
 

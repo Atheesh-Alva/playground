@@ -1,6 +1,12 @@
 {
-    "bug": true,
-    "enhancement": false,
-    "Title": "OP-1001",
-    "Comment": "Fixed parsing issue"
+    "title": "OP-1001",
+    "description": "Fixed parsing issue",
+    "commit_details": {
+        "bug": true,
+        "documentation": true,
+        "enhancement": false,
+        "help_wanted": false,
+        "invalid": false,
+        "question": false
+    }
 }

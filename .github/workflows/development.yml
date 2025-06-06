@@ -108,7 +108,6 @@ jobs:
     runs-on: ${{ vars.LINUX_OS }}
     needs: [extract-details, code-vulnerability-checks]
     if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
-    # permissions: write-all
 
     env: 
       SOURCE_BRANCH: ''
@@ -170,6 +169,11 @@ jobs:
             echo "Comment: ${{ needs.extract-details.outputs.comment }}"
             echo "Bug: ${{ needs.extract-details.outputs.bug }}"
             echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
+
+        - name: Checkout Source Code
+          uses: actions/checkout@master
+          with:
+            fetch-depth: 0
 
         - name: Auto-Merge Pull Request on Approval
           run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"

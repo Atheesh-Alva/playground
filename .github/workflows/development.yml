@@ -108,7 +108,6 @@ jobs:
     runs-on: ${{ vars.LINUX_OS }}
     needs: [extract-details, code-vulnerability-checks]
     if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
-    # permissions: write-all
 
     env: 
       SOURCE_BRANCH: ''
@@ -146,14 +145,6 @@ jobs:
 
     steps:
 
-        - name: Display output values
-          run: |
-            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
-            echo "Title: ${{ needs.extract-details.outputs.title }}"
-            echo "Comment: ${{ needs.extract-details.outputs.comment }}"
-            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
-            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
-
         - name: Create an Issue
           uses: actions-ecosystem/action-create-issue@v1
           with:
@@ -163,10 +154,36 @@ jobs:
               labels: ${{ env.LABEL }}
               assignees: ${{ env.OWNER }}
 
+  pr-merge:
+    name: Merge PR after review
+    runs-on: ${{ vars.LINUX_OS }}
+    needs: [extract-details, code-vulnerability-checks]
+    if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
+
+    steps:
+
+        - name: Display output values
+          run: |
+            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
+            echo "Title: ${{ needs.extract-details.outputs.title }}"
+            echo "Comment: ${{ needs.extract-details.outputs.comment }}"
+            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
+            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
+
+        - name: Checkout Source Code
+          uses: actions/checkout@master
+          with:
+            fetch-depth: 0
+
+        - name: Auto-Merge Pull Request on Approval
+          run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
+          env:
+              GH_TOKEN: ${{ github.token }}
+
   notify:
     name: Notification to Flutter team
     runs-on: ubuntu-latest
-    needs: [extract-details, code-vulnerability-checks, pr, issue]
+    needs: [extract-details, code-vulnerability-checks, pr, issue, pr-merge]
     if: always()  
     steps:
       - name: Set workflow status
@@ -180,6 +197,8 @@ jobs:
             echo "status=❌ Failed while creating Pull Request" >> $GITHUB_OUTPUT
           elif [[ "${{ needs.issue.result }}" == "failure" ]]; then
             echo "status=❌ Failed while creating Issue" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.pr-merge.result }}" == "failure" ]]; then
+            echo "status=❌ Failed while merging Pull Request after review" >> $GITHUB_OUTPUT
           else
             echo "status=✅ Workflow Succeeded" >> $GITHUB_OUTPUT
           fi

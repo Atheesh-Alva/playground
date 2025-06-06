@@ -107,15 +107,10 @@ jobs:
     name: Create Pull Request
     runs-on: ${{ vars.LINUX_OS }}
     needs: [extract-details, code-vulnerability-checks]
-    if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
+    if: false && ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
     # permissions: write-all
 
     steps:
-
-        - name: Flutter Clean & Get Packages
-          run: |
-            flutter clean
-            flutter pub get
 
         - name: Display output values
           run: |

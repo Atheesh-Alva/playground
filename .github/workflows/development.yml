@@ -204,11 +204,11 @@ jobs:
           if [ "${{ needs.extract-details.result }}" != "success" ]; then
             echo "status=❌ Extracting workflow details ${{ needs.extract-details.result }}" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "status=Pull Request: ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
+            echo "status=Pull Request ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event_name }}" == "issues" ]]; then
-            echo "status=Issue: ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
+            echo "status=Issue ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event_name }}" == "pull_request_review" ]]; then
-            echo "status=Pull Request Review: ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
+            echo "status=Pull Request Review ${{ github.event.action || 'N/A' }}" >> $GITHUB_OUTPUT
           elif [[ "${{ needs.code-vulnerability-checks.result }}" == "failure" ]]; then
             echo "status=❌ Failed while checking code vulnerabilities" >> $GITHUB_OUTPUT
           elif [[ "${{ needs.pr.result }}" == "failure" ]]; then

@@ -72,14 +72,6 @@ jobs:
           with:
             fetch-depth: 0
 
-        - name: Display output values
-          run: |
-            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
-            echo "Title: ${{ needs.extract-details.outputs.title }}"
-            echo "Comment: ${{ needs.extract-details.outputs.comment }}"
-            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
-            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
-
         - name: Flutter Setup with Version ${{ vars.FLUTTER_VERSION }}
           uses: subosito/flutter-action@v2
           with:
@@ -110,6 +102,24 @@ jobs:
 
         - name: Trivy Scan Report
           run: cat trivy-report.txt
+
+  pr:
+    name: Create Pull Request
+    runs-on: ${{ vars.LINUX_OS }}
+    needs: [extract-details, code-vulnerability-checks]
+    if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
+    # permissions: write-all
+
+    steps:
+
+        - name: Display output values
+          run: |
+            echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
+            echo "Title: ${{ needs.extract-details.outputs.title }}"
+            echo "Comment: ${{ needs.extract-details.outputs.comment }}"
+            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
+            echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
+
 
   notify:
     name: Notification to Flutter team

@@ -112,12 +112,17 @@ jobs:
 
     steps:
 
+        - name: Flutter Clean & Get Packages
+          run: |
+            flutter clean
+            flutter pub get
+
         - name: Display output values
           run: |
             echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
             echo "Title: ${{ needs.extract-details.outputs.title }}"
             echo "Comment: ${{ needs.extract-details.outputs.comment }}"
-            echo "Bug: ${{ needs.extract-details.outputs.s }}"
+            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
             echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
 
 

@@ -51,7 +51,7 @@ jobs:
 
       - name: Extract Workflow details
         run: |
-          if ${{ github.ref_type == 'tag' }}
+          if ${{ github.ref_type == 'tag' }}; then
             echo "ACTION_TYPE=$(echo ${{ github.ref_name }} | cut -d- -f1)" >> $GITHUB_ENV
           else
             echo "ACTION_TYPE=${{ github.event_name }}" >> $GITHUB_ENV

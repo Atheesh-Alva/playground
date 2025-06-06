@@ -63,7 +63,6 @@ jobs:
 
   code-vulnerability-checks:
       name: OWASP Checks
-      if: false
       needs: extract-details
       runs-on: ${{ vars.LINUX_OS }}
       steps:

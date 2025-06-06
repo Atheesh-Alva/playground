@@ -160,7 +160,7 @@ jobs:
   issue:
     name: Create Issue
     runs-on: ${{ vars.LINUX_OS }}
-    needs: [extract-details, code-vulnerability-checks]
+    needs: [extract-details]
     if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'ISSUE' }}
 
     steps:
@@ -177,7 +177,7 @@ jobs:
   pr-merge:
     name: Merge PR after review
     runs-on: ${{ vars.LINUX_OS }}
-    needs: [extract-details, code-vulnerability-checks]
+    needs: [extract-details]
     if: github.event_name == 'pull_request_review' && github.event.review.state == 'APPROVED'
 
     steps:

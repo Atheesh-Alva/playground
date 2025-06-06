@@ -117,7 +117,7 @@ jobs:
             echo "ACTION_TYPE: ${{ needs.extract-details.outputs.ACTION_TYPE }}"
             echo "Title: ${{ needs.extract-details.outputs.title }}"
             echo "Comment: ${{ needs.extract-details.outputs.comment }}"
-            echo "Bug: ${{ needs.extract-details.outputs.bug }}"
+            echo "Bug: ${{ needs.extract-details.outputs.s }}"
             echo "Enhancement: ${{ needs.extract-details.outputs.enhancement }}"
 
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:playground/presentation/views/home_page.dart';
 
 void main() {
-  print("");
   runApp(const MyApp());
 }
 

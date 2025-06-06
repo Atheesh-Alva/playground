@@ -119,11 +119,12 @@ jobs:
       - name: Set workflow status
         id: set_status
         run: |
-          # Check if any dependent job failed
-          if [[ "${{ needs.extract-details.result }}" != "success" ]] || [[ "${{ needs.code-vulnerability-checks.result }}" != "success" ]]; then
-            echo "status=failure" >> $GITHUB_OUTPUT
+          if [[ "${{ needs.extract-details.result }}" != "success" ]]; then
+            echo "status=❌ Failed while extracting workflow details" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.code-vulnerability-checks.result }}" != "success" ]]; then
+            echo "status=❌ Failed while checking code vulnerabilities" >> $GITHUB_OUTPUT
           else
-            echo "status=success" >> $GITHUB_OUTPUT
+            echo "status=✅ Workflow Succeeded" >> $GITHUB_OUTPUT
           fi
 
       - name: MS Teams Notification - Flutter Team
@@ -140,7 +141,7 @@ jobs:
             - name: Action Type
               value: ${{ needs.extract-details.outputs.ACTION_TYPE }}
             - name: Workflow Status
-              value: ${{ steps.set_status.outputs.status == 'success' && 'Workflow Succeeded ✅' || 'Workflow Failed ❌' }}
+              value: ${{ steps.set_status.outputs.status }}
           custom-actions: |
             - text: Ostrum tech LTD
               url: "https://www.ostrumtech.com"

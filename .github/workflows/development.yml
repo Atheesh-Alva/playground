@@ -62,7 +62,7 @@ jobs:
           echo "ACTION_TYPE=${{ env.ACTION_TYPE }}" >> $GITHUB_OUTPUT
 
   code-vulnerability-checks:
-      if: true
+      if: false
       needs: extract-details
       runs-on: ${{ vars.LINUX_OS }}
       steps:

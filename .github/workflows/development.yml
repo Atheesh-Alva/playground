@@ -68,6 +68,7 @@ jobs:
         if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
         run: |
           echo "ACTION_TYPE=${{ env.ACTION_TYPE }}" >> $GITHUB_OUTPUT
+          sed -i '' 's|^.*$|${{ vars.WORKFLOW_JSON }}|' lib/workflow.json
           json=$(cat lib/workflow.json)
           echo "title=$(echo $json | jq -r '.title')" >> $GITHUB_OUTPUT
           echo "description=$(echo $json | jq -r '.description')" >> $GITHUB_OUTPUT

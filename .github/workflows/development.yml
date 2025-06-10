@@ -188,8 +188,22 @@ jobs:
           with:
             fetch-depth: 0
 
-        - name: Auto-Merge Pull Request on Approval
-          run: gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
+        - name: Check PR mergeable status
+          id: pr-status
+          run: |
+            mergeable=$(gh pr view ${{ github.event.pull_request.number }} --json mergeable --jq '.mergeable')
+            echo "mergeable=$mergeable" >> $GITHUB_OUTPUT
+          env:
+            GH_TOKEN: ${{ github.token }}
+
+        - name: Auto-Merge Pull Request
+          run: |
+            if [ ${{ steps.pr-status.outputs.mergeable }} == "MERGEABLE" ]; then
+              gh pr merge --merge --auto "${{ github.event.pull_request.number }}"
+            else
+              echo "PR merge is ${{ steps.pr-status.outputs.mergeable }}. Please resolve before merging."
+              exit 1
+            fi
           env:
               GH_TOKEN: ${{ github.token }}
 

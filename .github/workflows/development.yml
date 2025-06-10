@@ -60,60 +60,73 @@ jobs:
 
       - name: Extract Workflow JSON details
         id: read-json
-        if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
+        if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
         run: |
-          echo "ACTION_TYPE=${{ env.ACTION_TYPE }}" >> $GITHUB_OUTPUT
-          echo '${{ vars.WORKFLOW_JSON }}' > lib/workflow.json
+          echo "ACTION_TYPE=${ACTION_TYPE}" >> $GITHUB_OUTPUT
+          echo "${{ vars.WORKFLOW_JSON }}" > lib/workflow.json
           json=$(cat lib/workflow.json)
-          echo "title=$(echo $json | jq -r '.title')" >> $GITHUB_OUTPUT
-          echo "description=$(echo $json | jq -r '.description')" >> $GITHUB_OUTPUT
-          echo "bug=$(echo $json | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
-          echo "documentation=$(echo $json | jq -r '.commit_details.documentation')" >> $GITHUB_OUTPUT
-          echo "enhancement=$(echo $json | jq -r '.commit_details.enhancement')" >> $GITHUB_OUTPUT
-          echo "help_wanted=$(echo $json | jq -r '.commit_details.help_wanted')" >> $GITHUB_OUTPUT
-          echo "invalid=$(echo $json | jq -r '.commit_details.invalid')" >> $GITHUB_OUTPUT
-          echo "question=$(echo $json | jq -r '.commit_details.question')" >> $GITHUB_OUTPUT
+          echo "title=$(echo "$json" | jq -r '.title')" >> $GITHUB_OUTPUT
+          echo "description=$(echo "$json" | jq -r '.description')" >> $GITHUB_OUTPUT
+          echo "bug=$(echo "$json" | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
+          echo "documentation=$(echo "$json" | jq -r '.commit_details.documentation')" >> $GITHUB_OUTPUT
+          echo "enhancement=$(echo "$json" | jq -r '.commit_details.enhancement')" >> $GITHUB_OUTPUT
+          echo "help_wanted=$(echo "$json" | jq -r '.commit_details.help_wanted')" >> $GITHUB_OUTPUT
+          echo "invalid=$(echo "$json" | jq -r '.commit_details.invalid')" >> $GITHUB_OUTPUT
+          echo "question=$(echo "$json" | jq -r '.commit_details.question')" >> $GITHUB_OUTPUT
 
-      
-      - name: Extract Workflow JSON details
-        if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
+      - name: Extract Workflow labels
+        if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
+        env:
+          BUG: ${{ steps.read-json.outputs.bug }}
+          DOCUMENTATION: ${{ steps.read-json.outputs.documentation }}
+          ENHANCEMENT: ${{ steps.read-json.outputs.enhancement }}
+          HELP_WANTED: ${{ steps.read-json.outputs.help_wanted }}
+          INVALID: ${{ steps.read-json.outputs.invalid }}
+          QUESTION: ${{ steps.read-json.outputs.question }}
         run: |
           label=""
-          if [ "${{ steps.read-json.outputs.bug }}" = "true" ]; then
+
+          if [ "$BUG" = "true" ]; then
             label="bug"
           fi
-          if [ "${{ steps.read-json.outputs.documentation }}" = "true" ]; then
+
+          if [ "$DOCUMENTATION" = "true" ]; then
             if [ -n "$label" ]; then
               label="${label},"
             fi
             label="${label}documentation"
           fi
-          if [ "${{ steps.read-json.outputs.enhancement }}" = "true" ]; then
+
+          if [ "$ENHANCEMENT" = "true" ]; then
             if [ -n "$label" ]; then
               label="${label},"
             fi
             label="${label}enhancement"
           fi
-          if [ "${{ steps.read-json.outputs.help_wanted }}" = "true" ]; then
+
+          if [ "$HELP_WANTED" = "true" ]; then
             if [ -n "$label" ]; then
               label="${label},"
             fi
             label="${label}help_wanted"
           fi
-          if [ "${{ steps.read-json.outputs.invalid }}" = "true" ]; then
+
+          if [ "$INVALID" = "true" ]; then
             if [ -n "$label" ]; then
               label="${label},"
             fi
             label="${label}invalid"
           fi
-          if [ "${{ steps.read-json.outputs.question }}" = "true" ]; then
+
+          if [ "$QUESTION" = "true" ]; then
             if [ -n "$label" ]; then
               label="${label},"
             fi
             label="${label}question"
           fi
-          echo "label=$label" >> $GITHUB_OUTPUT
 
+          echo "label=$label" >> $GITHUB_OUTPUT
+          
   code-vulnerability-checks:
       name: OWASP Checks
       needs: extract-details

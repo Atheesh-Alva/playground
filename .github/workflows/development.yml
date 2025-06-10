@@ -1,16 +1,3 @@
-env:
-
-# Choose the ID for Pull Request Reviewer / Issue Assignee
-  OWNER: ${{ vars.ID_ATHEESH }}
-
-  # Choose any label from the below options. If you are choosing more than one label, make sure no space is provided.
-  # LABEL: ${{ vars.LABEL_BUG }}
-  # # ${{ vars.LABEL_BUG }},${{ vars.LABEL_ENHANCEMENTS }},${{ vars.LABEL_DOCUMENTATION }}
-
-  # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
-
-# ******************************************** DO NOT ALTER ANY CODE BELOW ********************************************
-
 name: Integrated DevOps Flow
   
 on:
@@ -41,6 +28,7 @@ jobs:
       TITLE: ${{ steps.read-json.outputs.title }}
       DESCRIPTION: ${{ steps.read-json.outputs.description }}
       LABEL: ${{ steps.read-json.outputs.label }}
+      ISSUE_ASSIGNEE: ${{ steps.read-json.outputs.issueAssignee }}
 
     steps:
 
@@ -67,6 +55,7 @@ jobs:
           json=$(cat lib/workflow.json)
           echo "title=$(echo "$json" | jq -r '.title')" >> $GITHUB_OUTPUT
           echo "description=$(echo "$json" | jq -r '.description')" >> $GITHUB_OUTPUT
+          echo "issueAssignee=$(echo "$json" | jq -r '.commit_details.issue_assignee')" >> $GITHUB_OUTPUT
           labels=$(echo "$json" | jq -r '.commit_details | to_entries | map(select(.value == true)) | map(.key) | join(",")')
           echo "label=$labels" >> $GITHUB_OUTPUT
 
@@ -164,7 +153,7 @@ jobs:
               title: '[AUTO] Tag - ${{ github.ref_name }}'
               body: 'Auto created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
               labels: ${{ needs.extract-details.outputs.label }}
-              assignees: ${{ env.OWNER }}
+              assignees: ${{ needs.extract-details.outputs.ISSUE_ASSIGNEE }}
 
   pr-merge:
     name: Merge PR after review

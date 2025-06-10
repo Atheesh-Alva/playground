@@ -17,7 +17,7 @@ jobs:
       - name: Read JSON and extract labels
         id: set-label
         run: |
-          # echo "${{ vars.WORKFLOW_JSON }}" > lib/workflow.json
+          # echo ${{ vars.WORKFLOW_JSON }} > lib/workflow.json
           
           # Read the JSON file
           json=$(cat lib/workflow.json)

@@ -4,8 +4,8 @@ env:
   OWNER: ${{ vars.ID_ATHEESH }}
 
   # Choose any label from the below options. If you are choosing more than one label, make sure no space is provided.
-  LABEL: ${{ vars.LABEL_BUG }}
-  # ${{ vars.LABEL_BUG }},${{ vars.LABEL_ENHANCEMENTS }},${{ vars.LABEL_DOCUMENTATION }}
+  # LABEL: ${{ vars.LABEL_BUG }}
+  # # ${{ vars.LABEL_BUG }},${{ vars.LABEL_ENHANCEMENTS }},${{ vars.LABEL_DOCUMENTATION }}
 
   # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
@@ -38,14 +38,9 @@ jobs:
 
     outputs:
       ACTION_TYPE: ${{ steps.read-json.outputs.ACTION_TYPE }}
-      title: ${{ steps.read-json.outputs.title }}
-      description: ${{ steps.read-json.outputs.description }}
-      bug: ${{ steps.read-json.outputs.bug }}
-      documentation: ${{ steps.read-json.outputs.documentation }}
-      enhancement: ${{ steps.read-json.outputs.enhancement }}
-      help_wanted: ${{ steps.read-json.outputs.help_wanted }}
-      invalid: ${{ steps.read-json.outputs.invalid }}
-      question: ${{ steps.read-json.outputs.question }}
+      TITLE: ${{ steps.read-json.outputs.title }}
+      DESCRIPTION: ${{ steps.read-json.outputs.description }}
+      LABEL: ${{ steps.read-json.outputs.label }}
 
     steps:
 
@@ -65,19 +60,15 @@ jobs:
 
       - name: Extract Workflow JSON details
         id: read-json
-        if: ${{ env.ACTION_TYPE == 'PR' }} || ${{ env.ACTION_TYPE == 'ISSUE' }}
+        if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
         run: |
-          echo "ACTION_TYPE=${{ env.ACTION_TYPE }}" >> $GITHUB_OUTPUT
+          echo "ACTION_TYPE=${ACTION_TYPE}" >> $GITHUB_OUTPUT
           echo '${{ vars.WORKFLOW_JSON }}' > lib/workflow.json
           json=$(cat lib/workflow.json)
-          echo "title=$(echo $json | jq -r '.title')" >> $GITHUB_OUTPUT
-          echo "description=$(echo $json | jq -r '.description')" >> $GITHUB_OUTPUT
-          echo "bug=$(echo $json | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
-          echo "documentation=$(echo $json | jq -r '.commit_details.documentation')" >> $GITHUB_OUTPUT
-          echo "enhancement=$(echo $json | jq -r '.commit_details.enhancement')" >> $GITHUB_OUTPUT
-          echo "help_wanted=$(echo $json | jq -r '.commit_details.help_wanted')" >> $GITHUB_OUTPUT
-          echo "invalid=$(echo $json | jq -r '.commit_details.invalid')" >> $GITHUB_OUTPUT
-          echo "question=$(echo $json | jq -r '.commit_details.question')" >> $GITHUB_OUTPUT
+          echo "title=$(echo "$json" | jq -r '.title')" >> $GITHUB_OUTPUT
+          echo "description=$(echo "$json" | jq -r '.description')" >> $GITHUB_OUTPUT
+          labels=$(echo "$json" | jq -r '.commit_details | to_entries | map(select(.value == true)) | map(.key) | join(",")')
+          echo "label=$labels" >> $GITHUB_OUTPUT
 
   code-vulnerability-checks:
       name: OWASP Checks
@@ -154,7 +145,7 @@ jobs:
               --body 'Auto created by @${{ github.event.sender.login }}: ${{ needs.extract-details.outputs.description }}' \
               --reviewer ${{ env.OWNER }} \
               --assignee ${{ github.event.sender.login }} \
-              --label ${{ env.LABEL }}
+              --label ${{ needs.extract-details.outputs.label }}
           env:
               GITHUB_TOKEN: ${{ github.token }}
     
@@ -172,7 +163,7 @@ jobs:
               github_token: ${{ github.token }}
               title: '[AUTO] Tag - ${{ github.ref_name }}'
               body: 'Auto created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
-              labels: ${{ env.LABEL }}
+              labels: ${{ needs.extract-details.outputs.label }}
               assignees: ${{ env.OWNER }}
 
   pr-merge:

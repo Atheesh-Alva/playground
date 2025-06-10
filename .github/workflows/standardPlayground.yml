@@ -6,126 +6,26 @@ on:
     - 'Run-+[0-9]+[0-9]+[0-9]'
 
 jobs:
-  read-json:
-    name: Actions
-    runs-on: ${{ vars.LINUX_OS }}
-
+  job1:
+    runs-on: ubuntu-latest
     outputs:
-      title: ${{ steps.read-json.outputs.title }}
-      description: ${{ steps.read-json.outputs.description }}
-      bug: ${{ steps.read-json.outputs.bug }}
-
-    env:
-      AWS_REGION: 'eu-west-2'
-      AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
-
+      label: ${{ steps.set-label.outputs.label }}
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Read JSON file and set outputs
-        id: read-json
+      - name: Read JSON and extract labels
+        id: set-label
         run: |
+          echo '${{ vars.WORKFLOW_JSON }}' > lib/workflow.json
           json=$(cat lib/workflow.json)
-          echo "title=$(echo $json | jq -r '.title')" >> $GITHUB_OUTPUT
-          echo "description=$(echo $json | jq -r '.description')" >> $GITHUB_OUTPUT
-          echo "bug=$(echo $json | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
+          labels=$(echo "$json" | jq -r '.commit_details | to_entries | map(select(.value == true)) | map(.key) | join(",")')
+          echo "label=$labels" >> $GITHUB_OUTPUT
 
-  display:
-      needs: read-json
-      runs-on: ubuntu-latest
-      steps:
-        - name: Display JSON values
-          run: |
-            echo "title: ${{ needs.read-json.outputs.title }}"
-            echo "description: ${{ needs.read-json.outputs.description }}"
-            echo "bug: ${{ needs.read-json.outputs.bug }}"
-
-
-
-
-
-
-
-################################################################################################################################################################
-
-      # - name: Checkout code
-      #   uses: actions/checkout@v3
-      #   with:
-      #     fetch-depth: 0
-
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: ${{ env.AWS_REGION }}
-
-      # - name: Fetch AWS AppSync-Schema
-      #   run: |
-      #     cd assets/raw/release
-      #     npm install -g aws-appsync
-      #     aws appsync get-introspection-schema \
-      #       --api-id $AWS_API_ID \
-      #       --format JSON \
-      #       --region $AWS_REGION \
-      #       --no-include-directives schema.json
-      #     cat schema.json
-            
-      # - name: List CodeCommit Repositories
-      #   run: |
-      #     aws codecommit list-repositories
-
-    # - name: Push to CodeCommit
-    #   run: |
-    #     git remote add codecommit https://${{ secrets.CODECOMMIT_REPO_URL }}
-    #     git push codecommit master --force
-
-    #   - name: Fetch AWS AppSync-Schema
-    #     run: |
-    #       cd assets/raw/release
-    #       npm install -g aws-appsync
-    #       aws appsync get-introspection-schema \
-    #         --api-id $AWS_API_ID \
-    #         --format JSON \
-    #         --region $AWS_REGION \
-    #         --no-include-directives schema.json
-    #       cat schema.json
-          
-    #   - name: Setup JAVA for Android
-    #     uses: actions/setup-java@v3
-    #     with:
-    #       distribution: "zulu"
-    #       java-version: ${{ vars.JAVA_VERSION }}
-    #       cache: "gradle"
-
-    #   - name: Flutter Setup
-    #     uses: subosito/flutter-action@v2
-    #     with:
-    #         channel: "stable"
-    #         flutter-version: ${{ vars.FLUTTER_VERSION }}
-    #         cache: true
-
-    #   - name: Flutter Clean & Get Packages
-    #     run: |
-    #       flutter clean
-    #       flutter pub get
-
-    #   - name: Cache Flutter SDK
-    #     uses: actions/cache@v3
-    #     with:
-    #       path: /opt/hostedtoolcache/flutter
-    #       key: flutter-${{ hashFiles('**/pubspec.lock') }}
-
-    #   - name: Build APK File
-    #     run: |
-    #       flutter build apk \
-    #         --target=lib/main.dart \
-    #         --release
-
-    #   - name: Upload APK to GitHub Artifacts
-    #     uses: actions/upload-artifact@v4
-    #     with:
-    #       name: 'APK_TEST'
-    #       path: build/app/outputs/flutter-apk/app-release.apk
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use LABEL from job1
+        run: |
+          echo "Labels from job1: ${{ needs.job1.outputs.label }}"

@@ -4,8 +4,8 @@ env:
   OWNER: ${{ vars.ID_ATHEESH }}
 
   # Choose any label from the below options. If you are choosing more than one label, make sure no space is provided.
-  LABEL: ${{ vars.LABEL_BUG }}
-  # ${{ vars.LABEL_BUG }},${{ vars.LABEL_ENHANCEMENTS }},${{ vars.LABEL_DOCUMENTATION }}
+  # LABEL: ${{ vars.LABEL_BUG }}
+  # # ${{ vars.LABEL_BUG }},${{ vars.LABEL_ENHANCEMENTS }},${{ vars.LABEL_DOCUMENTATION }}
 
   # bug,documentation,duplicate,enhancement,"good first issue","help wanted",invalid,question,wontfix
 
@@ -38,9 +38,9 @@ jobs:
 
     outputs:
       ACTION_TYPE: ${{ steps.read-json.outputs.ACTION_TYPE }}
-      title: ${{ steps.read-json.outputs.title }}
-      description: ${{ steps.read-json.outputs.description }}
-      label: ${{ steps.read-json.outputs.label }}
+      TITLE: ${{ steps.read-json.outputs.title }}
+      DESCRIPTION: ${{ steps.read-json.outputs.description }}
+      LABEL: ${{ steps.read-json.outputs.label }}
 
     steps:
 
@@ -126,7 +126,7 @@ jobs:
           fi
 
           echo "label=$label" >> $GITHUB_OUTPUT
-          
+
   code-vulnerability-checks:
       name: OWASP Checks
       needs: extract-details

@@ -67,65 +67,8 @@ jobs:
           json=$(cat lib/workflow.json)
           echo "title=$(echo "$json" | jq -r '.title')" >> $GITHUB_OUTPUT
           echo "description=$(echo "$json" | jq -r '.description')" >> $GITHUB_OUTPUT
-          echo "bug=$(echo "$json" | jq -r '.commit_details.bug')" >> $GITHUB_OUTPUT
-          echo "documentation=$(echo "$json" | jq -r '.commit_details.documentation')" >> $GITHUB_OUTPUT
-          echo "enhancement=$(echo "$json" | jq -r '.commit_details.enhancement')" >> $GITHUB_OUTPUT
-          echo "help_wanted=$(echo "$json" | jq -r '.commit_details.help_wanted')" >> $GITHUB_OUTPUT
-          echo "invalid=$(echo "$json" | jq -r '.commit_details.invalid')" >> $GITHUB_OUTPUT
-          echo "question=$(echo "$json" | jq -r '.commit_details.question')" >> $GITHUB_OUTPUT
-
-      - name: Extract Workflow labels
-        if: ${{ env.ACTION_TYPE == 'PR' || env.ACTION_TYPE == 'ISSUE' }}
-        env:
-          BUG: ${{ steps.read-json.outputs.bug }}
-          DOCUMENTATION: ${{ steps.read-json.outputs.documentation }}
-          ENHANCEMENT: ${{ steps.read-json.outputs.enhancement }}
-          HELP_WANTED: ${{ steps.read-json.outputs.help_wanted }}
-          INVALID: ${{ steps.read-json.outputs.invalid }}
-          QUESTION: ${{ steps.read-json.outputs.question }}
-        run: |
-          label=""
-
-          if [ "$BUG" = "true" ]; then
-            label="bug"
-          fi
-
-          if [ "$DOCUMENTATION" = "true" ]; then
-            if [ -n "$label" ]; then
-              label="${label},"
-            fi
-            label="${label}documentation"
-          fi
-
-          if [ "$ENHANCEMENT" = "true" ]; then
-            if [ -n "$label" ]; then
-              label="${label},"
-            fi
-            label="${label}enhancement"
-          fi
-
-          if [ "$HELP_WANTED" = "true" ]; then
-            if [ -n "$label" ]; then
-              label="${label},"
-            fi
-            label="${label}help_wanted"
-          fi
-
-          if [ "$INVALID" = "true" ]; then
-            if [ -n "$label" ]; then
-              label="${label},"
-            fi
-            label="${label}invalid"
-          fi
-
-          if [ "$QUESTION" = "true" ]; then
-            if [ -n "$label" ]; then
-              label="${label},"
-            fi
-            label="${label}question"
-          fi
-
-          echo "label=$label" >> $GITHUB_OUTPUT
+          labels=$(echo "$json" | jq -r '.commit_details | to_entries | map(select(.value == true)) | map(.key) | join(",")')
+          echo "label=$labels" >> $GITHUB_OUTPUT
 
   code-vulnerability-checks:
       name: OWASP Checks

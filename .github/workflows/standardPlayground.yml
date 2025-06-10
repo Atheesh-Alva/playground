@@ -18,15 +18,9 @@ jobs:
         id: set-label
         run: |
           echo '${{ vars.WORKFLOW_JSON }}' > lib/workflow.json
-          
-          # Read the JSON file
           json=$(cat lib/workflow.json)
-          
-          # Use jq to extract keys with true values from commit_details
           labels=$(echo "$json" | jq -r '.commit_details | to_entries | map(select(.value == true)) | map(.key) | join(",")')
-          
-          echo "LABEL=$labels"
-          echo "::set-output name=label::$labels"
+          echo "label=$labels" >> $GITHUB_OUTPUT
 
   job2:
     needs: job1
@@ -35,4 +29,3 @@ jobs:
       - name: Use LABEL from job1
         run: |
           echo "Labels from job1: ${{ needs.job1.outputs.label }}"
-  

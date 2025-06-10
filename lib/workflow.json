@@ -1,3 +1,12 @@
 {
-    "ssl_pinning_base64": "sqfersg"
+    "title": "Title from GH Variables",
+    "description": "Description for GH Variables",
+    "commit_details": {
+        "bug": true,
+        "documentation": true,
+        "enhancement": false,
+        "help_wanted": false,
+        "invalid": false,
+        "question": false
+    }
 }

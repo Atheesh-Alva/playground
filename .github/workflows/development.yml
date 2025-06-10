@@ -152,8 +152,8 @@ jobs:
               github_token: ${{ github.token }}
               title: '[AUTO] Tag - ${{ github.ref_name }}'
               body: 'Auto created by @${{ github.event.sender.login }}: ${{ github.event.head_commit.message }}'
-              labels: ${{ needs.extract-details.outputs.label }}
-              assignees: ${{ needs.extract-details.outputs.ISSUE_ASSIGNEE }}
+              # labels: ${{ needs.extract-details.outputs.label }}
+              # assignees: ${{ needs.extract-details.outputs.ISSUE_ASSIGNEE }}
 
   pr-merge:
     name: Merge PR after review

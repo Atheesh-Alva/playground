@@ -143,7 +143,7 @@ jobs:
               --head ${{ env.SOURCE_BRANCH }} \
               --title '[AUTO] Tag - ${{ github.ref_name }} - ${{ needs.extract-details.outputs.title }}' \
               --body 'Auto created by @${{ github.event.sender.login }}: ${{ needs.extract-details.outputs.description }}' \
-              --reviewer ${{ env.OWNER }} \
+              --reviewer ${{ vars.PR_REVIEWERS }} \
               --assignee ${{ github.event.sender.login }} \
               --label ${{ needs.extract-details.outputs.label }}
           env:

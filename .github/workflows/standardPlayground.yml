@@ -28,9 +28,11 @@ jobs:
       run: |
         echo "${{ vars.WORKFLOW_JSON }}" > lib/workflow.json
 
-        # Use jq to parse and filter keys with true values
-        LABEL=$(jq -r '.commit_details | to_entries | map(select(.value == true) | .key) | join(",")' lib/workflow.json)
+        # Print the JSON content for inspection
+        cat lib/workflow.json
+        echo "---"
 
+        LABEL=$(jq -r '.commit_details | to_entries | map(select(.value == true) | .key) | join(",")' lib/workflow.json)
         echo "LABEL=$LABEL" >> $GITHUB_OUTPUT
 
 

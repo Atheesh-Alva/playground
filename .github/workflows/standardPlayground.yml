@@ -18,6 +18,11 @@ jobs:
       AWS_API_ID: ${{ secrets.AWS_APPSYNC_API_ID }}
 
     steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@master
+      with:
+        fetch-depth: 0
+
     - name: Extract Workflow JSON details
       id: read-json
       run: |

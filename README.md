@@ -11,7 +11,7 @@ To configure the development environment on your system, please follow the steps
     * ssl_pinning_key_beta.base64
 
 - ✅ Place all three files in the following directory within your project: `assets/raw/dev/`
-- ✅ Navigate to the file `lib/app/app_mode.dart`
+- ✅ Navigate to the file [home_page.dart](lib/presentation/views/home_page.dart)
 - ✅ Locate the variable `oaMode` and set its value to `developer`
 - ✅ <ins>These steps are intended for development purposes only. Ensure that any changes made for development are reverted before deploying to production!</ins>
 

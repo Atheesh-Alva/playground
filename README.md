@@ -21,20 +21,22 @@ ________________________________________________________________________________
 
 ### Automate multiple build and release types using the workflow specified in .github/workflows/release.yml.
 
+### ✅ Different Types of Releases:
+
+| Sl. No. | Description | Commit Tag |
+| ---------- | ---------- | ---------- |
+| 1 | Builds APK, AAB & IPA; Uplaods to Play Store - Internal & TestFlight | B*/V*/R* |
+| 2 | Builds APK & AAB; Uplaods to Play Store - Internal | B*/V*/AND |
+| 3 | Builds AAB; Uplaods to Play Store - Internal | B*/V*/GPS |
+| 4 | Builds IPA; Uplaods to TestFlight | B*/V*/IOS |
+
 ### ✅ Different Types of Builds:
 
 | Sl. No. | Description | Commit Tag |
 | ---------- | ---------- | ---------- |
-| 1 | Only APK | B*/V*/APK |
-| 2 | Only AAB  | B*/V*/AAB  |
-
-### ✅ Different Types of Releases:
-
-| Column 1   | Column 2   | Column 3   |
-| ---------- | ---------- | ---------- |
-| Row1Cell1  | Row1Cell2  | Row1Cell3  |
-| Row2Cell1  | Row2Cell2  | Row2Cell3  |
-
+| 1 | Builds APK | B*/V*/APK |
+| 2 | Builds AAB | B*/V*/AAB  |
+| 3 | Builds IPA | B*/V*/IPA  |
 
 ________________________________________________________________________________________________________________________________________________________________
 

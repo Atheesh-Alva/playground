@@ -23,14 +23,14 @@ ________________________________________________________________________________
 
 ### ✅ Different Types of Releases:
 
-| Sl. No. | Description | Commit Tag |
-| ---------- | ---------- | ---------- |
-| 1 | Builds APK, AAB & IPA; Uplaods to Play Store - Internal & TestFlight | B*/V*/R* |
-| 2 | Builds APK & AAB; Uplaods to Play Store - Internal | B*/V*/AND |
-| 3 | Builds AAB; Uplaods to Play Store - Internal | B*/V*/GPS |
-| 4 | Builds IPA; Uplaods to TestFlight | B*/V*/IOS |
+| Sl. No. | Description | Commit Tag | Note |
+| ---------- | ---------- | ---------- | ---------- |
+| 1 | Builds APK, AAB & IPA; Uplaods to Play Store - Internal & TestFlight | B*/V*/R* | Complete rollout |
+| 2 | Builds APK & AAB; Uplaods to Play Store - Internal | B*/V*/AND | Complete rollout for Android |
+| 3 | Builds AAB; Uplaods to Play Store - Internal | B*/V*/GPS | Release only to Play Store |
+| 4 | Builds IPA; Uplaods to TestFlight | B*/V*/IOS | Release only to App Store |
 
-### ✅ Different Types of Builds:
+### ✅ Different Types of Builds (typically used during the development):
 
 | Sl. No. | Description | Commit Tag |
 | ---------- | ---------- | ---------- |

@@ -23,10 +23,10 @@ ________________________________________________________________________________
 
 ### ✅ Different Types of Builds:
 
-| Column 1   | Column 2   | Column 3   |
+| Sl. No. | Description | Commit Tag |
 | ---------- | ---------- | ---------- |
-| Row1Cell1  | Row1Cell2  | Row1Cell3  |
-| Row2Cell1  | Row2Cell2  | Row2Cell3  |
+| 1 | Only APK | B*/V*/APK |
+| 2 | Only AAB  | B*/V*/AAB  |
 
 ### ✅ Different Types of Releases:
 

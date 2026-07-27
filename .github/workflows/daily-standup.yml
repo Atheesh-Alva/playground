@@ -35,7 +35,7 @@ jobs:
               id: ms_teams_ostrum
               with:
                   github-token: ${{ github.token }}
-                  webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+                  webhook-uri: ${{ secrets.TEAMS_WEBHOOK_URL }}
                   show-on-start: false
                   card-layout-exit: complete
                   enable-review-diffs-action: false

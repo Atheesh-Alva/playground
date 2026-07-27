@@ -25,6 +25,7 @@ jobs:
 
     outputs:
       ACTION_TYPE: ${{ steps.read-json.outputs.ACTION_TYPE }}
+      OWASP_CHECK: ${{ steps.read-json.outputs.owaspCheck }}
       TITLE: ${{ steps.read-json.outputs.title }}
       DESCRIPTION: ${{ steps.read-json.outputs.description }}
       LABEL: ${{ steps.read-json.outputs.label }}
@@ -54,6 +55,7 @@ jobs:
           echo '${{ vars.WORKFLOW_JSON }}' > lib/workflow.json
           json=$(cat lib/workflow.json)
           echo "title=$(echo "$json" | jq -r '.title')" >> $GITHUB_OUTPUT
+          echo "owaspCheck=$(echo "$json" | jq -r '.owaspCheck')" >> $GITHUB_OUTPUT
           echo "description=$(echo "$json" | jq -r '.description')" >> $GITHUB_OUTPUT
           echo "issueAssignee=$(echo "$json" | jq -r '.commit_details.issue_assignee')" >> $GITHUB_OUTPUT
           labels=$(echo "$json" | jq -r '.commit_details | to_entries | map(select(.value == true)) | map(.key) | join(",")')
@@ -63,7 +65,7 @@ jobs:
       name: OWASP Checks
       needs: extract-details
       runs-on: ${{ vars.LINUX_OS }}
-      if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR' }}
+      if: ${{ needs.extract-details.outputs.ACTION_TYPE == 'PR'  && needs.extract-details.outputs.OWASP_CHECK == 'true' }}
 
       steps:
 

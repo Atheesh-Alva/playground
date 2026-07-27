@@ -1,0 +1,29 @@
+name: daily-standup-notify
+
+on:
+    schedule:
+        - cron: "0/5 * * * *"
+    workflow_dispatch: {}
+
+permissions:
+    contents: write # required to push the cleared CSV back
+
+jobs:
+    notify:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+            - run: pip install requests
+            - run: python scripts/standup_notify.py
+              env:
+                  TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+            - name: Commit cleared updates
+              run: |
+                  git config user.name "standup-bot"
+                  git config user.email "standup-bot@users.noreply.github.com"
+                  git add data/updates.csv data/updates_archive.csv
+                  git diff --cached --quiet || git commit -m "chore: clear standup updates for $(date +%F)"
+                  git push

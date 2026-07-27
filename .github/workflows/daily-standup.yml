@@ -1,30 +1,37 @@
-name: daily-standup-notify
+name: Daily Standup Teams Notification
 
 on:
     push:
-    # schedule:
-    #     - cron: "*/5 * * * *"
-    workflow_dispatch: {}
+    schedule:
+        # 3:00 AM UTC = 8:30 AM IST (Monday through Friday)
+        - cron: "0 3 * * 1-5"
+    workflow_dispatch: {} # Allows manual testing anytime
 
 permissions:
-    contents: write # required to push the cleared CSV back
+    contents: write
 
 jobs:
     notify:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+
             - uses: actions/setup-python@v5
               with:
                   python-version: "3.12"
-            - run: pip install requests
-            - run: python scripts/standup_notify.py
+
+            - name: Install dependencies
+              run: pip install requests openpyxl
+
+            - name: Run Standup Notification Script
               env:
                   TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
-            - name: Commit cleared updates
+              run: python scripts/standup_notify.py
+
+            - name: Commit Updated Rotation State
               run: |
-                  git config user.name "op-bot"
-                  git config user.email "op-bot@users.noreply.github.com"
-                  git add data/updates.csv data/updates_archive.csv
-                  git diff --cached --quiet || git commit -m "Clear Stand-Up updates for $(date +%F)"
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add data/rotation_state.json
+                  git diff --cached --quiet || git commit -m "chore: update standup speaker rotation state"
                   git push

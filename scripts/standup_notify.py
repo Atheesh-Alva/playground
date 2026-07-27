@@ -1,86 +1,119 @@
-import csv, datetime, os, re, subprocess, requests
-from zoneinfo import ZoneInfo
+import os
+import json
+import requests
+from datetime import datetime
+import openpyxl  # pip install openpyxl
 
 WEBHOOK_URL = os.environ["TEAMS_WEBHOOK_URL"]
-ROSTER_PATH = "data/roster.csv"
-UPDATES_PATH = "data/updates.csv"
-ARCHIVE_PATH = "data/updates_archive.csv"
+EXCEL_PATH = "data/Standup_Updates.xlsx"
+STATE_PATH = "data/rotation_state.json"
 
-def read_roster():
-    with open(ROSTER_PATH, newline="") as f:
-        return list(csv.DictReader(f))
-
-def git_blame_authors(path):
-    output = subprocess.run(
-        ["git", "blame", "--line-porcelain", "--", path],
-        capture_output=True, text=True, check=True,
-    ).stdout
-    rows, current_email = [], None
-    for line in output.split("\n"):
-        if line.startswith("author-mail "):
-            current_email = line.split("author-mail ", 1)[1].strip("<>")
-        elif line.startswith("\t"):
-            rows.append((current_email, line[1:]))
-    return rows
-
-NOREPLY_RE = re.compile(r"^\d+\+([^@]+)@users\.noreply\.github\.com$")
-
-def match_person(email, roster_by_email, roster_by_username):
-    if email in roster_by_email:
-        return roster_by_email[email]
-    m = NOREPLY_RE.match(email or "")
-    if m:
-        return roster_by_username.get(m.group(1))
-    return None
-
-roster = read_roster()
-roster_by_email = {r["email"]: r for r in roster}
-roster_by_username = {r["github_username"]: r for r in roster}
-
-now_ist = datetime.datetime.now(ZoneInfo("Asia/Kolkata"))
-today_str = now_ist.date().isoformat()
-iso_week = now_ist.date().isocalendar()[1]
-speaker = roster[(iso_week - 1) % len(roster)]
-
-blamed = git_blame_authors(UPDATES_PATH)
-attributed, unmatched = [], []
-for email, content in blamed:
-    if not content.strip():
-        continue
-    person = match_person(email, roster_by_email, roster_by_username)
-    if person:
-        attributed.append({"name": person["name"], "email": email, "update": content.strip()})
+def get_next_speaker(roster):
+    """Calculates the speaker on a continuous loop regardless of calendar year."""
+    state = {"last_index": -1}
+    if os.path.exists(STATE_PATH):
+        with open(STATE_PATH, "r") as f:
+            state = json.load(f)
+    
+    # Check if today is Monday to advance the speaker
+    today = datetime.now()
+    # 0 = Monday
+    if today.weekday() == 0 or state["last_index"] == -1:
+        next_index = (state["last_index"] + 1) % len(roster)
     else:
-        unmatched.append({"name": email or "unknown", "email": email, "update": content.strip()})
+        next_index = state["last_index"]
 
-by_name = {a["name"]: a["update"] for a in attributed}
-update_summary = "\n\n".join(
-    f"**{r['name']}:** {by_name.get(r['name'], '_no update logged_')}"
-    for r in roster
-)
-if unmatched:
-    update_summary += "\n\n_Unattributed (git email didn't match roster):_\n" + "\n".join(
-        f"- {u['email']}: {u['update']}" for u in unmatched
-    )
+    # Save state
+    with open(STATE_PATH, "w") as f:
+        json.dump({"last_index": next_index, "updated_at": today.isoformat()}, f)
 
-payload = {
-    "speaker_email": speaker["email"],   # used by the flow to resolve real Teams identity
-    "update_summary": update_summary,
-}
+    return roster[next_index]
 
-resp = requests.post(WEBHOOK_URL, json=payload)
-resp.raise_for_status()
+def read_excel_updates():
+    wb = openpyxl.load_workbook(EXCEL_PATH)
+    
+    # Read Roster
+    roster_sheet = wb["Roster"]
+    roster = []
+    for row in roster_sheet.iter_rows(min_row=2, values_only=True):
+        if row[0] is not None:
+            roster.append({"order": row[0], "name": row[1], "email": row[2]})
+            
+    # Read Updates
+    updates_sheet = wb["Today"]
+    updates = {}
+    for row in updates_sheet.iter_rows(min_row=2, values_only=True):
+        if row[0] is not None:
+            updates[row[1]] = row[2] if row[2] else "_No update logged_"
 
-# --- clear + archive, unchanged from before ---
-open(UPDATES_PATH, "w").close()
-archive_rows = [
-    {"date": today_str, "name": a["name"], "email": a["email"], "update": a["update"]}
-    for a in (attributed + unmatched)
-]
-if archive_rows:
-    archive_exists = os.path.exists(ARCHIVE_PATH)
-    with open(ARCHIVE_PATH, "a", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["date", "name", "email", "update"])
-        if not archive_exists:
-            writer.writeheader()
-        writer.writerows(archive_rows)
+    return roster, updates
+
+def send_teams_card(speaker, roster, updates):
+    """Sends a rich Adaptive Card to MS Teams."""
+    
+    facts = []
+    for member in roster:
+        name = member["name"]
+        update_text = updates.get(member["email"], "_No update logged_")
+        facts.append({"title": name, "value": update_text})
+
+    card_payload = {
+        "type": "message",
+        "attachments": [
+            {
+                "contentType": "application/vnd.microsoft.card.adaptive",
+                "contentUrl": None,
+                "content": {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.4",
+                    "body": [
+                        {
+                            "type": "TextBlock",
+                            "text": "📢 Daily Standup Reminder (9:00 AM IST)",
+                            "weight": "Bolder",
+                            "size": "Large",
+                            "color": "Accent"
+                        },
+                        {
+                            "type": "Container",
+                            "style": "warning",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": f"🎙️ **Weekly Speaker:** {speaker['name']} ({speaker['email']})",
+                                    "weight": "Bolder",
+                                    "wrap": True
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Please lead today's meeting and sync on updates!",
+                                    "isSubtle": True,
+                                    "spacing": "None"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "📋 **Today's Team Updates**",
+                            "weight": "Bolder",
+                            "size": "Medium",
+                            "spacing": "Medium"
+                        },
+                        {
+                            "type": "FactSet",
+                            "facts": facts
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+
+    response = requests.post(WEBHOOK_URL, json=card_payload)
+    response.raise_for_status()
+
+if __name__ == "__main__":
+    roster, updates = read_excel_updates()
+    speaker = get_next_speaker(roster)
+    send_teams_card(speaker, roster, updates)

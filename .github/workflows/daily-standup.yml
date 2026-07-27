@@ -28,3 +28,15 @@ jobs:
                   git add data/updates.csv data/updates_archive.csv
                   git diff --cached --quiet || git commit -m "chore: clear standup updates for $(date +%F)"
                   git push
+
+            - name: MS Teams Notification
+              if: always()
+              uses: freenet-actions/ms-teams-deploy-card@master
+              id: ms_teams_ostrum
+              with:
+                  github-token: ${{ github.token }}
+                  webhook-uri: ${{ secrets.MS_TEAMS_PLAYGROUND_WEBHOOK_URI }}
+                  show-on-start: false
+                  card-layout-exit: complete
+                  enable-review-diffs-action: false
+                  include-files: false

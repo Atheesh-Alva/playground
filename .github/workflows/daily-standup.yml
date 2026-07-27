@@ -23,20 +23,8 @@ jobs:
                   TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
             - name: Commit cleared updates
               run: |
-                  git config user.name "standup-bot"
-                  git config user.email "standup-bot@users.noreply.github.com"
+                  git config user.name "op-bot"
+                  git config user.email "op-bot@users.noreply.github.com"
                   git add data/updates.csv data/updates_archive.csv
-                  git diff --cached --quiet || git commit -m "chore: clear standup updates for $(date +%F)"
+                  git diff --cached --quiet || git commit -m "Clear Stand-Up updates for $(date +%F)"
                   git push
-
-            - name: MS Teams Notification
-              if: always()
-              uses: freenet-actions/ms-teams-deploy-card@master
-              id: ms_teams_ostrum
-              with:
-                  github-token: ${{ github.token }}
-                  webhook-uri: ${{ secrets.TEAMS_WEBHOOK_URL }}
-                  show-on-start: false
-                  card-layout-exit: complete
-                  enable-review-diffs-action: false
-                  include-files: false

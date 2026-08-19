@@ -1,61 +1,65 @@
 import os
-import json
+import csv
+import datetime
 import requests
-from datetime import datetime
-import openpyxl  # pip install openpyxl
+import openpyxl
+from zoneinfo import ZoneInfo
 
 WEBHOOK_URL = os.environ["TEAMS_WEBHOOK_URL"]
 EXCEL_PATH = "data/Standup_Updates.xlsx"
-STATE_PATH = "data/rotation_state.json"
+ARCHIVE_PATH = "data/updates_archive.csv"
 
-def get_next_speaker(roster):
-    """Calculates the speaker on a continuous loop regardless of calendar year."""
-    state = {"last_index": -1}
-    if os.path.exists(STATE_PATH):
-        with open(STATE_PATH, "r") as f:
-            state = json.load(f)
-    
-    # Check if today is Monday to advance the speaker
-    today = datetime.now()
-    # 0 = Monday
-    if today.weekday() == 0 or state["last_index"] == -1:
-        next_index = (state["last_index"] + 1) % len(roster)
-    else:
-        next_index = state["last_index"]
-
-    # Save state
-    with open(STATE_PATH, "w") as f:
-        json.dump({"last_index": next_index, "updated_at": today.isoformat()}, f)
-
-    return roster[next_index]
-
-def read_excel_updates():
+def read_roster_and_updates():
     wb = openpyxl.load_workbook(EXCEL_PATH)
     
-    # Read Roster
+    # 1. Read Roster Sheet
     roster_sheet = wb["Roster"]
     roster = []
     for row in roster_sheet.iter_rows(min_row=2, values_only=True):
         if row[0] is not None:
-            roster.append({"order": row[0], "name": row[1], "email": row[2]})
+            roster.append({"order": int(row[0]), "name": row[1], "email": row[2]})
             
-    # Read Updates
+    # Sort roster by 'order' column just in case
+    roster.sort(key=lambda x: x["order"])
+
+    # 2. Read Today's Updates Sheet
     updates_sheet = wb["Today"]
     updates = {}
     for row in updates_sheet.iter_rows(min_row=2, values_only=True):
-        if row[0] is not None:
-            updates[row[1]] = row[2] if row[2] else "_No update logged_"
+        if row[0] is not None and row[1]:  # row[1] is Email
+            updates[row[1]] = row[2] if (len(row) > 2 and row[2]) else "_No update logged_"
 
     return roster, updates
 
-def send_teams_card(speaker, roster, updates):
-    """Sends a rich Adaptive Card to MS Teams."""
+def get_speaker_from_archive(roster):
+    """Determines speaker by counting Mondays or looking at week numbers."""
+    now_ist = datetime.datetime.now(ZoneInfo("Asia/Kolkata"))
+    iso_week = now_ist.date().isocalendar()[1]
     
-    facts = []
-    for member in roster:
-        name = member["name"]
-        update_text = updates.get(member["email"], "_No update logged_")
-        facts.append({"title": name, "value": update_text})
+    # Continuous loop index based on ISO week number
+    speaker_index = (iso_week - 1) % len(roster)
+    return roster[speaker_index]
+
+def archive_today_updates(today_str, roster, updates):
+    """Appends today's updates to data/updates_archive.csv."""
+    file_exists = os.path.exists(ARCHIVE_PATH)
+    
+    with open(ARCHIVE_PATH, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if not file_exists:
+            writer.writerow(["date", "name", "update"])
+            
+        for member in roster:
+            name = member["name"]
+            email = member["email"]
+            update_text = updates.get(email, "_No update logged_")
+            writer.writerow([today_str, name, update_text])
+
+def send_teams_card(speaker, roster, updates):
+    facts = [
+        {"title": member["name"], "value": updates.get(member["email"], "_No update logged_")}
+        for member in roster
+    ]
 
     card_payload = {
         "type": "message",
@@ -84,12 +88,6 @@ def send_teams_card(speaker, roster, updates):
                                     "text": f"🎙️ **Weekly Speaker:** {speaker['name']} ({speaker['email']})",
                                     "weight": "Bolder",
                                     "wrap": True
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "text": "Please lead today's meeting and sync on updates!",
-                                    "isSubtle": True,
-                                    "spacing": "None"
                                 }
                             ]
                         },
@@ -110,10 +108,15 @@ def send_teams_card(speaker, roster, updates):
         ]
     }
 
-    response = requests.post(WEBHOOK_URL, json=card_payload)
-    response.raise_for_status()
+    resp = requests.post(WEBHOOK_URL, json=card_payload)
+    resp.raise_for_status()
 
 if __name__ == "__main__":
-    roster, updates = read_excel_updates()
-    speaker = get_next_speaker(roster)
+    now_ist = datetime.datetime.now(ZoneInfo("Asia/Kolkata"))
+    today_str = now_ist.date().isoformat()
+    
+    roster, updates = read_roster_and_updates()
+    speaker = get_speaker_from_archive(roster)
+    
     send_teams_card(speaker, roster, updates)
+    archive_today_updates(today_str, roster, updates)

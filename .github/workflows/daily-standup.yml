@@ -2,10 +2,11 @@ name: Daily Standup Teams Notification
 
 on:
     push:
-    schedule:
-        # 3:00 AM UTC = 8:30 AM IST (Monday through Friday)
-        - cron: "0 3 * * 1-5"
-    workflow_dispatch: {} # Allows manual testing anytime
+        tags: "test"
+    # schedule:
+    #     # 3:00 AM UTC = 8:30 AM IST (Monday through Friday)
+    #     - cron: "0 3 * * 1-5"
+    # workflow_dispatch: {} # Allows manual testing anytime
 
 permissions:
     contents: write
@@ -27,6 +28,14 @@ jobs:
               env:
                   TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
               run: python scripts/standup_notify.py
+
+            - name: Commit Archive Updates
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add data/updates_archive.csv
+                  git diff --cached --quiet || git commit -m "chore: archive standup updates for $(date +%F)"
+                  git push
 
             - name: Commit Updated Rotation State
               run: |
